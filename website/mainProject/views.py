@@ -12,6 +12,9 @@ def index(request):
 
     films = all_films.order_by('-id')[:10]
 
+    messages = request.session.get('custom_messages', [])
+    messages = messages[::-1]
+
     return render(request, "index.html", context={
         "films": films,
         "upgraded_fields": [
@@ -23,29 +26,97 @@ def index(request):
             "rating", 
             "title_lang", 
             "is_adult"
-        ]                        
+        ],
+        "messages": messages               
     })
         
-def delete_film(request):
-    film_id = request.POST.get('film_id')
+# def delete_film(request):
+    # messages = []
+    # messages_block = []
+
+    # if 'custom_messages' not in request.session:
+    #     request.session['custom_messages'] = []
+
+#     film_id = request.POST.get('film_id')
     
-    if not film_id:
-        messages.error(request, "Не указан ID фильма для удаления")
-        return redirect('home')
+#     if not film_id:
+#         messages.error(request, "Не указан ID фильма для удаления")
+#         return redirect('home')
     
-    try:
-        film = Film.objects.get(id=film_id)
-        film_title = film.title
-        film.delete()
-        messages.success(request, f'Фильм "{film_title}" успешно удалён')
-    except Film.DoesNotExist:
-        messages.error(request, "Фильм не найден")
-    except Exception as e:
-        messages.error(request, f"Ошибка при удалении: {str(e)}")
+#     try:
+#         film = Film.objects.get(search_id=film_id)
+#         film_title = film.title
+#         film.delete()
+#         messages.append(f"Фильм {film_title}(id {film_id}) успешно удалён!")
+#     except Film.DoesNotExist:
+#         messages.error(request, "Фильм не найден")
+#     except Exception as e:
+#         messages.error(request, f"Ошибка при удалении: {str(e)}")
+    
+    # messages.append("end")
+
+    # messages_block.append(messages)
+    # request.session['custom_messages'].extend(messages_block)
+    # request.session.modified = True
+
+#     return redirect('home')
+
+def delete_films(request):
+    messages = []
+    messages_block = []
+
+    if 'custom_messages' not in request.session:
+        request.session['custom_messages'] = []
+
+    film_ids = request.POST.getlist('film_ids')
+    
+    if not film_ids:
+        messages.append("Не выбрано ни одного фильма для удаления")
+    else:
+        try:
+            films_to_delete = Film.objects.filter(id__in=film_ids)
+            deleted_films = [[film.title, film.search_id] for film in films_to_delete]
+
+            deleted_count = films_to_delete.delete()[0]
+            messages.append(f"Успешно удалено {deleted_count} фильмов!")
+
+            for film in deleted_films:
+                messages.append(f"Фильм {film[0]}(id {film[1]}) успешно удалён!")
+
+
+        except Exception as e:
+            messages.append(f"Ошибка при удалении: {str(e)}")
+    
+    messages.append("end")
+
+    messages_block.append(messages)
+    request.session['custom_messages'].extend(messages_block)
+    request.session.modified = True
     
     return redirect('home')
 
+def delete_all_films(request):
+    messages = []
+    messages_block = []
+
+    films = Film.objects.all().delete()
+    messages.append(f"Все фильмы успешно удалены!")
+
+    messages.append("end")
+
+    messages_block.append(messages)
+    request.session['custom_messages'].extend(messages_block)
+    request.session.modified = True
+
+    return redirect('home')
+
 def parse_films(request):
+    messages = []
+    messages_block = []
+
+    if 'custom_messages' not in request.session:
+        request.session['custom_messages'] = []
+
     start_page = request.POST.get('start_page')
     end_page = request.POST.get('end_page')
     delete_jsons = request.POST.get('delete_jsons')
@@ -59,25 +130,46 @@ def parse_films(request):
             end_page = int(end_page)
 
             if start_page < 0 or end_page < 0:
+                messages.append("Нельзя вводить числа меньше чем ноль")
                 raise ValueError("Поддерживаются только положительные целочисленные типы данных")
             else:
                 if start_page > end_page:
                     start_page, end_page = end_page, start_page
-            
-            # print(f"start_page:{start_page}; end_page: {end_page}, delete_jsons:{delete_jsons}; update_db:{update_db}")
-            download_movies(start_page, end_page)
-            print("Фильмы скачаны!")
+            try:
+                download_movies(start_page, end_page)
+                messages.append("Фильмы скачаны!")
+            except:
+                messages.append("Возможно не включен VPN. Ошибка при запросе к TMDB API!")
 
         except Exception as e:
-            print("Поддерживаются только положительные целочисленные типы данных", e)
+            messages.append(f"Можно вводить только целые числа: {e}")
+        
 
     if update_db:
-        print("upgraded_field", upgraded_field)
-        json_to_db(upgraded_field)
-        print("Фильмы перенесены в базу данных!")
+        json_to_db(upgraded_field, messages)
+        messages.append("Фильмы перенесены в базу данных!")
+        if upgraded_field:
+            messages.append(f"Обновленно поле {upgraded_field}!")
 
     if delete_jsons:
         delete_everything_in_folder()
-        print("Папка с json файлами очищена!")
+        messages.append("Папка с json файлами очищена!")
 
+    messages.append("end")
+
+    messages_block.append(messages)
+    request.session['custom_messages'].extend(messages_block)
+    request.session.modified = True
+
+    return redirect('home')
+
+def clear_messages(request):
+    if 'custom_messages' not in request.session:
+        request.session['custom_messages'] = []
+    
+    request.session['custom_messages'] = [
+        ["Сообщения очищены", "end"]
+    ]
+    request.session.modified = True
+    
     return redirect('home')

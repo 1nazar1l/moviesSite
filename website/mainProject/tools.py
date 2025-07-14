@@ -45,25 +45,21 @@ def download_movies(start_page=1, end_page=2, language="en"):
             "language": language,
             "page": page_number,         
         }
+
+        response = requests.get(url, params=params)
+        response.raise_for_status()
         
-        try:
-            response = requests.get(url, params=params)
-            response.raise_for_status()
-            
-            data = response.json()
-            movies = parse_page(data, movies, img_url)
-            time.sleep(0.1)
+        data = response.json()
+        movies = parse_page(data, movies, img_url)
+        time.sleep(0.1)
 
-            filepath = f"page{page_number}.json"
-            filepath = os.path.join(jsons_folder_path, filepath)
+        filepath = f"page{page_number}.json"
+        filepath = os.path.join(jsons_folder_path, filepath)
 
-            with open(filepath, "w", encoding="utf-8") as f:
-                json.dump(movies, f, indent=4, ensure_ascii=False)
+        with open(filepath, "w", encoding="utf-8") as f:
+            json.dump(movies, f, indent=4, ensure_ascii=False)
 
-            movies = []
-            
-        except requests.exceptions.RequestException as e:
-            print("Ошибка при запросе к TMDB API:", e)
+        movies = []
 
 def get_file_numbers():
     files = os.listdir(jsons_folder_path)
@@ -79,12 +75,11 @@ def get_file_numbers():
     file_numbers.sort()
     return file_numbers
 
-def json_to_db(upgraded_field):
+def json_to_db(upgraded_field, operation_messages):
     file_numbers = get_file_numbers()
     for num in file_numbers:
         filename = f"page{num}.json"
         path = os.path.join(jsons_folder_path, filename)
-        print(path)
 
         if os.path.exists(path):
             with open(path, "r", encoding='utf-8') as f:
@@ -107,6 +102,9 @@ def json_to_db(upgraded_field):
                 if not created and upgraded_field:
                     film_obj.title = film_data[upgraded_field]
                     film_obj.save()
+
+        else:
+            operation_messages.append(f"Путь {path} не существует")
 
 def delete_everything_in_folder():
     shutil.rmtree(jsons_folder_path)
