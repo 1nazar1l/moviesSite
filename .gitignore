@@ -182,3 +182,4 @@ cython_debug/
 
 website/mainProject/templates/jsons
 .gitattributes
+website/mainProject/static/images/movies

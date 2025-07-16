@@ -1,5 +1,13 @@
 from django.shortcuts import render
-from .tools import download_movies, delete_everything_in_folder, json_to_db
+from .tools import (
+    download_movies, 
+    delete_everything_in_folder, 
+    json_to_db, 
+    download_images, 
+    upgrade_local_imgs_path, 
+    collect_special_messages_block
+)
+
 import json
 from django.http import JsonResponse
 from .models import Film
@@ -21,7 +29,8 @@ def index(request):
             "search_id", 
             "title", 
             "overview", 
-            "img_path", 
+            "local_img_path", 
+            "site_img_path",
             "release_date", 
             "rating", 
             "title_lang", 
@@ -29,37 +38,6 @@ def index(request):
         ],
         "messages": messages               
     })
-        
-# def delete_film(request):
-    # messages = []
-    # messages_block = []
-
-    # if 'custom_messages' not in request.session:
-    #     request.session['custom_messages'] = []
-
-#     film_id = request.POST.get('film_id')
-    
-#     if not film_id:
-#         messages.error(request, "Не указан ID фильма для удаления")
-#         return redirect('home')
-    
-#     try:
-#         film = Film.objects.get(search_id=film_id)
-#         film_title = film.title
-#         film.delete()
-#         messages.append(f"Фильм {film_title}(id {film_id}) успешно удалён!")
-#     except Film.DoesNotExist:
-#         messages.error(request, "Фильм не найден")
-#     except Exception as e:
-#         messages.error(request, f"Ошибка при удалении: {str(e)}")
-    
-    # messages.append("end")
-
-    # messages_block.append(messages)
-    # request.session['custom_messages'].extend(messages_block)
-    # request.session.modified = True
-
-#     return redirect('home')
 
 def delete_films(request):
     messages = []
@@ -86,12 +64,8 @@ def delete_films(request):
 
         except Exception as e:
             messages.append(f"Ошибка при удалении: {str(e)}")
-    
-    messages.append("end")
 
-    messages_block.append(messages)
-    request.session['custom_messages'].extend(messages_block)
-    request.session.modified = True
+    collect_special_messages_block(messages, messages_block, request)
     
     return redirect('home')
 
@@ -101,12 +75,8 @@ def delete_all_films(request):
 
     films = Film.objects.all().delete()
     messages.append(f"Все фильмы успешно удалены!")
-
-    messages.append("end")
-
-    messages_block.append(messages)
-    request.session['custom_messages'].extend(messages_block)
-    request.session.modified = True
+    
+    collect_special_messages_block(messages, messages_block, request)
 
     return redirect('home')
 
@@ -144,7 +114,6 @@ def parse_films(request):
         except Exception as e:
             messages.append(f"Можно вводить только целые числа: {e}")
         
-
     if update_db:
         json_to_db(upgraded_field, messages)
         messages.append("Фильмы перенесены в базу данных!")
@@ -155,13 +124,33 @@ def parse_films(request):
         delete_everything_in_folder()
         messages.append("Папка с json файлами очищена!")
 
-    messages.append("end")
-
-    messages_block.append(messages)
-    request.session['custom_messages'].extend(messages_block)
-    request.session.modified = True
+    collect_special_messages_block(messages, messages_block, request)
 
     return redirect('home')
+
+def update_info(request):
+    messages = []
+    messages_block = []
+
+    should_download_images = request.POST.get("should_download_images")
+    update_local_img_path = request.POST.get("update_local_img_path")
+    vpn_is_connected = request.POST.get('vpn_is_connected')
+    
+    if vpn_is_connected and should_download_images:
+        try:
+            download_images()
+            messages.append("Постеры к фильмам скачаны!")
+        except:
+            messages.append("Возможно не включен VPN. Ошибка при запросе к TMDB API!")
+
+    if update_local_img_path:
+        upgrade_local_imgs_path()
+        messages.append("Пути к скачаным постерам обновлены!")
+
+    collect_special_messages_block(messages, messages_block, request)
+    
+    return redirect('home')
+
 
 def clear_messages(request):
     if 'custom_messages' not in request.session:
@@ -173,3 +162,4 @@ def clear_messages(request):
     request.session.modified = True
     
     return redirect('home')
+

@@ -25,6 +25,7 @@
       
       {% for film in films %}
         <div class="film_block" style="margin-bottom: 20px; border: 1px solid #ddd;">
+          {% comment %} <img src="{% static film.local_img_path %}" alt=""> {% endcomment %}
           <div class="block">
             <span><strong>ID:</strong> {{ film.search_id }}</span>
             <span><strong>Название:</strong> {{ film.title }}</span>
@@ -56,6 +57,17 @@
             {% endfor %}
           </select>
           <button type="submit" class="parse" onclick="return confirm('Начать?')">Начать</button>
+        </div>
+      </form>
+
+      <form action=" {% url "update_info" %}" method="post">
+        {% csrf_token %}
+        <div class="content">
+          <h1>Обновление информации</h1>
+          <p><input type="checkbox" name="vpn_is_connected"><span>VPN включен?(нужен для скачивания картинок)</span></p>
+          <p><input type="checkbox" name="should_download_images"><span>Скачать постеры к фильмам</span></p>
+          <p><input type="checkbox" name="update_local_img_path"><span>Обновить локальные пути к картинкам</span></p>
+          <button type="submit" class="update" onclick="return confirm('Начать?')">Начать</button>
         </div>
       </form>
     </div>

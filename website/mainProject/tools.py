@@ -21,7 +21,8 @@ def parse_page(page, movies, img_url):
             "id": movie["id"],
             "title": movie["title"],
             "overview": overview,
-            "img_path": os.path.join(f"{img_url}{movie["poster_path"]}"),
+            "site_img_path": os.path.join(f"{img_url}{movie["poster_path"]}"),
+            "local_img_path": f"images/movies/{movie["id"]}.jpg",
             "release_date": movie["release_date"],
             "genre_ids": movie["genre_ids"],
             "rating": movie["vote_average"],
@@ -91,7 +92,8 @@ def json_to_db(upgraded_field, operation_messages):
                     defaults={
                         'title': film_data["title"],
                         'overview': film_data["overview"],
-                        'img_path': film_data["img_path"],
+                        'site_img_path': film_data["site_img_path"],
+                        'local_img_path': film_data["local_img_path"],
                         'release_date': film_data["release_date"],
                         'rating': film_data["rating"],
                         'title_lang': film_data["title_lang"],
@@ -99,6 +101,7 @@ def json_to_db(upgraded_field, operation_messages):
                     }
                 )
                 
+                # если существует
                 if not created and upgraded_field:
                     film_obj.title = film_data[upgraded_field]
                     film_obj.save()
@@ -109,3 +112,41 @@ def json_to_db(upgraded_field, operation_messages):
 def delete_everything_in_folder():
     shutil.rmtree(jsons_folder_path)
     os.mkdir(jsons_folder_path)    
+
+def download_images():
+    imgs_folder = "mainProject/static/images/movies"
+    os.makedirs(imgs_folder, exist_ok=True)
+
+    file_numbers = get_file_numbers()
+    for num in file_numbers:
+        json_filename = f"page{num}.json"
+        json_path = os.path.join(jsons_folder_path, json_filename)
+
+        if os.path.exists(json_path):
+            with open(json_path, "r", encoding='utf-8') as f:
+                films_data = json.load(f)
+
+            for film in films_data:
+                img_filename = f"{film["id"]}.jpg"
+                img_filepath = os.path.join(imgs_folder, img_filename)
+
+                if not os.path.exists(img_filepath):
+                    p = requests.get(film["site_img_path"])
+                    
+                    with open(img_filepath, "wb") as out:
+                        out.write(p.content)
+    
+def upgrade_local_imgs_path():
+    films = Film.objects.all()
+    imgs_folder = "images/movies"
+
+    for film in films:
+        film.local_img_path = f"{imgs_folder}/{film.search_id}.jpg"
+        film.save()
+
+def collect_special_messages_block(messages, messages_block, request):
+    messages.append("end")
+    
+    messages_block.append(messages)
+    request.session['custom_messages'].extend(messages_block)
+    request.session.modified = True
