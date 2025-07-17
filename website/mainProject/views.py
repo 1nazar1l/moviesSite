@@ -18,7 +18,7 @@ from django.contrib import messages
 def index(request):
     all_films = Film.objects.all()
 
-    films = all_films.order_by('-id')[:10]
+    films = all_films.order_by('-id')[0:100]
 
     messages = request.session.get('custom_messages', [])
     messages = messages[::-1]
@@ -134,7 +134,7 @@ def update_info(request):
 
     should_download_images = request.POST.get("should_download_images")
     update_local_img_path = request.POST.get("update_local_img_path")
-    vpn_is_connected = request.POST.get('vpn_is_connected')
+    vpn_is_connected = request.POST.get('vpn_is_connecteD')
     
     if vpn_is_connected and should_download_images:
         try:

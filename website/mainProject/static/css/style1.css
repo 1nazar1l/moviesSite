@@ -1,0 +1,168 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    display: flex;
+    background-color: grey;
+}
+
+h1 {
+    text-align: center;
+}
+
+button {
+    cursor: pointer;
+}
+
+form {
+    width: 100%;
+}
+.films_container {
+    width: 25%;
+    display: flex;
+    flex-direction: column;
+    padding-left: 20px;
+}
+
+.films_container .delete_films_btn {
+    width: 100%;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.films_container h1 {
+    margin-bottom: 10px;
+}
+
+.film_block {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    box-sizing: border-box;
+    background-color: lightgrey;
+    border-radius: 4px;
+}
+
+.film_block .block {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    height: max-content;
+}
+
+.film_block .block:nth-child(1){
+    align-items: start;
+    padding-left: 5px;
+}
+
+.film_block .block:nth-child(2){
+    margin-bottom: auto;
+    margin-left: auto;
+    margin-right: 10px;
+}
+
+.film_block .block:nth-child(2) input{
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+
+.film_block span {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.film_block button {
+    background-color: lightgray;
+    border: 0;
+    outline: 0;
+    padding: 6px 10px;
+    border-radius: 10px;
+    border: 1px solid grey;
+    transition: .3s all;
+}
+
+.film_block button:hover {
+    background-color: grey;
+    font-weight: bold;
+    cursor: pointer;
+    transform: scale(1.05);
+    padding: 10px;
+}
+
+.admin_container {
+    flex: 1;
+    padding-left: 50px;
+    display: flex;
+}
+
+.admin_container .parse_films_block form {
+    width: 100%;
+}
+
+.admin_container .parse_films_block {
+    width: 50%;
+}
+
+
+.admin_container .parse_films_block .content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: start;
+}
+
+.admin_container .parse_films_block .content p>input {
+    margin-right: 6px;
+}
+
+.admin_container .messages_block {
+    width: 50%;
+    padding-inline: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin_container .messages_block .content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: start;
+    align-items: center;
+}
+
+.admin_container .messages_block h1 {
+    margin-bottom: 10px;
+}
+
+.admin_container .messages_block p {
+    text-align: center;
+}
+
+.admin_container .messages_block .border {
+    border-bottom: 1px solid lightgrey;
+    width: 100%;
+}
+
+.admin_container .messages_block form>button {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.admin_container .messages_block .content .message_block {
+    background-color: white;
+    width: 100%;
+    padding: 10px;
+    border-radius: 4px;
+}
