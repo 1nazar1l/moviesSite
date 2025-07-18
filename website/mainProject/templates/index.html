@@ -1,168 +1,54 @@
-<!DOCTYPE html>
-{% load static %}
+{% extends "base.html" %}
+{% include "parse_media_block_content.html" with title_text="Парсинг фильмов" %}
 
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="{% static "css/normalize.css" %}">
-  <link rel="stylesheet" href="{% static "css/style.css" %}">
+{% block page_title %}
+  Список фильмов
+{% endblock page_title %}
 
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <title>Список фильмов</title>
-</head>
-<body>
-  <div class="films_container">
-    <div class="title_block">
-      <p>Список фильмов</p>
-    </div>
-    <div class="buttons_block">
-      <form action="{% url 'delete_films' %}" method="post" class="delete-form" id="delete-selected-form">
-        {% csrf_token %}
-        <button type="submit" class="custom_button delete_button" onclick="return confirm('Удалить выбранные фильмы?')">
-          Удалить выбранные
-        </button>
-      </form>
-      <form action="{% url 'delete_all_films' %}" method="post" class="delete-form">
-        {% csrf_token %}
-        <button type="submit" class="custom_button delete_button" onclick="return confirm('Удалить все фильмы?')">
-          Удалить все фильмы
-        </button>
-      </form>
-    </div>
-    <div class="films_block">
-      <div class="films_content">
-        {% for film in films %}
-          <div class="film_block">
-            <div class="film_info">
-              <span><strong>ID:</strong> {{ film.search_id }}</span>
-              <span><strong>Название:</strong> {{ film.title }}</span>
-              <span><strong>Дата выхода:</strong> {{ film.release_date|date:"Y" }}</span>
-            </div>
-            <div class="film_actions">
-              <input type="checkbox" name="film_ids" value="{{ film.id }}" form="delete-selected-form" class="film-checkbox">
-            </div>
-          </div>
-        {% endfor %}
+{% block title %}
+  Список фильмов
+{% endblock title %}
+
+{% block delete_buttons_block %}
+  <form action="{% url 'delete_films' %}" method="post" class="delete-form" id="delete-selected-form">
+    {% csrf_token %}
+    <button type="submit" class="custom_button delete_button" onclick="return confirm('Удалить выбранные фильмы?')">
+      Удалить выбранные
+    </button>
+  </form>
+  <form action="{% url 'delete_all_films' %}" method="post" class="delete-form">
+    {% csrf_token %}
+    <button type="submit" class="custom_button delete_button" onclick="return confirm('Удалить все фильмы?')">
+      Удалить все фильмы
+    </button>
+  </form>
+{% endblock delete_buttons_block %}
+
+{% block media_block %}
+  {% for film in films %}
+    <div class="film_block">
+      <div class="film_info">
+        <span><strong>ID:</strong> {{ film.search_id }}</span>
+        <span><strong>Название:</strong> {{ film.title }}</span>
+        <span><strong>Дата выхода:</strong> {{ film.release_date|date:"Y" }}</span>
+      </div>
+      <div class="film_actions">
+        <input type="checkbox" name="film_ids" value="{{ film.id }}" form="delete-selected-form" class="film-checkbox">
       </div>
     </div>
-  </div>
-  <div class="admin_container">
-    <div class="parse_films_block">
-      <form action="{% url "parse_films" %}" method="post">
-        {% csrf_token %}
-        <div class="content">
-          <div class="title_block">
-            Парсинг фильмов
-          </div>
-          <div class="input_block text_type">
-            <label>С какой страницы начать</label>
-            <input type="text" placeholder="" name="start_page">
-          </div>
-          <div class="input_block text_type">
-            <label>Какой страницей закончить</label>
-            <input type="text" placeholder="" name="end_page">
-          </div>
-          <div class="input_block checkbox_type">
-            <label>VPN включен?(нужен для парсинга)</label>
-            <div class="custom_checkbox">
-              <input type="checkbox" name="vpn_is_connected" id="vpn_connected">
-              <label for="vpn_connected" class="checkbox_visual">
-                <i class="fa-solid fa-check"></i>
-              </label>
-            </div>
-          </div>
-          <div class="input_block checkbox_type">
-            <label>Удалить временные json файлы</label>
-            <div class="custom_checkbox">
-              <input type="checkbox" name="delete_jsons" id="delete_jsons">
-              <label for="delete_jsons" class="checkbox_visual">
-                <i class="fa-solid fa-check"></i>
-              </label>
-            </div>
-          </div>
-          <div class="input_block checkbox_type">
-            <label>Занести данные в таблицу</label>
-            <div class="custom_checkbox">
-              <input type="checkbox" name="update_db" id="update_db">
-              <label for="update_db" class="checkbox_visual">
-                <i class="fa-solid fa-check"></i>
-              </label>
-            </div>
-          </div>
-          <select class="upgraded_field" name="upgraded_field" id="field-select">
-            <option value="">Выберите поля в которых обновить информацию</option>
-            {% for field in upgraded_fields %}
-              <option value="{{field}}">{{field}}</option>
-            {% endfor %}
-          </select>
-          <button type="submit" class="custom_button continue_button" onclick="return confirm('Начать?')">Начать</button>
-        </div>
-      </form>
+  {% endfor %}
+{% endblock media_block %}
 
-      <form action=" {% url "update_info" %}" method="post">
-        {% csrf_token %}
-        <div class="content">
-          <div class="title_block">
-            Обновление информации
-          </div>
-          <div class="input_block checkbox_type">
-            <label>VPN включен?(нужен для парсинга)</label>
-            <div class="custom_checkbox">
-              <input type="checkbox" name="vpn_is_connecteD" id="vpn_is_connecteD">
-              <label for="vpn_is_connecteD" class="checkbox_visual">
-                <i class="fa-solid fa-check"></i>
-              </label>
-            </div>
-          </div>
-          <div class="input_block checkbox_type">
-            <label>Скачать постеры к фильмам</label>
-            <div class="custom_checkbox">
-              <input type="checkbox" name="should_download_images" id="should_download_images">
-              <label for="should_download_images" class="checkbox_visual">
-                <i class="fa-solid fa-check"></i>
-              </label>
-            </div>
-          </div>
-          <div class="input_block checkbox_type">
-            <label>Обновить локальные пути к картинкам</label>
-            <div class="custom_checkbox">
-              <input type="checkbox" name="update_local_img_path" id="update_local_img_path">
-              <label for="update_local_img_path" class="checkbox_visual">
-                <i class="fa-solid fa-check"></i>
-              </label>
-            </div>
-          </div>
-          <button type="submit" class="custom_button continue_button" onclick="return confirm('Начать?')">Начать</button>
-        </div>
-      </form>
-    </div>
-    <div class="messages_container">
-      <div class="title_block">
-        Сообщения и ошибки
-      </div>
-      <form action="{% url "clear_messages" %}" method="post">
-        {% csrf_token %}
-        <button type="submit"  class="custom_button delete_messages_button" onclick="return confirm('Продолжить?')">Очистить сообщения</button>
-      </form>
-      <div class="messages_block">
-        <div class="messages_content">
-        
-          {% for message_block in messages %}
-              {% for message in message_block %}
-                {% if message != "end" %}
-                  <div class="message_block">
-                    <p>{{message}}</p>
-                  </div>
-                {% endif %}
-                {% if message != "end" %}
-                  <div class="message_border"></div>
-                {% endif %}
-              {% endfor %}
-          {% endfor %}
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
-</html>
+{% block parse_media_block %}
+  <form action="{% url "parse_films" %}" method="post">
+    {% csrf_token %}
+    {% include "parse_media_content_block.html" with title_text="Парсинг фильмов" updated_fields=updated_fields %}
+  </form>
+{% endblock parse_media_block %}
+
+{% block update_media_info_block %}
+  <form action=" {% url "update_info" %}" method="post">
+    {% csrf_token %}
+    {% include "update_media_content_block.html" %}
+  </form>
+{% endblock update_media_info_block %}

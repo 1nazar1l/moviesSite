@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static "css/normalize.css" %}">
+  <link rel="stylesheet" href="{% static "css/style.css" %}">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <title>{% block page_title %}{% endblock page_title %}</title>
+</head>
+<body>
+  <header class="header">
+    
+  </header>
+  <main>
+    <div class="films_container">
+        <div class="title_block">
+          <p>{% block title %}{% endblock title %}</p>
+        </div>
+        <div class="buttons_block">
+          {% block delete_buttons_block %}{% endblock delete_buttons_block %}
+        </div>
+      <div class="films_block">
+        <div class="films_content">
+          {% block media_block %}{% endblock media_block %}
+        </div>
+      </div>
+    </div>
+    <div class="admin_container">
+      <div class="parse_films_block">
+        {% block parse_media_block %}{% endblock parse_media_block %}
+        {% block update_media_info_block %}{% endblock update_media_info_block %}
+      </div>
+      <div class="messages_container">
+        <div class="title_block">
+          Сообщения и ошибки
+        </div>
+        <form action="{% url "clear_messages" %}" method="post">
+          {% csrf_token %}
+          <button type="submit"  class="custom_button delete_messages_button" onclick="return confirm('Продолжить?')">
+            Очистить сообщения
+          </button>
+        </form>
+        <div class="messages_block">
+          <div class="messages_content">
+            {% for message_block in messages %}
+                {% for message in message_block %}
+                  {% if message != "end" %}
+                    <div class="message_block">
+                      <p>{{message}}</p>
+                    </div>
+                  {% endif %}
+                  {% if message != "end" %}
+                    <div class="message_border"></div>
+                  {% endif %}
+                {% endfor %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
