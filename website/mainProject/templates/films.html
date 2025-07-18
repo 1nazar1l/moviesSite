@@ -32,7 +32,7 @@
         <span><strong>Дата выхода:</strong> {{ film.release_date|date:"Y" }}</span>
       </div>
       <div class="media_actions">
-        <input type="checkbox" name="film_ids" value="{{ film.id }}" form="delete-selected-form">
+        <input type="checkbox" name="media_ids" value="{{ film.id }}" form="delete-selected-form">
       </div>
     </div>
   {% endfor %}

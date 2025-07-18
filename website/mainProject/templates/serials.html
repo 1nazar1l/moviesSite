@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+  Список сериалов
+{% endblock page_title %}
+
+{% block title %}
+  Список сериалов
+{% endblock title %}
+
+{% block delete_buttons_block %}
+  <form action="{% url 'delete_serials' %}" method="post" id="delete-selected-form">
+    {% csrf_token %}
+    <button type="submit" class="custom_button delete_button" onclick="return confirm('Удалить выбранные сериалы?')">
+      Удалить выбранные
+    </button>
+  </form>
+  <form action="{% url 'delete_all_serials' %}" method="post">
+    {% csrf_token %}
+    <button type="submit" class="custom_button delete_button" onclick="return confirm('Удалить все сериалы?')">
+      Удалить все сериалы
+    </button>
+  </form>
+{% endblock delete_buttons_block %}
+
+{% block media_block %}
+  {% for serial in serials %} 
+    <div class="media_block">
+      <div class="media_info">
+        <span><strong>ID:</strong> {{ serial.search_id }}</span>
+        <span><strong>Название:</strong> {{ serial.title }}</span>
+        <span><strong>Дата выхода:</strong> {{ serial.release_date|date:"Y" }}</span>
+      </div>
+      <div class="media_actions">
+        <input type="checkbox" name="media_ids" value="{{ serial.id }}" form="delete-selected-form">
+      </div>
+    </div>
+  {% endfor %}
+{% endblock media_block %}
+
+{% block parse_media_block %}
+  <form action="{% url "parse_serials" %}" method="post">
+    {% csrf_token %}
+    {% include "admin_page_components/parse_media_content_block.html" with title_text="Парсинг сериалов" updated_fields=updated_fields %}
+  </form>
+{% endblock parse_media_block %}
+
+{% block update_media_info_block %}
+  <form action=" {% url "update_serials_info" %}" method="post">
+    {% csrf_token %}
+    {% include "admin_page_components/update_media_content_block.html" %}
+  </form>
+{% endblock update_media_info_block %}

@@ -85,6 +85,7 @@ main {
     padding: 10px;
     color: rgb(41, 41, 41);
     scroll-behavior: smooth;
+    min-height: 110px;
 }
 
 .media_container .media_items_content .media_block{
