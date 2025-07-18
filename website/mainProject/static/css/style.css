@@ -49,7 +49,7 @@ main {
     padding-top: 100px;
 }
 
-.films_container {
+.media_container {
     display: flex;
     flex-direction: column;
     padding: 20px;
@@ -63,19 +63,19 @@ main {
     margin-bottom: 24px;
 }
 
-.films_container .buttons_block {
+.media_container .buttons_block {
     display: flex;
     gap: 10px;
     margin-bottom: 24px;
 }
 
-.films_container .films_block {
+.media_container .media_items_block {
     background-color: var(--color2);
     border-radius: 20px;
     overflow: hidden;
 }
 
-.films_container .films_content {
+.media_container .media_items_content {
     display: flex;
     width: 100%;
     overflow-x: scroll;
@@ -87,7 +87,7 @@ main {
     scroll-behavior: smooth;
 }
 
-.films_container .films_content .film_block{
+.media_container .media_items_content .media_block{
     flex: 0 0 auto;
     min-width: fit-content;   
     display: flex;
@@ -98,12 +98,12 @@ main {
     box-shadow: 3px 4px 8px 0px #939191;
 }
 
-.films_container .films_content .film_block .film_info{
+.media_container .media_items_content .media_block .media_info{
     display: flex;
     flex-direction: column;
 }
 
-.films_container .films_content .film_block .film_actions input {
+.media_container .media_items_content .media_block .media_actions input {
     width: 16px;
     aspect-ratio: 1 / 1;
     background-color: black;
@@ -117,20 +117,20 @@ main {
     display: flex;
 }
 
-.admin_container .parse_films_block {
+.admin_container .parse_media_items_block {
     width: 60%;
 }
 
-.parse_films_block form {
+.parse_media_items_block form {
     margin-bottom: 36px;
 }
 
-.admin_container .parse_films_block .content {
+.admin_container .parse_media_items_block .content {
     display: flex;
     flex-direction: column;
 }
 
-.parse_films_block .input_block {
+.parse_media_items_block .input_block {
     background-color: var(--color3);
     padding-left: 6px;
     border-radius: 12px;
@@ -142,16 +142,16 @@ main {
     justify-content: space-between;
 }
 
-.parse_films_block .input_block label {
+.parse_media_items_block .input_block label {
     color: rgb(41, 41, 41);
     font-weight: 600;
 }
 
-.parse_films_block .input_block.text_type {
+.parse_media_items_block .input_block.text_type {
     overflow: hidden;
 }
 
-.parse_films_block .input_block.text_type input {
+.parse_media_items_block .input_block.text_type input {
     border: 0;
     background-color: var(--color2);
     outline: 0;
@@ -164,13 +164,13 @@ main {
     cursor: pointer;
 }
 
-.parse_films_block .input_block.text_type:hover input {
+.parse_media_items_block .input_block.text_type:hover input {
     width: 100px;
     padding: 4px;
     padding-inline: 16px;
 }
 
-.parse_films_block .input_block.text_type input:focus {
+.parse_media_items_block .input_block.text_type input:focus {
     width: 100px;
     padding: 4px;
     padding-inline: 16px;

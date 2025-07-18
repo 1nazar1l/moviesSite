@@ -14,24 +14,25 @@
 </head>
 <body>
   <header class="header">
-    
+    <a href="films.html">Фильмы</a>
+    <a href="serials.html">Сериалы</a>
   </header>
   <main>
-    <div class="films_container">
+    <div class="media_container">
         <div class="title_block">
           <p>{% block title %}{% endblock title %}</p>
         </div>
         <div class="buttons_block">
           {% block delete_buttons_block %}{% endblock delete_buttons_block %}
         </div>
-      <div class="films_block">
-        <div class="films_content">
+      <div class="media_items_block">
+        <div class="media_items_content">
           {% block media_block %}{% endblock media_block %}
         </div>
       </div>
     </div>
     <div class="admin_container">
-      <div class="parse_films_block">
+      <div class="parse_media_items_block">
         {% block parse_media_block %}{% endblock parse_media_block %}
         {% block update_media_info_block %}{% endblock update_media_info_block %}
       </div>

@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% include "parse_media_block_content.html" with title_text="Парсинг фильмов" %}
 
 {% block page_title %}
   Список фильмов
@@ -10,13 +9,13 @@
 {% endblock title %}
 
 {% block delete_buttons_block %}
-  <form action="{% url 'delete_films' %}" method="post" class="delete-form" id="delete-selected-form">
+  <form action="{% url 'delete_films' %}" method="post" id="delete-selected-form">
     {% csrf_token %}
     <button type="submit" class="custom_button delete_button" onclick="return confirm('Удалить выбранные фильмы?')">
       Удалить выбранные
     </button>
   </form>
-  <form action="{% url 'delete_all_films' %}" method="post" class="delete-form">
+  <form action="{% url 'delete_all_films' %}" method="post">
     {% csrf_token %}
     <button type="submit" class="custom_button delete_button" onclick="return confirm('Удалить все фильмы?')">
       Удалить все фильмы
@@ -26,14 +25,14 @@
 
 {% block media_block %}
   {% for film in films %}
-    <div class="film_block">
-      <div class="film_info">
+    <div class="media_block">
+      <div class="media_info">
         <span><strong>ID:</strong> {{ film.search_id }}</span>
         <span><strong>Название:</strong> {{ film.title }}</span>
         <span><strong>Дата выхода:</strong> {{ film.release_date|date:"Y" }}</span>
       </div>
-      <div class="film_actions">
-        <input type="checkbox" name="film_ids" value="{{ film.id }}" form="delete-selected-form" class="film-checkbox">
+      <div class="media_actions">
+        <input type="checkbox" name="film_ids" value="{{ film.id }}" form="delete-selected-form">
       </div>
     </div>
   {% endfor %}
@@ -42,13 +41,13 @@
 {% block parse_media_block %}
   <form action="{% url "parse_films" %}" method="post">
     {% csrf_token %}
-    {% include "parse_media_content_block.html" with title_text="Парсинг фильмов" updated_fields=updated_fields %}
+    {% include "admin_page_components/parse_media_content_block.html" with title_text="Парсинг фильмов" updated_fields=updated_fields %}
   </form>
 {% endblock parse_media_block %}
 
 {% block update_media_info_block %}
   <form action=" {% url "update_info" %}" method="post">
     {% csrf_token %}
-    {% include "update_media_content_block.html" %}
+    {% include "admin_page_components/update_media_content_block.html" %}
   </form>
 {% endblock update_media_info_block %}
