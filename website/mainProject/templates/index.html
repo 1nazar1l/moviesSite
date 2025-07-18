@@ -46,7 +46,7 @@
 {% endblock parse_media_block %}
 
 {% block update_media_info_block %}
-  <form action=" {% url "update_info" %}" method="post">
+  <form action=" {% url "update_films_info" %}" method="post">
     {% csrf_token %}
     {% include "admin_page_components/update_media_content_block.html" %}
   </form>

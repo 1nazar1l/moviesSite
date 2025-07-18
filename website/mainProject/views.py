@@ -15,7 +15,10 @@ from .models import Film
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 
-def index(request):
+def home(request):
+    return render(request, "home.html")
+
+def films_admin_panel(request):
     all_films = Film.objects.all()
 
     films = all_films.order_by('-id')[0:100]
@@ -43,9 +46,6 @@ def delete_films(request):
     messages = []
     messages_block = []
 
-    if 'custom_messages' not in request.session:
-        request.session['custom_messages'] = []
-
     film_ids = request.POST.getlist('film_ids')
     
     if not film_ids:
@@ -67,7 +67,7 @@ def delete_films(request):
 
     collect_special_messages_block(messages, messages_block, request)
     
-    return redirect('home')
+    return redirect('films')
 
 def delete_all_films(request):
     messages = []
@@ -78,14 +78,11 @@ def delete_all_films(request):
     
     collect_special_messages_block(messages, messages_block, request)
 
-    return redirect('home')
+    return redirect('films')
 
 def parse_films(request):
     messages = []
     messages_block = []
-
-    if 'custom_messages' not in request.session:
-        request.session['custom_messages'] = []
 
     start_page = request.POST.get('start_page')
     end_page = request.POST.get('end_page')
@@ -126,7 +123,7 @@ def parse_films(request):
 
     collect_special_messages_block(messages, messages_block, request)
 
-    return redirect('home')
+    return redirect('films')
 
 def update_info(request):
     messages = []
@@ -149,7 +146,7 @@ def update_info(request):
 
     collect_special_messages_block(messages, messages_block, request)
     
-    return redirect('home')
+    return redirect('films')
 
 
 def clear_messages(request):
@@ -161,5 +158,5 @@ def clear_messages(request):
     ]
     request.session.modified = True
     
-    return redirect('home')
+    return redirect('films')
 

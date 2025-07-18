@@ -311,6 +311,7 @@ main {
     background-color: var(--color2);
     overflow: hidden;
     border-radius: 20px;
+    width: 450px;
 }
 
 .messages_container .messages_content {
@@ -322,6 +323,7 @@ main {
     padding: 10px;
     border-radius: 20px;
     text-align: center;
+    width: 100%;
 }
 
 .message_block {
