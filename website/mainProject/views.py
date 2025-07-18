@@ -26,7 +26,7 @@ def films_admin_panel(request):
     messages = request.session.get('custom_messages', [])
     messages = messages[::-1]
 
-    return render(request, "index.html", context={
+    return render(request, "films.html", context={
         "films": films,
         "upgraded_fields": [
             "search_id", 
