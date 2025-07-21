@@ -29,7 +29,7 @@
       <div class="media_info">
         <span><strong>ID:</strong> {{ serial.search_id }}</span>
         <span><strong>Название:</strong> {{ serial.title }}</span>
-        <span><strong>Дата выхода:</strong> {{ serial.release_date|date:"Y" }}</span>
+        <span><strong>Дата выхода:</strong> {{ serial.first_air_date|date:"Y" }}</span>
       </div>
       <div class="media_actions">
         <input type="checkbox" name="media_ids" value="{{ serial.id }}" form="delete-selected-form">
@@ -41,6 +41,6 @@
 {% block parse_media_block %}
   <form action="{% url "parse_serials" %}" method="post">
     {% csrf_token %}
-    {% include "admin_page_components/parse_media_content_block.html" with title_text="Парсинг сериалов" updated_fields=updated_fields %}
+    {% include "admin_page_components/parse_media_content_block.html" with title_text="Парсинг сериалов" %}
   </form>
 {% endblock parse_media_block %}

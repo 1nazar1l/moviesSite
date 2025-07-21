@@ -4,13 +4,15 @@ from django.utils import timezone
 class Film(models.Model):
     search_id = models.IntegerField(null=True, blank=True)
     title = models.CharField(max_length=100, null=True, blank=True)
+    budget = models.IntegerField(null=True, blank=True)
+    revenue = models.IntegerField(null=True, blank=True)
     overview = models.TextField(null=True, blank=True)
-    local_img_path = models.URLField(null=True, blank=True)
     site_img_path = models.URLField(null=True, blank=True)
+    local_img_path = models.URLField(null=True, blank=True)
     release_date = models.DateField(null=True, blank=True, default=timezone.now)
+    runtime = models.IntegerField(null=True, blank=True)
+    status = models.CharField(max_length=20, null=True, blank=True)
     rating = models.FloatField(null=True, blank=True)
-    title_lang = models.CharField(max_length=10, null=True, blank=True)
-    is_adult = models.BooleanField(null=True, blank=True)
 
     class Meta:
         verbose_name = "Фильм"
@@ -21,14 +23,16 @@ class Film(models.Model):
 
 class Serial(models.Model):
     search_id = models.IntegerField(null=True, blank=True)
+    first_air_date = models.DateField(null=True, blank=True, default=timezone.now)
+    last_air_date = models.DateField(null=True, blank=True, default=timezone.now)
     title = models.CharField(max_length=100, null=True, blank=True)
+    episodes = models.IntegerField(null=True, blank=True)
+    seasons = models.IntegerField(null=True, blank=True)
     overview = models.TextField(null=True, blank=True)
-    local_img_path = models.URLField(null=True, blank=True)
     site_img_path = models.URLField(null=True, blank=True)
-    release_date = models.DateField(null=True, blank=True, default=timezone.now)
+    local_img_path = models.URLField(null=True, blank=True)
+    status = models.CharField(max_length=20, null=True, blank=True)
     rating = models.FloatField(null=True, blank=True)
-    title_lang = models.CharField(max_length=10, null=True, blank=True)
-    is_adult = models.BooleanField(null=True, blank=True)
 
     class Meta:
         verbose_name = "Сериал"

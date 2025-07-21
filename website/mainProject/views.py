@@ -1,9 +1,8 @@
 from django.shortcuts import render
 from .tools import (
-    parse_media_items,
     delete_selected_media_items,
     delete_all_media_items,
-    parse_actors_item
+    start_parsing_media_items
 )
 
 from .models import Film, Serial, Actor
@@ -23,17 +22,6 @@ def films_admin_panel(request):
 
     return render(request, "films.html", context={
         "films": films,
-        "upgraded_fields": [
-            "search_id", 
-            "title", 
-            "overview", 
-            "local_img_path", 
-            "site_img_path",
-            "release_date", 
-            "rating", 
-            "title_lang", 
-            "is_adult"
-        ],
         "messages": messages               
     })
 
@@ -47,17 +35,6 @@ def serials_admin_panel(request):
 
     return render(request, "serials.html", context={
         "serials": serials,
-        "upgraded_fields": [
-            "search_id", 
-            "title", 
-            "overview", 
-            "local_img_path", 
-            "site_img_path",
-            "release_date", 
-            "rating", 
-            "title_lang", 
-            "is_adult"
-        ],
         "messages": messages               
     })
 
@@ -143,7 +120,7 @@ def parse_films(request):
 
     media_type = "films"
 
-    parse_media_items(request, media_type, messages, messages_block)
+    start_parsing_media_items(request, media_type, messages, messages_block)
 
     return redirect('films')
 
@@ -153,7 +130,7 @@ def parse_serials(request):
 
     media_type = "serials"
 
-    parse_media_items(request, media_type, messages, messages_block)
+    start_parsing_media_items(request, media_type, messages, messages_block)
 
     return redirect('serials')
 
@@ -163,7 +140,7 @@ def parse_actors(request):
 
     media_type = "actors"
 
-    parse_actors_item(request, media_type, messages, messages_block)
+    start_parsing_media_items(request, media_type, messages, messages_block)
 
     return redirect('actors')
 
