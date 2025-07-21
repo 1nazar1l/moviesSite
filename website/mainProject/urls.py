@@ -17,6 +17,12 @@ urlpatterns = [
     path('serials/', views.serials_admin_panel, name='serials'),
     path('serials/parse_serials/', views.parse_serials, name='parse_serials'),
     path('serials/update_serials_info/', views.update_serials_info, name='update_serials_info'),
-    path('films/delete_serials/', views.delete_serials, name='delete_serials'),
-    path('films/delete_all_serials/', views.delete_all_serials, name='delete_all_serials'),
+    path('serials/delete_serials/', views.delete_serials, name='delete_serials'),
+    path('serials/delete_all_serials/', views.delete_all_serials, name='delete_all_serials'),
+
+    path('actors/', views.actors_admin_panel, name='actors'),
+    path('actors/parse_actors/', views.parse_actors, name='parse_actors'),
+    path('actors/delete_actors/', views.delete_actors, name='delete_actors'),
+    path('actors/delete_all_actors/', views.delete_all_actors, name='delete_all_actors'),
+
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

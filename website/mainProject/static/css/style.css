@@ -165,6 +165,12 @@ main {
     cursor: pointer;
 }
 
+.parse_media_items_block .input_block.text_type input.active {
+    width: 100px;
+    padding: 4px;
+    padding-inline: 16px;
+}
+
 .parse_media_items_block .input_block.text_type:hover input {
     width: 100px;
     padding: 4px;

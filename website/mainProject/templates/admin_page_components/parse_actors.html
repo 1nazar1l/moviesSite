@@ -1,0 +1,78 @@
+<div class="content">
+  <div class="title_block">
+    {{title_text}}
+  </div>
+
+  <div class="input_block checkbox_type">
+    <label>VPN включен?(нужен для парсинга)</label>
+    <div class="custom_checkbox">
+      <input type="checkbox" name="vpn_is_connected" id="vpn_connected">
+      <label for="vpn_connected" class="checkbox_visual">
+        <i class="fa-solid fa-check"></i>
+      </label>
+    </div>
+  </div>
+
+  <div class="input_block checkbox_type">
+    <label>Получить id актеров</label>
+    <div class="custom_checkbox">
+      <input type="checkbox" name="get_actors_id" id="get_actors_id">
+      <label for="get_actors_id" class="checkbox_visual">
+        <i class="fa-solid fa-check"></i>
+      </label>
+    </div>
+  </div>
+
+  <div class="input_block text_type">
+    <label>С какой страницы начать</label>
+    <input type="text" placeholder="" name="start_page" id="start_page">
+  </div>
+
+  <div class="input_block text_type">
+    <label>Какой страницей закончить</label>
+    <input type="text" placeholder="" name="end_page" id="end_page">
+  </div>
+
+  <div class="input_block checkbox_type">
+    <label>Получить данные об актерах</label>
+    <div class="custom_checkbox">
+      <input type="checkbox" name="get_actors_data" id="get_actors_data">
+      <label for="get_actors_data" class="checkbox_visual">
+        <i class="fa-solid fa-check"></i>
+      </label>
+    </div>
+  </div>
+
+  <div class="input_block checkbox_type">
+    <label>Занести данные в таблицу</label>
+    <div class="custom_checkbox">
+      <input type="checkbox" name="update_db" id="update_db">
+      <label for="update_db" class="checkbox_visual">
+        <i class="fa-solid fa-check"></i>
+      </label>
+    </div>
+  </div>
+
+  <div class="input_block checkbox_type">
+    <label>Удалить временные json файлы</label>
+    <div class="custom_checkbox">
+      <input type="checkbox" name="delete_jsons" id="delete_jsons">
+      <label for="delete_jsons" class="checkbox_visual">
+        <i class="fa-solid fa-check"></i>
+      </label>
+    </div>
+  </div>
+
+  <div class="input_block checkbox_type">
+    <label>Скачать фотографии актеров</label>
+    <div class="custom_checkbox">
+      <input type="checkbox" name="download_images" id="download_images">
+      <label for="download_images" class="checkbox_visual">
+        <i class="fa-solid fa-check"></i>
+      </label>
+    </div>
+  </div>
+
+  <button type="submit" class="custom_button continue_button" onclick="return confirm('Начать?')">Начать</button>
+
+</div>

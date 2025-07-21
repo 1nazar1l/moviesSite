@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+  Список актеров
+{% endblock page_title %}
+
+{% block title %}
+  Список актеров
+{% endblock title %}
+
+{% block delete_buttons_block %}
+  <form action="{% url 'delete_actors' %}" method="post" id="delete-selected-form">
+    {% csrf_token %}
+    <button type="submit" class="custom_button delete_button" onclick="return confirm('Удалить выбранных актеров?')">
+      Удалить выбранные
+    </button>
+  </form>
+  <form action="{% url 'delete_all_actors' %}" method="post">
+    {% csrf_token %}
+    <button type="submit" class="custom_button delete_button" onclick="return confirm('Удалить всех актеров?')">
+      Удалить всех актеров
+    </button>
+  </form>
+{% endblock delete_buttons_block %}
+
+{% block media_block %}
+  {% for actor in actors %}
+    <div class="media_block">
+      <div class="media_info">
+        <span><strong>ID:</strong> {{ actor.search_id }}</span>
+        <span><strong>Имя:</strong> {{ actor.name }}</span>
+        <span><strong>День рождения:</strong> {{ actor.birthday|date:"Y" }}</span>
+      </div>
+      <div class="media_actions">
+        <input type="checkbox" name="media_ids" value="{{ actor.id }}" form="delete-selected-form">
+      </div>
+    </div>
+  {% endfor %}
+{% endblock media_block %}
+
+{% block parse_media_block %}
+  <form action="{% url "parse_actors" %}" method="post">
+    {% csrf_token %}
+    {% include "admin_page_components/parse_actors.html" with title_text="Парсинг актеров" updated_fields=updated_fields %}
+  </form>
+{% endblock parse_media_block %}
+
+{% block update_media_info_block %}
+{% endblock update_media_info_block %}

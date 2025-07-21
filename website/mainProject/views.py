@@ -3,10 +3,11 @@ from .tools import (
     parse_media_items,
     update_info,
     delete_selected_media_items,
-    delete_all_media_items
+    delete_all_media_items,
+    parse_actors_item
 )
 
-from .models import Film, Serial
+from .models import Film, Serial, Actor
 
 from django.shortcuts import redirect
 
@@ -40,13 +41,13 @@ def films_admin_panel(request):
 def serials_admin_panel(request):
     all_serials = Serial.objects.all()
 
-    films = all_serials.order_by('-id')[0:100]
+    serials = all_serials.order_by('-id')[0:100]
 
     messages = request.session.get('custom_messages', [])
     messages = messages[::-1]
 
     return render(request, "serials.html", context={
-        "serials": films,
+        "serials": serials,
         "upgraded_fields": [
             "search_id", 
             "title", 
@@ -60,6 +61,20 @@ def serials_admin_panel(request):
         ],
         "messages": messages               
     })
+
+def actors_admin_panel(request):
+    all_actors = Actor.objects.all()
+
+    actors = all_actors.order_by('-id')
+
+    messages = request.session.get('custom_messages', [])
+    messages = messages[::-1]
+
+    return render(request, "actors.html", context={
+        "actors": actors,
+        "messages": messages               
+    })
+
 
 def delete_films(request):
     messages = []
@@ -81,6 +96,17 @@ def delete_serials(request):
     
     return redirect('serials')
 
+def delete_actors(request):
+    messages = []
+    messages_block = []
+
+    media_type = "actors"
+
+    delete_selected_media_items(request, media_type, messages, messages_block)
+    
+    return redirect('actors')
+
+
 def delete_all_films(request):
     messages = []
     messages_block = []
@@ -100,6 +126,17 @@ def delete_all_serials(request):
     delete_all_media_items(request, media_type, messages, messages_block)
 
     return redirect('serials')
+
+def delete_all_actors(request):
+    messages = []
+    messages_block = []
+
+    media_type = "actors"
+
+    delete_all_media_items(request, media_type, messages, messages_block)
+
+    return redirect('actors')
+
 
 def parse_films(request):
     messages = []
@@ -121,6 +158,16 @@ def parse_serials(request):
 
     return redirect('serials')
 
+def parse_actors(request):
+    messages = []
+    messages_block = []
+
+    media_type = "actors"
+
+    parse_actors_item(request, media_type, messages, messages_block)
+
+    return redirect('actors')
+
 def update_films_info(request):
     messages = []
     messages_block = []
@@ -140,6 +187,7 @@ def update_serials_info(request):
     update_info(request, media_type, messages, messages_block)
     
     return redirect('serials')
+
 
 def clear_messages(request):
     if 'custom_messages' not in request.session:
