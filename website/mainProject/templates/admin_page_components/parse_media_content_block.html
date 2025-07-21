@@ -2,14 +2,7 @@
   <div class="title_block">
     {{title_text}}
   </div>
-  <div class="input_block text_type">
-    <label>С какой страницы начать</label>
-    <input type="text" placeholder="" name="start_page" id="start_page">
-  </div>
-  <div class="input_block text_type">
-    <label>Какой страницей закончить</label>
-    <input type="text" placeholder="" name="end_page" id="end_page">
-  </div>
+
   <div class="input_block checkbox_type">
     <label>VPN включен?(нужен для парсинга)</label>
     <div class="custom_checkbox">
@@ -19,15 +12,17 @@
       </label>
     </div>
   </div>
-  <div class="input_block checkbox_type">
-    <label>Удалить временные json файлы</label>
-    <div class="custom_checkbox">
-      <input type="checkbox" name="delete_jsons" id="delete_jsons">
-      <label for="delete_jsons" class="checkbox_visual">
-        <i class="fa-solid fa-check"></i>
-      </label>
-    </div>
+
+  <div class="input_block text_type">
+    <label>С какой страницы начать</label>
+    <input type="text" placeholder="" name="start_page" id="start_page">
   </div>
+
+  <div class="input_block text_type">
+    <label>Какой страницей закончить</label>
+    <input type="text" placeholder="" name="end_page" id="end_page">
+  </div>
+
   <div class="input_block checkbox_type">
     <label>Занести данные в таблицу</label>
     <div class="custom_checkbox">
@@ -37,11 +32,26 @@
       </label>
     </div>
   </div>
-  <select class="upgraded_field" name="upgraded_field" id="field-select">
-    <option value="">Выберите поля в которых обновить информацию</option>
-    {% for field in upgraded_fields %}
-      <option value="{{field}}">{{field}}</option>
-    {% endfor %}
-  </select>
+
+  <div class="input_block checkbox_type">
+    <label>Удалить временные json файлы</label>
+    <div class="custom_checkbox">
+      <input type="checkbox" name="delete_jsons" id="delete_jsons">
+      <label for="delete_jsons" class="checkbox_visual">
+        <i class="fa-solid fa-check"></i>
+      </label>
+    </div>
+  </div>
+
+  <div class="input_block checkbox_type">
+    <label>Скачать постеры</label>
+    <div class="custom_checkbox">
+      <input type="checkbox" name="should_download_images" id="should_download_images">
+      <label for="should_download_images" class="checkbox_visual">
+        <i class="fa-solid fa-check"></i>
+      </label>
+    </div>
+  </div>
+
   <button type="submit" class="custom_button continue_button" onclick="return confirm('Начать?')">Начать</button>
 </div>

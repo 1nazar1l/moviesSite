@@ -44,10 +44,3 @@
     {% include "admin_page_components/parse_media_content_block.html" with title_text="Парсинг фильмов" updated_fields=updated_fields %}
   </form>
 {% endblock parse_media_block %}
-
-{% block update_media_info_block %}
-  <form action=" {% url "update_films_info" %}" method="post">
-    {% csrf_token %}
-    {% include "admin_page_components/update_media_content_block.html" %}
-  </form>
-{% endblock update_media_info_block %}

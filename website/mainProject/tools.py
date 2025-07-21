@@ -216,6 +216,7 @@ def parse_media_items(request, media_type, messages, messages_block):
     update_db = request.POST.get('update_db')
     vpn_is_connected = request.POST.get('vpn_is_connected')
     upgraded_field = request.POST.get('upgraded_field')
+    should_download_images = request.POST.get("should_download_images")
 
     if vpn_is_connected:
         try:
@@ -254,22 +255,13 @@ def parse_media_items(request, media_type, messages, messages_block):
         delete_everything_in_folder(media_type)
         messages.append("Папка с json файлами очищена!")
 
-    collect_special_messages_block(messages, messages_block, request)
-
-def update_info(request, media_type, messages, messages_block):
-    should_download_images = request.POST.get("should_download_images")
-    vpn_is_connected = request.POST.get('vpn_is_connecteD')
-    
     if vpn_is_connected and should_download_images:
-        try:
-            download_images(media_type)
-            if media_type == "films":
-                messages.append("Постеры к фильмам скачаны!")
-            elif media_type == "serials":
-                messages.append("Постеры к сериалам скачаны!")
+        download_images(media_type)
 
-        except Exception as e:
-            messages.append(f"Возможно не включен VPN. Ошибка при запросе к TMDB API! {e}")
+        if media_type == "films":
+                messages.append("Постеры к фильмам скачаны!")
+        elif media_type == "serials":
+            messages.append("Постеры к сериалам скачаны!")
 
     collect_special_messages_block(messages, messages_block, request)
 

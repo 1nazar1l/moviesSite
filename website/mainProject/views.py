@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from .tools import (
     parse_media_items,
-    update_info,
     delete_selected_media_items,
     delete_all_media_items,
     parse_actors_item
@@ -167,26 +166,6 @@ def parse_actors(request):
     parse_actors_item(request, media_type, messages, messages_block)
 
     return redirect('actors')
-
-def update_films_info(request):
-    messages = []
-    messages_block = []
-
-    media_type = "films"
-
-    update_info(request, media_type, messages, messages_block)
-    
-    return redirect('films')
-
-def update_serials_info(request):
-    messages = []
-    messages_block = []
-
-    media_type = "serials"
-
-    update_info(request, media_type, messages, messages_block)
-    
-    return redirect('serials')
 
 
 def clear_messages(request):
