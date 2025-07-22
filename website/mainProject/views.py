@@ -150,7 +150,7 @@ def clear_messages(request):
         request.session['custom_messages'] = []
     
     request.session['custom_messages'] = [
-        ["Сообщения очищены", "end"]
+        ["Сообщения очищены"]
     ]
     request.session.modified = True
     

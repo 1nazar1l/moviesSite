@@ -5,7 +5,7 @@ from environs import env
 from .models import Film, Serial, Actor
 import shutil
 import os
-from datetime import datetime
+from datetime import datetime, time
 
 
 env.read_env()
@@ -13,9 +13,37 @@ api_key = env("API_KEY")
 BASE_URL = "https://api.themoviedb.org/3"
 jsons_folder_path = "mainProject/templates/jsons"
 
-def set_time():
-    print(datetime.now().date())
-    print(datetime.now().time())
+
+def measure_time(func):
+    def wrapper(*args, **kwargs):
+        start = datetime.now()
+        func(*args, **kwargs)
+        end = datetime.now()
+        lead_time = end - start
+
+        return start.replace(microsecond=0), lead_time.total_seconds()
+    
+    return wrapper
+
+def create_error_message(messages, media_type, text):
+    messages.append({
+        "message_type": "error",
+        "media_type": media_type,
+        "text": text,
+        "when_happened": str(datetime.now().replace(microsecond=0)),
+        "time_to_complete": str(time(hour=0, minute=0, second=0, microsecond=0)),
+        "admin": "People"
+    })
+
+def create_success_message(messages, media_type, start_time, lead_time, text):
+    messages.append({
+        "message_type": "success",
+        "media_type": media_type,
+        "text": text,
+        "when_happened": str(start_time),
+        "time_to_complete": str(lead_time),
+        "admin": "People"
+    })
 
 def get_folder_path(media_type, jsons_folder_path):
     if media_type == "films":
@@ -27,12 +55,19 @@ def get_folder_path(media_type, jsons_folder_path):
 
     return folder_path
 
+def collect_special_messages_block(messages, messages_block, request):
+    messages_block.append(messages)
+    request.session['custom_messages'].extend(messages_block)
+    request.session.modified = True
+
+@measure_time
 def delete_everything_in_folder(media_type):
     folder_path = get_folder_path(media_type, jsons_folder_path)
 
     shutil.rmtree(folder_path)
     os.mkdir(folder_path)    
 
+@measure_time
 def download_images(media_type):
     imgs_folder = f"mainProject/static/images/{media_type}"
     os.makedirs(imgs_folder, exist_ok=True)
@@ -54,73 +89,7 @@ def download_images(media_type):
                 with open(img_filepath, "wb") as out:
                     out.write(p.content)
 
-def collect_special_messages_block(messages, messages_block, request):
-    messages.append("end")
-    
-    messages_block.append(messages)
-    request.session['custom_messages'].extend(messages_block)
-    request.session.modified = True
-
-def delete_selected_media_items(request, media_type, messages, messages_block):
-    media_ids = request.POST.getlist('media_ids')
-
-    if not media_ids:
-        if media_type == "films":
-            messages.append("Не выбрано ни одного фильма для удаления")
-        elif media_type == "serials":
-            messages.append("Не выбрано ни одного сериала для удаления")
-        elif media_type == "actors":
-            messages.append("Не выбрано ни одного актера для удаления")
-    else:
-        try:
-            if media_type == "films":
-                media_items_to_delete = Film.objects.filter(id__in=media_ids)
-            elif media_type == "serials":
-                media_items_to_delete = Serial.objects.filter(id__in=media_ids)
-            elif media_type == "actors":
-                media_items_to_delete = Actor.objects.filter(id__in=media_ids)
-
-            if media_type != "actors":
-                deleted_media_items = [[media_item.title, media_item.search_id] for media_item in media_items_to_delete]
-            else:
-                deleted_media_items = [[media_item.name, media_item.search_id] for media_item in media_items_to_delete]
-
-            deleted_count = media_items_to_delete.delete()[0]
-
-            if media_type == "films":
-                messages.append(f"Успешно удалено {deleted_count} фильмов!")
-            elif media_type == "serials":
-                messages.append(f"Успешно удалено {deleted_count} сериалов!")
-            elif media_type == "actors":
-                messages.append(f"Успешно удалено {deleted_count} актеров!")
-
-            for media_item in deleted_media_items:
-                if media_type == "films":
-                    messages.append(f"Фильм {media_item[0]}(id {media_item[1]}) успешно удалён!")
-                elif media_type == "serials":
-                    messages.append(f"Сериал {media_item[0]}(id {media_item[1]}) успешно удалён!")
-                elif media_type == "actors":
-                    messages.append(f"Актер {media_item[0]}(id {media_item[1]}) успешно удалён!")
-                    
-
-        except Exception as e:
-            messages.append(f"Ошибка при удалении: {str(e)}")
-
-    collect_special_messages_block(messages, messages_block, request)
-
-def delete_all_media_items(request, media_type, messages, messages_block):
-    if media_type == "films":
-        films = Film.objects.all().delete()
-        messages.append(f"Все фильмы успешно удалены!")
-    elif media_type == "serials":
-        serials = Serial.objects.all().delete()
-        messages.append(f"Все сериалы успешно удалены!")
-    elif media_type == "actors":
-        actors = Actor.objects.all().delete()
-        messages.append(f"Все актеры успешно удалены!")
-        
-    collect_special_messages_block(messages, messages_block, request)
-
+@measure_time
 def get_media_items_id(media_type, start_page, end_page):
     if media_type == "films":
         url = f"{BASE_URL}/movie/popular"
@@ -143,10 +112,12 @@ def get_media_items_id(media_type, start_page, end_page):
 
         response = requests.get(url, params=params)
         response.raise_for_status()
-
+        print(response)
         index = "title" if media_type == "films" else "name"
         
         data = response.json()
+        print(data)
+
         for media_item in data["results"]:
             media_items.append({
                 "id": media_item["id"],
@@ -160,6 +131,7 @@ def get_media_items_id(media_type, start_page, end_page):
     with open(filepath, "w", encoding="utf-8") as f:
         json.dump(media_items, f, indent=4, ensure_ascii=False)
 
+@measure_time
 def parse_media_items(media_type):
     img_url = "https://media.themoviedb.org/t/p/w220_and_h330_face/"
     media_items = []
@@ -265,7 +237,8 @@ def parse_media_items(media_type):
     with open(json_filepath, "w", encoding="utf-8") as f:
         json.dump(media_items, f, indent=4, ensure_ascii=False)
 
-def transfer_media_items_to_db(media_type):
+@measure_time
+def transfer_media_items_to_db(messages, media_type):
     folder_path = get_folder_path(media_type, jsons_folder_path)
     os.makedirs(folder_path, exist_ok=True)
 
@@ -276,62 +249,159 @@ def transfer_media_items_to_db(media_type):
         with open(json_filepath, "r", encoding='utf-8') as f:
             media_items = json.load(f)
 
-    for media_item in media_items:
-        if media_type == "films":
-            defaults = {
-                "id": media_item["id"],
-                "title": media_item["title"],
-                "budget": media_item["budget"],
-                "revenue": media_item["revenue"],
-                "overview": media_item["overview"],
-                "site_img_path": media_item["site_img_path"],
-                "local_img_path": media_item["local_img_path"],
-                "release_date": media_item["release_date"],
-                "runtime": media_item["runtime"],
-                "status": media_item["status"],
-                "rating": media_item["vote_average"],
-            }
-        elif media_type == "serials":
-            defaults = {
-                "id": media_item["id"],
-                "first_air_date": media_item["first_air_date"],
-                "last_air_date": media_item["last_air_date"],
-                "title": media_item["name"],
-                "episodes": media_item["episodes"],
-                "seasons": media_item["seasons"],
-                "overview": media_item["overview"],
-                "site_img_path": media_item["site_img_path"],
-                "local_img_path": media_item["local_img_path"],
-                "status": media_item["status"],
-                "rating": media_item["vote_average"],
-            }
-        elif media_type == "actors":
-            defaults = {
-                "id": media_item["id"],
-                "name": media_item["name"],
-                "biography": media_item["biography"],
-                "birthday": media_item["birthday"],
-                "deathday": media_item["deathday"],
-                "gender": media_item["gender"],
-                "site_img_path": media_item["site_img_path"],
-                "local_img_path": media_item["local_img_path"],
+        models = {
+            "films": Film,
+            "serials": Serial,
+            "actors": Actor,
+        }
+
+        model = models.get(media_type)
+        if model:
+            start_time = datetime.now()
+            for media_item in media_items:
+                if media_type == "films":
+                    defaults = {
+                        "id": media_item["id"],
+                        "title": media_item["title"],
+                        "budget": media_item["budget"],
+                        "revenue": media_item["revenue"],
+                        "overview": media_item["overview"],
+                        "site_img_path": media_item["site_img_path"],
+                        "local_img_path": media_item["local_img_path"],
+                        "release_date": media_item["release_date"],
+                        "runtime": media_item["runtime"],
+                        "status": media_item["status"],
+                        "rating": media_item["vote_average"],
+                    }
+                elif media_type == "serials":
+                    defaults = {
+                        "id": media_item["id"],
+                        "first_air_date": media_item["first_air_date"],
+                        "last_air_date": media_item["last_air_date"],
+                        "title": media_item["name"],
+                        "episodes": media_item["episodes"],
+                        "seasons": media_item["seasons"],
+                        "overview": media_item["overview"],
+                        "site_img_path": media_item["site_img_path"],
+                        "local_img_path": media_item["local_img_path"],
+                        "status": media_item["status"],
+                        "rating": media_item["vote_average"],
+                    }
+                elif media_type == "actors":
+                    defaults = {
+                        "id": media_item["id"],
+                        "name": media_item["name"],
+                        "biography": media_item["biography"],
+                        "birthday": media_item["birthday"],
+                        "deathday": media_item["deathday"],
+                        "gender": media_item["gender"],
+                        "site_img_path": media_item["site_img_path"],
+                        "local_img_path": media_item["local_img_path"],
+                    }
+
+                media_item_obj, created = model.objects.get_or_create(
+                    search_id=media_item["id"],
+                    defaults=defaults
+                )
+
+            end = datetime.now()
+            lead_time = end - start_time
+
+            create_success_message(
+                messages,
+                media_type,
+                str(start_time.replace(microsecond=0)),
+                str(lead_time.total_seconds()),
+                "Объекты занесены в бд"
+            )
+
+        else:
+            create_error_message(messages, media_type, "Модель не найдена(transfer_media_items_to_db)")
+
+    else:
+        create_error_message(messages, media_type, "Json файл с данными не был найден, либо был очищен")
+
+
+def delete_selected_media_items(request, media_type, messages, messages_block):
+    media_ids = request.POST.getlist('media_ids')
+
+    if not media_ids:
+        create_error_message(messages, media_type, "Не выбрано ни одного объекта для удаления")
+    else:
+        try:
+            models = {
+                "films": Film,
+                "serials": Serial,
+                "actors": Actor,
             }
 
-        if media_type == "films":
-            media_item_obj, created = Film.objects.get_or_create(
-                search_id=media_item["id"],
-                defaults=defaults
-            )
-        elif media_type == "serials":
-            media_item_obj, created = Serial.objects.get_or_create(
-                search_id=media_item["id"],
-                defaults=defaults
-            )
-        elif media_type == "actors":
-            media_item_obj, created = Actor.objects.get_or_create(
-                search_id=media_item["id"],
-                defaults=defaults
-            )
+            model = models.get(media_type)
+            
+            if model:
+                start_time = datetime.now()
+                media_items_to_delete = model.objects.filter(id__in=media_ids)
+
+                if media_type != "actors":
+                    deleted_media_items = [[media_item.title, media_item.search_id] for media_item in media_items_to_delete]
+                else:
+                    deleted_media_items = [[media_item.name, media_item.search_id] for media_item in media_items_to_delete]
+
+                deleted_count = media_items_to_delete.delete()[0]
+
+                end = datetime.now()
+                lead_time = end - start_time
+
+                create_success_message(
+                    messages, 
+                    media_type, 
+                    str(start_time.replace(microsecond=0)),
+                    str(lead_time.total_seconds()),
+                    f"Успешно удалено {deleted_count} объектов!"
+                )
+
+
+                for media_item in deleted_media_items:
+                    create_success_message(
+                        messages, 
+                        media_type, 
+                        str(start_time.replace(microsecond=0)),
+                        "0.000000",
+                        f"Объект {media_item[0]}(id {media_item[1]}) успешно удалён!"
+                    )
+            else:
+                create_error_message(messages, media_type, "Модель не найдена(delete_selected_media_items)")
+
+        except Exception as e:
+            create_error_message(messages, media_type, f"Ошибка при удалении: {str(e)}")
+
+    collect_special_messages_block(messages, messages_block, request)
+
+def delete_all_media_items(request, media_type, messages, messages_block):
+    models = {
+        "films": Film,
+        "serials": Serial,
+        "actors": Actor,
+    }
+
+    model = models.get(media_type)
+
+    if model:
+        start_time = datetime.now()
+        model.objects.all().delete()
+        end = datetime.now()
+        lead_time = end - start_time
+
+        create_success_message(
+            messages,
+            media_type,
+            str(start_time.replace(microsecond=0)),
+            str(lead_time.total_seconds()),
+            "Все объекты успешно удалены!"
+        )
+    else:
+        create_error_message(messages, media_type, "Модель не найдена(delete_all_media_items)")
+
+    collect_special_messages_block(messages, messages_block, request)
 
 def start_parsing_media_items(request, media_type, messages, messages_block):
     vpn_is_connected = request.POST.get('vpn_is_connected')
@@ -344,41 +414,48 @@ def start_parsing_media_items(request, media_type, messages, messages_block):
     should_download_images = request.POST.get('download_images')
     
     if vpn_is_connected:
-        try:
-            start_page = int(start_page)
-            end_page = int(end_page)
-
-            if start_page < 0 or end_page < 0:
-                messages.append(f"{media_type}Нельзя вводить числа меньше чем ноль")
-                raise ValueError(f"Поддерживаются только положительные целочисленные типы данных")
-            else:
-                if start_page > end_page:
-                    start_page, end_page = end_page, start_page
+        if get_media_items_id_list:
             try:
-                if get_media_items_id_list:
-                    get_media_items_id(media_type, start_page, end_page)
-                    messages.append(f"{media_type}Id актеров получены")
+                start_page = int(start_page)
+                end_page = int(end_page)
 
-                if get_media_items_data:
-                    parse_media_items(media_type)
-                    messages.append(f"{media_type}Данные актеров получены")
+                if start_page < 0 or end_page < 0:
+                    create_error_message(messages, media_type, "Нельзя вводить числа меньше чем ноль")
+                    raise ValueError(f"Поддерживаются только положительные целочисленные типы данных")
+                else:
+                    if start_page > end_page:
+                        start_page, end_page = end_page, start_page
+                try:
+                    start_time, lead_time = get_media_items_id(media_type, start_page, end_page)
+                    create_success_message(messages, media_type, start_time, lead_time, "Id объектов получены")
+
+                except Exception as e:
+                    create_error_message(messages, media_type, f"Возможно не включен VPN. Ошибка при запросе к TMDB API! {e}")
 
             except Exception as e:
-                messages.append(f"{media_type}Возможно не включен VPN. Ошибка при запросе к TMDB API! {e}")
+                create_error_message(messages, media_type, f"Можно вводить только целые числа: {e}")
+        
+        if get_media_items_data:
+            try:
+                start_time, lead_time = parse_media_items(media_type)
+                create_success_message(messages, media_type, start_time, lead_time, "Данные объектов получены")
 
-        except Exception as e:
-            messages.append(f"{media_type}Можно вводить только целые числа: {e}")
+            except Exception as e:
+                create_error_message(messages, media_type, f"Возможно не включен VPN. Ошибка при запросе к TMDB API! {e}")
 
     if update_db:
-        transfer_media_items_to_db(media_type)
-        messages.append(f"{media_type}Актеры занесены в бд")
+        transfer_media_items_to_db(messages, media_type)
 
     if delete_jsons:
-        delete_everything_in_folder(media_type)
-        messages.append(f"{media_type}Папка с json файлами очищена!")
+        start_time, lead_time = delete_everything_in_folder(media_type)
+        create_success_message(messages, media_type, start_time, lead_time, "Папка с json файлами очищена!")
 
     if vpn_is_connected and should_download_images:
-        download_images(media_type)
-        messages.append(f"{media_type}Фотографии актеров скачаны")
+        start_time, lead_time = download_images(media_type)
+
+        if media_type == "actors":
+            create_success_message(messages, media_type, start_time, lead_time, "Фотографии актеров скачаны")
+        else:
+            create_success_message(messages, media_type, start_time, lead_time, "Постеры скачаны")
 
     collect_special_messages_block(messages, messages_block, request)

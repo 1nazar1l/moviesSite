@@ -50,14 +50,10 @@
           <div class="messages_content">
             {% for message_block in messages %}
                 {% for message in message_block %}
-                  {% if message != "end" %}
-                    <div class="message_block">
-                      <p>{{message}}</p>
-                    </div>
-                  {% endif %}
-                  {% if message != "end" %}
-                    <div class="message_border"></div>
-                  {% endif %}
+                  <div class="message_block">
+                    <p>{{message}}</p>
+                  </div>
+                  <div class="message_border"></div>
                 {% endfor %}
             {% endfor %}
           </div>
