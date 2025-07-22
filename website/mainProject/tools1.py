@@ -7,6 +7,8 @@ import shutil
 import os
 from datetime import datetime, time
 
+import pprint
+
 
 env.read_env()
 api_key = env("API_KEY")
@@ -78,7 +80,7 @@ def download_images(model):
                     out.write(p.content)
 
 @measure_time
-def get_media_items_id(media_type, start_page, end_page, url, folder_path):
+def get_media_items_id(media_type, start_page, end_page, url, filepath):
     media_items = []
 
     for page_number in range(start_page, end_page + 1):
@@ -101,24 +103,15 @@ def get_media_items_id(media_type, start_page, end_page, url, folder_path):
                 "name": media_item[index],
                 "page_number": page_number
             })
-        
-    filename = f"{media_type}_id.json"
-    filepath = os.path.join(folder_path, filename)
 
     with open(filepath, "w", encoding="utf-8") as f:
         json.dump(media_items, f, indent=4, ensure_ascii=False)
 
 @measure_time
-def parse_media_items(media_type, root_url, folder_path, img_url):
+def parse_media_items(media_type, root_url, ids_dataset, json_filepath, img_url):
     media_items = []
-
-    ids_json_filename = f"{media_type}_id.json"
-    ids_json_filepath = os.path.join(folder_path, ids_json_filename)
     
-    with open(ids_json_filepath, "r", encoding='utf-8') as f:
-        media_items_data = json.load(f)
-
-    for media_item_data in media_items_data:
+    for media_item_data in ids_dataset:
         url = f"{root_url}/{media_item_data["id"]}"
 
         if media_type != "actors":
@@ -199,69 +192,59 @@ def parse_media_items(media_type, root_url, folder_path, img_url):
 
         media_items.append(media_item_object)
 
-    json_filename = f"{media_type}.json"
-    json_filepath = os.path.join(folder_path, json_filename)
-
     with open(json_filepath, "w", encoding="utf-8") as f:
         json.dump(media_items, f, indent=4, ensure_ascii=False)
 
 @measure_time
-def transfer_media_items_to_db(messages, media_type, folder_path, model):
-    json_filename = f"{media_type}.json"
-    json_filepath = os.path.join(folder_path, json_filename)
+def transfer_media_items_to_db(media_type, media_items_dataset, model):
+    for media_item in media_items_dataset:
+        if media_type == "films":
+            defaults = {
+                "id": media_item["id"],
+                "title": media_item["title"],
+                "budget": media_item["budget"],
+                "revenue": media_item["revenue"],
+                "overview": media_item["overview"],
+                "site_img_path": media_item["site_img_path"],
+                "local_img_path": media_item["local_img_path"],
+                "release_date": media_item["release_date"],
+                "runtime": media_item["runtime"],
+                "status": media_item["status"],
+                "rating": media_item["vote_average"],
+            }
+        elif media_type == "serials":
+            defaults = {
+                "id": media_item["id"],
+                "first_air_date": media_item["first_air_date"],
+                "last_air_date": media_item["last_air_date"],
+                "title": media_item["name"],
+                "episodes": media_item["episodes"],
+                "seasons": media_item["seasons"],
+                "overview": media_item["overview"],
+                "site_img_path": media_item["site_img_path"],
+                "local_img_path": media_item["local_img_path"],
+                "status": media_item["status"],
+                "rating": media_item["vote_average"],
+            }
+        elif media_type == "actors":
+            defaults = {
+                "id": media_item["id"],
+                "name": media_item["name"],
+                "biography": media_item["biography"],
+                "birthday": media_item["birthday"],
+                "deathday": media_item["deathday"],
+                "gender": media_item["gender"],
+                "site_img_path": media_item["site_img_path"],
+                "local_img_path": media_item["local_img_path"],
+            }
 
-    if os.path.exists(json_filepath):
-        with open(json_filepath, "r", encoding='utf-8') as f:
-            media_items = json.load(f)
+        media_item_obj, created = model.objects.get_or_create(
+            search_id=media_item["id"],
+            defaults=defaults
+        )
 
-        for media_item in media_items:
-            if media_type == "films":
-                defaults = {
-                    "id": media_item["id"],
-                    "title": media_item["title"],
-                    "budget": media_item["budget"],
-                    "revenue": media_item["revenue"],
-                    "overview": media_item["overview"],
-                    "site_img_path": media_item["site_img_path"],
-                    "local_img_path": media_item["local_img_path"],
-                    "release_date": media_item["release_date"],
-                    "runtime": media_item["runtime"],
-                    "status": media_item["status"],
-                    "rating": media_item["vote_average"],
-                }
-            elif media_type == "serials":
-                defaults = {
-                    "id": media_item["id"],
-                    "first_air_date": media_item["first_air_date"],
-                    "last_air_date": media_item["last_air_date"],
-                    "title": media_item["name"],
-                    "episodes": media_item["episodes"],
-                    "seasons": media_item["seasons"],
-                    "overview": media_item["overview"],
-                    "site_img_path": media_item["site_img_path"],
-                    "local_img_path": media_item["local_img_path"],
-                    "status": media_item["status"],
-                    "rating": media_item["vote_average"],
-                }
-            elif media_type == "actors":
-                defaults = {
-                    "id": media_item["id"],
-                    "name": media_item["name"],
-                    "biography": media_item["biography"],
-                    "birthday": media_item["birthday"],
-                    "deathday": media_item["deathday"],
-                    "gender": media_item["gender"],
-                    "site_img_path": media_item["site_img_path"],
-                    "local_img_path": media_item["local_img_path"],
-                }
-
-            media_item_obj, created = model.objects.get_or_create(
-                search_id=media_item["id"],
-                defaults=defaults
-            )
-
-    else:
-        create_error_message(messages, media_type, "Json файл с данными не был найден, либо был очищен")
+    # else:
+    #     create_error_message(messages, media_type, "Json файл с данными не был найден, либо был очищен")
 
 
 def delete_selected_media_items(request, media_type, messages, messages_block):
@@ -365,13 +348,13 @@ def start_parsing_media_items(request, media_type, messages, messages_block):
 
     if media_type == "films":
         media_items_ids_root_url = f"{BASE_URL}/movie/popular"
-        media_item_data_root_url = f"{BASE_URL}/movie"
+        data_root_url = f"{BASE_URL}/movie"
     elif media_type == "serials":
         media_items_ids_root_url = f"{BASE_URL}/tv/popular"
-        media_item_data_root_url = f"{BASE_URL}/tv"
+        data_root_url = f"{BASE_URL}/tv"
     elif media_type == "actors":
         media_items_ids_root_url = f"{BASE_URL}/person/popular"
-        media_item_data_root_url = f"{BASE_URL}/person"
+        data_root_url = f"{BASE_URL}/person"
 
     folder_path = get_folder_path(media_type, jsons_folder_path)
     os.makedirs(folder_path, exist_ok=True)
@@ -380,6 +363,18 @@ def start_parsing_media_items(request, media_type, messages, messages_block):
     
     imgs_folder = f"mainProject/static/images/{media_type}"
     os.makedirs(imgs_folder, exist_ok=True)
+
+    ids_json_filename = f"{media_type}_id.json"
+    ids_json_filepath = os.path.join(folder_path, ids_json_filename)
+
+    with open(ids_json_filepath, "r", encoding='utf-8') as f:
+        ids_dataset = json.load(f)
+
+    datasets_json_filename = f"{media_type}.json"
+    datasets_json_filepath = os.path.join(folder_path, datasets_json_filename)
+
+    with open(datasets_json_filepath, "r", encoding='utf-8') as f:
+        media_items_dataset = json.load(f)
 
     if model:
         if vpn_is_connected and get_media_items_id_list:
@@ -394,7 +389,7 @@ def start_parsing_media_items(request, media_type, messages, messages_block):
                     if start_page > end_page:
                         start_page, end_page = end_page, start_page
                 try:
-                    start_time, lead_time = get_media_items_id(media_type, start_page, end_page, media_items_ids_root_url, folder_path)
+                    start_time, lead_time = get_media_items_id(media_type, start_page, end_page, media_items_ids_root_url, ids_json_filepath)
                     create_success_message(messages, media_type, start_time, lead_time, "Id объектов получены")
 
                 except Exception as e:
@@ -405,14 +400,20 @@ def start_parsing_media_items(request, media_type, messages, messages_block):
 
         if vpn_is_connected and get_media_items_data:
             try:
-                start_time, lead_time = parse_media_items(media_type, media_item_data_root_url, folder_path, url_for_download_images)
+                start_time, lead_time = parse_media_items(
+                    media_type, 
+                    data_root_url, 
+                    ids_dataset, 
+                    datasets_json_filepath, 
+                    url_for_download_images
+                )
                 create_success_message(messages, media_type, start_time, lead_time, "Данные объектов получены")
 
             except Exception as e:
                 create_error_message(messages, media_type, f"Возможно не включен VPN. Ошибка при запросе к TMDB API! {e}")
 
         if update_db:
-            start_time, lead_time = transfer_media_items_to_db(messages, media_type, folder_path, model)
+            start_time, lead_time = transfer_media_items_to_db(media_type, media_items_dataset, model)
             create_success_message(messages, media_type, start_time, lead_time, "Объекты занесены в бд")
 
         if delete_jsons:
