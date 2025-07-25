@@ -338,8 +338,9 @@ main {
     border-radius: 8px;
     padding: 10px;
     box-shadow: 3px 4px 8px 0px #939191;
-    text-align: center;
-    align-items: center;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
 }
 
 .message_block p {
@@ -349,5 +350,43 @@ main {
 
 .message_border {
     width: 100%;
-    border-bottom: 1px solid var(--color5);
+    border-bottom: 1px solid var(--color4);
+    margin: 4px 0;
+}
+
+.message_block .main_info {
+    display: flex;
+    justify-content: space-between;
+}
+
+.message_block .main_info .text_info {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    gap: 6px;
+}
+
+.message_block .main_info .icon_info.success i {
+    color: #4CAF50;
+}
+
+.message_block .main_info .icon_info.error i {
+    color: #da2d29;
+}
+
+.message_block .text {
+    word-break: break-all;
+    box-sizing: border-box;
+    text-align: left;
+}
+
+.message_block .other_info {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.message_block .other_info div {
+    text-align: left;
 }

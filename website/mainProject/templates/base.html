@@ -50,10 +50,54 @@
           <div class="messages_content">
             {% for message_block in messages %}
                 {% for message in message_block %}
+                {% if message.message_type != "clear" %}
                   <div class="message_block">
-                    <p>{{message}}</p>
+                    <div class="main_info">
+                      <div class="text_info">
+                        <div>
+                          {% if message.media_type == "actors" %}
+                            <b>Откуда:</b> Актеры
+                          {% elif message.media_type == "serials" %}  
+                            <b>Откуда:</b> Сериалы
+                          {% elif message.media_type == "films" %}
+                            <b>Откуда:</b> Фильмы
+                          {% endif %}
+                        </div>
+                        <div>
+                          <b>Админ:</b> {{message.admin}}
+                        </div>
+                      </div>
+                      {% if message.message_type == "success" %}
+                      <div class="icon_info success">
+                        <i class="fa-solid fa-circle-check"></i>
+                      </div>
+                      {% elif message.message_type == "error" %}
+                      <div class="icon_info error">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                      </div>
+                      {% endif %}
+                    </div>
+                    <div class="message_border"></div>
+                    <div class="text">
+                      {{message.text}}
+                    </div>
+                    <div class="message_border"></div>
+                    <div class="other_info">
+                      <div>
+                        <b>Когда произошло: </b>
+                        {{message.when_happened}}
+                      </div>
+                      <div>
+                        <b>Продолжительность:</b>
+                        {{message.time_to_complete}} с.
+                      </div>
+                    </div>
                   </div>
-                  <div class="message_border"></div>
+                {% else %}
+                  <div class="message_block">
+                    Сообщения очищены
+                  </div>
+                {% endif %}
                 {% endfor %}
             {% endfor %}
           </div>

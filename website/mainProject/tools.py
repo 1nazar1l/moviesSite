@@ -31,7 +31,7 @@ def create_error_message(messages, media_type, text):
         "media_type": media_type,
         "text": text,
         "when_happened": str(datetime.now().replace(microsecond=0)),
-        "time_to_complete": str(time(hour=0, minute=0, second=0, microsecond=0)),
+        "time_to_complete": 0.0,
         "admin": "People"
     })
 
@@ -234,6 +234,7 @@ def transfer_media_items_to_db(messages, media_type, media_datasets_filepath, mo
                     "gender": media_item["gender"],
                     "site_img_path": media_item["site_img_path"],
                     "local_img_path": media_item["local_img_path"],
+                    "movies": media_item["movies"]
                 }
 
             media_item_obj, created = model.objects.get_or_create(

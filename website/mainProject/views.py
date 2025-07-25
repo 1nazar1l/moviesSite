@@ -149,9 +149,10 @@ def clear_messages(request):
     if 'custom_messages' not in request.session:
         request.session['custom_messages'] = []
     
-    request.session['custom_messages'] = [
-        ["Сообщения очищены"]
-    ]
+    request.session['custom_messages'] = [[{
+        "text": "Сообщения очищены",
+        "message_type": "clear"
+    }]]
     request.session.modified = True
     
     return redirect('films')

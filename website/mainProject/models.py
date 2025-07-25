@@ -50,7 +50,7 @@ class Actor(models.Model):
     gender = models.IntegerField(null=True, blank=True)
     site_img_path = models.URLField(null=True, blank=True)
     local_img_path = models.URLField(null=True, blank=True)
-    movies = models.ManyToManyField(Film, null=True, blank=True)
+    movies = models.JSONField(null=True, blank=True)
     
     class Meta:
         verbose_name = "Актер"
