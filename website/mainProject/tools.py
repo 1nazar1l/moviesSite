@@ -84,7 +84,7 @@ def download_images(model):
 def get_media_items_id(media_type, start_page, end_page, url, ids_filepath):
     media_items = []
 
-    for page_number in range(start_page, end_page + 1):
+    for page_number in range(int(start_page), int(end_page) + 1):
         params = {
             "api_key": api_key,
             "language": "en",
