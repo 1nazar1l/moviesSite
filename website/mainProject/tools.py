@@ -46,14 +46,7 @@ def create_success_message(messages, media_type, start_time, lead_time, text):
     })
 
 def get_folder_path(media_type, jsons_folder_path):
-    if media_type == "films":
-        folder_path = f"{jsons_folder_path}/films"
-    elif media_type == "serials":
-        folder_path = f"{jsons_folder_path}/serials"
-    elif media_type == "actors":
-        folder_path = f"{jsons_folder_path}/actors"
-
-    return folder_path
+    return f"{jsons_folder_path}/{media_type}"
 
 def collect_special_messages_block(messages, messages_block, request):
     messages_block.append(messages)
@@ -78,7 +71,7 @@ def download_images(model):
                     out.write(p.content)
 
 @measure_time
-def get_media_items_id(media_type, start_page, end_page, url, folder_path):
+def get_media_items_id(media_type, start_page, end_page, url, ids_filepath):
     media_items = []
 
     for page_number in range(start_page, end_page + 1):
@@ -101,20 +94,14 @@ def get_media_items_id(media_type, start_page, end_page, url, folder_path):
                 "name": media_item[index],
                 "page_number": page_number
             })
-        
-    filename = f"{media_type}_id.json"
-    filepath = os.path.join(folder_path, filename)
 
-    with open(filepath, "w", encoding="utf-8") as f:
+    with open(ids_filepath, "w", encoding="utf-8") as f:
         json.dump(media_items, f, indent=4, ensure_ascii=False)
 
 @measure_time
-def parse_media_items(media_type, root_url, folder_path, img_url):
+def parse_media_items(media_type, root_url, ids_json_filepath, media_datasets_filepath, img_url):
     media_items = []
 
-    ids_json_filename = f"{media_type}_id.json"
-    ids_json_filepath = os.path.join(folder_path, ids_json_filename)
-    
     with open(ids_json_filepath, "r", encoding='utf-8') as f:
         media_items_data = json.load(f)
 
@@ -199,19 +186,13 @@ def parse_media_items(media_type, root_url, folder_path, img_url):
 
         media_items.append(media_item_object)
 
-    json_filename = f"{media_type}.json"
-    json_filepath = os.path.join(folder_path, json_filename)
-
-    with open(json_filepath, "w", encoding="utf-8") as f:
+    with open(media_datasets_filepath, "w", encoding="utf-8") as f:
         json.dump(media_items, f, indent=4, ensure_ascii=False)
 
 @measure_time
-def transfer_media_items_to_db(messages, media_type, folder_path, model):
-    json_filename = f"{media_type}.json"
-    json_filepath = os.path.join(folder_path, json_filename)
-
-    if os.path.exists(json_filepath):
-        with open(json_filepath, "r", encoding='utf-8') as f:
+def transfer_media_items_to_db(messages, media_type, media_datasets_filepath, model):
+    if os.path.exists(media_datasets_filepath):
+        with open(media_datasets_filepath, "r", encoding='utf-8') as f:
             media_items = json.load(f)
 
         for media_item in media_items:
@@ -387,6 +368,12 @@ def start_parsing_media_items(request, media_type, messages, messages_block):
     imgs_folder = f"mainProject/static/images/{media_type}"
     os.makedirs(imgs_folder, exist_ok=True)
 
+    ids_json_filename = f"{media_type}_id.json"
+    ids_json_filepath = os.path.join(folder_path, ids_json_filename)
+
+    media_datasets_json_filename = f"{media_type}.json"
+    media_datasets_json_filepath = os.path.join(folder_path, media_datasets_json_filename)
+
     if not model:
         create_error_message(messages, media_type, "Модель не найдена")
         collect_special_messages_block(messages, messages_block, request)
@@ -404,7 +391,7 @@ def start_parsing_media_items(request, media_type, messages, messages_block):
                 if start_page > end_page:
                     start_page, end_page = end_page, start_page
             try:
-                start_time, lead_time = get_media_items_id(media_type, start_page, end_page, media_items_ids_root_url, folder_path)
+                start_time, lead_time = get_media_items_id(media_type, start_page, end_page, media_items_ids_root_url, ids_json_filepath)
                 create_success_message(messages, media_type, start_time, lead_time, "Id объектов получены")
 
             except Exception as e:
@@ -415,14 +402,14 @@ def start_parsing_media_items(request, media_type, messages, messages_block):
 
     if vpn_is_connected and get_media_items_data:
         try:
-            start_time, lead_time = parse_media_items(media_type, media_item_data_root_url, folder_path, url_for_download_images)
+            start_time, lead_time = parse_media_items(media_type, media_item_data_root_url, ids_json_filepath, media_datasets_json_filepath, url_for_download_images)
             create_success_message(messages, media_type, start_time, lead_time, "Данные объектов получены")
 
         except Exception as e:
             create_error_message(messages, media_type, f"Возможно не включен VPN. Ошибка при запросе к TMDB API! {e}")
 
     if update_db:
-        start_time, lead_time = transfer_media_items_to_db(messages, media_type, folder_path, model)
+        start_time, lead_time = transfer_media_items_to_db(messages, media_type, media_datasets_json_filepath, model)
         create_success_message(messages, media_type, start_time, lead_time, "Объекты занесены в бд")
 
     if delete_jsons:
