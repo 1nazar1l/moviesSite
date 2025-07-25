@@ -269,52 +269,56 @@ def delete_selected_media_items(request, media_type, messages, messages_block):
 
     if not media_ids:
         create_error_message(messages, media_type, "Не выбрано ни одного объекта для удаления")
-    else:
-        try:
-            models = {
-                "films": Film,
-                "serials": Serial,
-                "actors": Actor,
-            }
+        collect_special_messages_block(messages, messages_block, request)
+        return
 
-            model = models.get(media_type)
-            
-            if model:
-                start_time = datetime.now()
-                media_items_to_delete = model.objects.filter(id__in=media_ids)
+    try:
+        models = {
+            "films": Film,
+            "serials": Serial,
+            "actors": Actor,
+        }
 
-                if media_type != "actors":
-                    deleted_media_items = [[media_item.title, media_item.search_id] for media_item in media_items_to_delete]
-                else:
-                    deleted_media_items = [[media_item.name, media_item.search_id] for media_item in media_items_to_delete]
+        model = models.get(media_type)
+        
+        if not model:
+            create_error_message(messages, media_type, "Модель не найдена(delete_selected_media_items)")
+            collect_special_messages_block(messages, messages_block, request)
+            return
 
-                deleted_count = media_items_to_delete.delete()[0]
+        start_time = datetime.now()
+        media_items_to_delete = model.objects.filter(id__in=media_ids)
 
-                end = datetime.now()
-                lead_time = end - start_time
+        if media_type != "actors":
+            deleted_media_items = [[media_item.title, media_item.search_id] for media_item in media_items_to_delete]
+        else:
+            deleted_media_items = [[media_item.name, media_item.search_id] for media_item in media_items_to_delete]
 
-                create_success_message(
-                    messages, 
-                    media_type, 
-                    str(start_time.replace(microsecond=0)),
-                    str(lead_time.total_seconds()),
-                    f"Успешно удалено {deleted_count} объектов!"
-                )
+        deleted_count = media_items_to_delete.delete()[0]
+
+        end = datetime.now()
+        lead_time = end - start_time
+
+        create_success_message(
+            messages, 
+            media_type, 
+            str(start_time.replace(microsecond=0)),
+            str(lead_time.total_seconds()),
+            f"Успешно удалено {deleted_count} объектов!"
+        )
 
 
-                for media_item in deleted_media_items:
-                    create_success_message(
-                        messages, 
-                        media_type, 
-                        str(start_time.replace(microsecond=0)),
-                        "0.000000",
-                        f"Объект {media_item[0]}(id {media_item[1]}) успешно удалён!"
-                    )
-            else:
-                create_error_message(messages, media_type, "Модель не найдена(delete_selected_media_items)")
+        for media_item in deleted_media_items:
+            create_success_message(
+                messages, 
+                media_type, 
+                str(start_time.replace(microsecond=0)),
+                "0.000000",
+                f"Объект {media_item[0]}(id {media_item[1]}) успешно удалён!"
+            )
 
-        except Exception as e:
-            create_error_message(messages, media_type, f"Ошибка при удалении: {str(e)}")
+    except Exception as e:
+        create_error_message(messages, media_type, f"Ошибка при удалении: {str(e)}")
 
     collect_special_messages_block(messages, messages_block, request)
 
@@ -327,21 +331,23 @@ def delete_all_media_items(request, media_type, messages, messages_block):
 
     model = models.get(media_type)
 
-    if model:
-        start_time = datetime.now()
-        model.objects.all().delete()
-        end = datetime.now()
-        lead_time = end - start_time
-
-        create_success_message(
-            messages,
-            media_type,
-            str(start_time.replace(microsecond=0)),
-            str(lead_time.total_seconds()),
-            "Все объекты успешно удалены!"
-        )
-    else:
+    if not model:
         create_error_message(messages, media_type, "Модель не найдена(delete_all_media_items)")
+        collect_special_messages_block(messages, messages_block, request)
+        return
+    
+    start_time = datetime.now()
+    model.objects.all().delete()
+    end = datetime.now()
+    lead_time = end - start_time
+
+    create_success_message(
+        messages,
+        media_type,
+        str(start_time.replace(microsecond=0)),
+        str(lead_time.total_seconds()),
+        "Все объекты успешно удалены!"
+    )
 
     collect_special_messages_block(messages, messages_block, request)
 
@@ -381,56 +387,57 @@ def start_parsing_media_items(request, media_type, messages, messages_block):
     imgs_folder = f"mainProject/static/images/{media_type}"
     os.makedirs(imgs_folder, exist_ok=True)
 
-    if model:
-        if vpn_is_connected and get_media_items_id_list:
+    if not model:
+        create_error_message(messages, media_type, "Модель не найдена")
+        collect_special_messages_block(messages, messages_block, request)
+        return
+
+    if vpn_is_connected and get_media_items_id_list:
+        try:
+            start_page = int(start_page)
+            end_page = int(end_page)
+
+            if start_page < 0 or end_page < 0:
+                create_error_message(messages, media_type, "Нельзя вводить числа меньше чем ноль")
+                raise ValueError(f"Поддерживаются только положительные целочисленные типы данных")
+            else:
+                if start_page > end_page:
+                    start_page, end_page = end_page, start_page
             try:
-                start_page = int(start_page)
-                end_page = int(end_page)
-
-                if start_page < 0 or end_page < 0:
-                    create_error_message(messages, media_type, "Нельзя вводить числа меньше чем ноль")
-                    raise ValueError(f"Поддерживаются только положительные целочисленные типы данных")
-                else:
-                    if start_page > end_page:
-                        start_page, end_page = end_page, start_page
-                try:
-                    start_time, lead_time = get_media_items_id(media_type, start_page, end_page, media_items_ids_root_url, folder_path)
-                    create_success_message(messages, media_type, start_time, lead_time, "Id объектов получены")
-
-                except Exception as e:
-                    create_error_message(messages, media_type, f"Возможно не включен VPN. Ошибка при запросе к TMDB API! {e}")
-
-            except Exception as e:
-                create_error_message(messages, media_type, f"Можно вводить только целые числа: {e}")
-
-        if vpn_is_connected and get_media_items_data:
-            try:
-                start_time, lead_time = parse_media_items(media_type, media_item_data_root_url, folder_path, url_for_download_images)
-                create_success_message(messages, media_type, start_time, lead_time, "Данные объектов получены")
+                start_time, lead_time = get_media_items_id(media_type, start_page, end_page, media_items_ids_root_url, folder_path)
+                create_success_message(messages, media_type, start_time, lead_time, "Id объектов получены")
 
             except Exception as e:
                 create_error_message(messages, media_type, f"Возможно не включен VPN. Ошибка при запросе к TMDB API! {e}")
 
-        if update_db:
-            start_time, lead_time = transfer_media_items_to_db(messages, media_type, folder_path, model)
-            create_success_message(messages, media_type, start_time, lead_time, "Объекты занесены в бд")
+        except Exception as e:
+            create_error_message(messages, media_type, f"Можно вводить только целые числа: {e}")
 
-        if delete_jsons:
-            start_time, lead_time = delete_everything_in_folder(folder_path)
-            create_success_message(messages, media_type, start_time, lead_time, "Папка с json файлами очищена!")
+    if vpn_is_connected and get_media_items_data:
+        try:
+            start_time, lead_time = parse_media_items(media_type, media_item_data_root_url, folder_path, url_for_download_images)
+            create_success_message(messages, media_type, start_time, lead_time, "Данные объектов получены")
 
-        if vpn_is_connected and should_download_images:
-            start_time, lead_time = download_images(model)
+        except Exception as e:
+            create_error_message(messages, media_type, f"Возможно не включен VPN. Ошибка при запросе к TMDB API! {e}")
 
-            create_success_message(
-                messages, 
-                media_type, 
-                start_time, 
-                lead_time, 
-                "Фотографии актеров скачаны" if media_type == "actors" else "Постеры скачаны"
-            )
+    if update_db:
+        start_time, lead_time = transfer_media_items_to_db(messages, media_type, folder_path, model)
+        create_success_message(messages, media_type, start_time, lead_time, "Объекты занесены в бд")
 
-    else:
-        create_error_message(messages, media_type, "Модель не найдена")
+    if delete_jsons:
+        start_time, lead_time = delete_everything_in_folder(folder_path)
+        create_success_message(messages, media_type, start_time, lead_time, "Папка с json файлами очищена!")
+
+    if vpn_is_connected and should_download_images:
+        start_time, lead_time = download_images(model)
+
+        create_success_message(
+            messages, 
+            media_type, 
+            start_time, 
+            lead_time, 
+            "Фотографии актеров скачаны" if media_type == "actors" else "Постеры скачаны"
+        )
 
     collect_special_messages_block(messages, messages_block, request)
