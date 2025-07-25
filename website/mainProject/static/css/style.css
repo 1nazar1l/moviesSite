@@ -157,13 +157,14 @@ main {
     border: 0;
     background-color: var(--color2);
     outline: 0;
-    color: var(--color5);
+    color: rgb(41, 41, 41);
     border-radius: 12px;
     height: 100%;
     width: 0;
     text-align: center;
     transition: all 0.5s;
     cursor: pointer;
+    font-size: 18px;
 }
 
 .parse_media_items_block .input_block.text_type input.active {
@@ -378,6 +379,10 @@ main {
 
 .message_block .main_info .icon_info.error i {
     color: #da2d29;
+}
+
+.message_block .main_info .icon_info.warning i {
+    color: #FFD43B;
 }
 
 .message_block .text {

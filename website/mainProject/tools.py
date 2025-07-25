@@ -5,7 +5,7 @@ from environs import env
 from .models import Film, Serial, Actor
 import shutil
 import os
-from datetime import datetime, time
+from datetime import datetime
 
 
 env.read_env()
@@ -28,6 +28,16 @@ def measure_time(func):
 def create_error_message(messages, media_type, text):
     messages.append({
         "message_type": "error",
+        "media_type": media_type,
+        "text": text,
+        "when_happened": str(datetime.now().replace(microsecond=0)),
+        "time_to_complete": 0.0,
+        "admin": "People"
+    })
+
+def create_warning_message(messages, media_type, text):
+    messages.append({
+        "message_type": "warning",
         "media_type": media_type,
         "text": text,
         "when_happened": str(datetime.now().replace(microsecond=0)),
@@ -382,25 +392,11 @@ def start_parsing_media_items(request, media_type, messages, messages_block):
 
     if vpn_is_connected and get_media_items_id_list:
         try:
-            start_page = int(start_page)
-            end_page = int(end_page)
+            start_time, lead_time = get_media_items_id(media_type, start_page, end_page, media_items_ids_root_url, ids_json_filepath)
+            create_success_message(messages, media_type, start_time, lead_time, "Id объектов получены")
 
-            if start_page < 0 or end_page < 0:
-                create_error_message(messages, media_type, "Нельзя вводить числа меньше чем ноль")
-                raise ValueError(f"Поддерживаются только положительные целочисленные типы данных")
-            else:
-                if start_page > end_page:
-                    start_page, end_page = end_page, start_page
-            try:
-                start_time, lead_time = get_media_items_id(media_type, start_page, end_page, media_items_ids_root_url, ids_json_filepath)
-                create_success_message(messages, media_type, start_time, lead_time, "Id объектов получены")
-
-            except requests.exceptions.ConnectionError:
-                create_error_message(messages, media_type, "VPN не включен!")
-
-
-        except Exception as e:
-            create_error_message(messages, media_type, f"Можно вводить только целые числа: {e}")
+        except requests.exceptions.ConnectionError:
+            create_error_message(messages, media_type, "VPN не включен!")
 
     if vpn_is_connected and get_media_items_data:
         try:

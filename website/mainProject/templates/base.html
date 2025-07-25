@@ -75,6 +75,10 @@
                       <div class="icon_info error">
                         <i class="fa-solid fa-triangle-exclamation"></i>
                       </div>
+                      {% elif message.message_type == "warning" %}
+                      <div class="icon_info warning">
+                        <i class="fa-solid fa-exclamation"></i>
+                      </div>
                       {% endif %}
                     </div>
                     <div class="message_border"></div>

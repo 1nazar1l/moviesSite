@@ -19,7 +19,11 @@ endPage.addEventListener('input', function() {
 
 document.addEventListener('DOMContentLoaded', function() {
   const vpnCheckbox = document.getElementById('vpn_connected');
-  
+  const idsCheckbox = document.getElementById('get_media_items_id');
+  const submitButton = document.querySelector('.continue_button');
+  const startPageInput = document.getElementById('start_page');
+  const endPageInput = document.getElementById('end_page');
+
   const vpnDependentElements = [
     {
       element: document.getElementById('get_media_items_id'),
@@ -59,6 +63,59 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   toggleVpnDependentElements();
+
+  function validatePageNumbers() {
+    const isVpnConnected = vpnCheckbox.checked;
+    const getMediaIds = idsCheckbox.checked;
+    const startValue = startPageInput.value.trim();
+    const endValue = endPageInput.value.trim();
+
+    if (isVpnConnected && getMediaIds) {
+
+      // Проверка на пустые значения
+      if (!startValue || !endValue) {
+        alert('Оба поля (начальная и конечная страница) должны быть заполнены!');
+        return false;
+      }
+      
+      // Проверка что значения - целые числа
+      if (!/^\d+$/.test(startValue) || !/^\d+$/.test(endValue)) {
+        alert('Введите целые положительные числа в оба поля!');
+        return false;
+      }
+      
+      const startNum = parseInt(startValue);
+      const endNum = parseInt(endValue);
+      
+      // Проверка что числа больше 0
+      if (startNum <= 0 || endNum <= 0) {
+        alert('Числа должны быть больше нуля!');
+        return false;
+      }
+
+      if (startNum > 500 || endNum > 500) {
+        alert('Максимально допустимая страница 500!');
+        return false;
+      }
+      
+      // Проверка что начальная страница не больше конечной
+      if (startNum > endNum) {
+        alert('Начальная страница не может быть больше конечной!');
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  submitButton.addEventListener('click', function(e) {
+    if (!validatePageNumbers()) {
+      e.preventDefault();
+      return false;
+    }
+    
+    return confirm('Начать?');
+  });
 
   vpnCheckbox.addEventListener('change', toggleVpnDependentElements);
 });
