@@ -395,8 +395,9 @@ def start_parsing_media_items(request, media_type, messages, messages_block):
                 start_time, lead_time = get_media_items_id(media_type, start_page, end_page, media_items_ids_root_url, ids_json_filepath)
                 create_success_message(messages, media_type, start_time, lead_time, "Id объектов получены")
 
-            except Exception as e:
-                create_error_message(messages, media_type, f"Возможно не включен VPN. Ошибка при запросе к TMDB API! {e}")
+            except requests.exceptions.ConnectionError:
+                create_error_message(messages, media_type, "VPN не включен!")
+
 
         except Exception as e:
             create_error_message(messages, media_type, f"Можно вводить только целые числа: {e}")

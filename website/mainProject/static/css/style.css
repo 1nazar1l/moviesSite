@@ -141,6 +141,7 @@ main {
     align-items: center;
     width: 450px;
     justify-content: space-between;
+    transition: all 0.3s;
 }
 
 .parse_media_items_block .input_block label {
@@ -181,6 +182,11 @@ main {
     width: 100px;
     padding: 4px;
     padding-inline: 16px;
+}
+
+.parse_media_items_block .input_block.disabled {
+    opacity: .6;
+    pointer-events: none;
 }
 
 .custom_checkbox {
