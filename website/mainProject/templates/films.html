@@ -41,6 +41,6 @@
 {% block parse_media_block %}
   <form action="{% url "parse_films" %}" method="post">
     {% csrf_token %}
-    {% include "admin_page_components/parse_media_content_block.html" with title_text="Парсинг фильмов" %}
+    {% include "admin_page_components/parse_media_content_block.html" with title_text="Парсинг фильмов" media_type="films"%}
   </form>
 {% endblock parse_media_block %}

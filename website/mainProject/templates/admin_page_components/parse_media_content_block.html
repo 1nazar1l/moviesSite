@@ -4,7 +4,7 @@
   </div>
 
   <div class="input_block checkbox_type">
-    <label>VPN включен?(нужен для парсинга)</label>
+    <label>VPN включен(нужен для парсинга)</label>
     <div class="custom_checkbox">
       <input type="checkbox" name="vpn_is_connected" id="vpn_connected">
       <label for="vpn_connected" class="checkbox_visual">
@@ -14,7 +14,13 @@
   </div>
 
   <div class="input_block checkbox_type">
-    <label>Получить id актеров</label>
+    {% if media_type == "actors" %}
+      <label>Получить id актеров</label>
+    {% elif media_type == "serials" %}  
+      <label>Получить id сериалов</label>
+    {% elif media_type == "films" %}
+      <label>Получить id фильмов</label>
+    {% endif %}
     <div class="custom_checkbox">
       <input type="checkbox" name="get_media_items_id" id="get_media_items_id">
       <label for="get_media_items_id" class="checkbox_visual">
@@ -34,7 +40,13 @@
   </div>
 
   <div class="input_block checkbox_type">
-    <label>Получить данные об актерах</label>
+    {% if media_type == "actors" %}
+      <label>Получить данные об актерах</label>
+    {% elif media_type == "serials" %}  
+      <label>Получить данные о сериалах</label>
+    {% elif media_type == "films" %}
+      <label>Получить данные о фильмах</label>
+    {% endif %}
     <div class="custom_checkbox">
       <input type="checkbox" name="get_media_items_data" id="get_media_items_data">
       <label for="get_media_items_data" class="checkbox_visual">
@@ -64,7 +76,14 @@
   </div>
 
   <div class="input_block checkbox_type">
-    <label>Скачать фотографии актеров</label>
+    {% if media_type == "actors" %}
+      <label>Скачать фотографии актеров</label>
+    {% elif media_type == "serials" %}  
+      <label>Скачать постеры к сериалам</label>
+    {% elif media_type == "films" %}
+      <label>Скачать постеры к фильмам</label>
+    {% endif %}
+
     <div class="custom_checkbox">
       <input type="checkbox" name="download_images" id="download_images">
       <label for="download_images" class="checkbox_visual">
