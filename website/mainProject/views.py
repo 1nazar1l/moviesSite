@@ -46,9 +46,21 @@ def serials_admin_panel(request):
     messages = request.session.get('custom_messages', [])
     messages = messages[::-1]
 
+    messages_type = {
+        "success": 0,
+        "warning": 0,
+        "error": 0,
+        "clear": 0
+    }
+
+    for message_block in messages:
+        for message in message_block:
+            messages_type[message["message_type"]] += 1
+
     return render(request, "serials.html", context={
         "serials": serials,
-        "messages": messages               
+        "messages": messages,
+        "messages_type": messages_type      
     })
 
 def actors_admin_panel(request):
@@ -59,9 +71,21 @@ def actors_admin_panel(request):
     messages = request.session.get('custom_messages', [])
     messages = messages[::-1]
 
+    messages_type = {
+        "success": 0,
+        "warning": 0,
+        "error": 0,
+        "clear": 0
+    }
+
+    for message_block in messages:
+        for message in message_block:
+            messages_type[message["message_type"]] += 1
+
     return render(request, "actors.html", context={
         "actors": actors,
-        "messages": messages               
+        "messages": messages,
+        "messages_type": messages_type      
     })
 
 
