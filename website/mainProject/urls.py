@@ -12,6 +12,7 @@ urlpatterns = [
     path('films/parse_films/', views.parse_films, name='parse_films'),
     path('films/delete_films/', views.delete_films, name='delete_films'),
     path('films/delete_all_films/', views.delete_all_films, name='delete_all_films'),
+    path('films/parse_movies_by_actors/', views.parse_movies_by_actors, name='parse_movies_by_actors'),
 
     path('serials/', views.serials_admin_panel, name='serials'),
     path('serials/parse_serials/', views.parse_serials, name='parse_serials'),

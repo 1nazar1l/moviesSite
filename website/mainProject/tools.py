@@ -5,7 +5,7 @@ from environs import env
 from .models import Film, Serial, Actor
 import shutil
 import os
-from datetime import datetime
+from datetime import datetime, date
 
 
 env.read_env()
@@ -83,6 +83,7 @@ def download_images(model):
 @measure_time
 def get_media_items_id(media_type, start_page, end_page, url, ids_filepath):
     media_items = []
+    delete_everything_in_folder(get_folder_path(media_type, jsons_folder_path))
 
     for page_number in range(int(start_page), int(end_page) + 1):
         params = {
@@ -99,10 +100,13 @@ def get_media_items_id(media_type, start_page, end_page, url, ids_filepath):
         data = response.json()
 
         for media_item in data["results"]:
+            if media_type == "actors" and media_item["known_for_department"] != "Acting":
+                continue
+
             media_items.append({
                 "id": media_item["id"],
                 "name": media_item[index],
-                "page_number": page_number
+                "page_number": page_number,
             })
 
     with open(ids_filepath, "w", encoding="utf-8") as f:
@@ -424,5 +428,105 @@ def start_parsing_media_items(request, media_type, messages, messages_block):
             lead_time, 
             "Фотографии актеров скачаны" if media_type == "actors" else "Постеры скачаны"
         )
+
+    collect_special_messages_block(messages, messages_block, request)
+
+@measure_time
+def parse_films_without_using_jsons(media_type, ids, model, img_url, nums):
+    for id in ids:
+        is_exist = model.objects.filter(search_id = id).exists()
+        if is_exist:
+            continue
+
+        url = f"{BASE_URL}/movie/{id}"
+
+        params = {
+            "api_key": api_key,
+            "language": "en",
+        }
+
+        img_index = "poster_path"
+
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+
+        media_item = response.json()
+
+        if media_item[img_index] is None:
+            site_img_path = ""
+            local_img_path = ""
+        else:
+            site_img_path = f"{img_url}/{media_item[img_index]}"
+            local_img_path = f"images/{media_type}/{media_item["id"]}.jpg"
+
+        if media_item["release_date"] is None or media_item["release_date"] == "":
+            release_date = date(2050, 1, 1)
+        else:
+            release_date = media_item["release_date"]
+
+        defaults = {
+            "search_id": media_item["id"],
+            "title": media_item["title"],
+            "budget": media_item["budget"],
+            "revenue": media_item["revenue"],
+            "overview": media_item["overview"],
+            "site_img_path": site_img_path,
+            "local_img_path": local_img_path,
+            "release_date": release_date,
+            "runtime": media_item["runtime"],
+            "status": media_item["status"],
+            "rating": media_item["vote_average"],
+            "genres": [{"id": genre["id"], "name": genre["name"]} for genre in media_item["genres"]]
+        }
+
+        film, created = model.objects.get_or_create(
+            search_id=media_item["id"],
+            defaults=defaults
+        )
+
+        img_filepath = os.path.join("mainProject/static", local_img_path)
+
+        if not os.path.exists(img_filepath):
+            if site_img_path != "":
+                p = requests.get(site_img_path)
+            
+                with open(img_filepath, "wb") as out:
+                    out.write(p.content)
+
+        nums[0] += 1
+
+def load_movies_from_source(request, media_type, messages, messages_block, ids):
+
+    models = {
+        "films": Film,
+        "serials": Serial,
+        "actors": Actor,
+    }
+
+    model = models.get(media_type)
+
+    img_url = "https://media.themoviedb.org/t/p/w220_and_h330_face/"
+
+    try:
+        url = f"{BASE_URL}/movie/{ids[0]}"
+
+        params = {
+            "api_key": api_key,
+            "language": "en",
+        }
+
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+
+    except requests.exceptions.ConnectionError:
+        create_error_message(messages, media_type, "VPN не включен!")
+        collect_special_messages_block(messages, messages_block, request)
+        return
+    
+    nums = [0]
+
+    start_time, lead_time = parse_films_without_using_jsons(media_type, ids, model, img_url, nums)
+
+    create_success_message(messages, media_type, start_time, lead_time, f"Успешно добавлено {nums[0]} объектов!")
 
     collect_special_messages_block(messages, messages_block, request)

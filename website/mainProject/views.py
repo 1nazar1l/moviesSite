@@ -2,7 +2,8 @@ from django.shortcuts import render
 from .tools import (
     delete_selected_media_items,
     delete_all_media_items,
-    start_parsing_media_items
+    start_parsing_media_items,
+    load_movies_from_source
 )
 
 from .models import Film, Serial, Actor
@@ -144,7 +145,6 @@ def parse_actors(request):
 
     return redirect('actors')
 
-
 def clear_messages(request):
     if 'custom_messages' not in request.session:
         request.session['custom_messages'] = []
@@ -156,3 +156,27 @@ def clear_messages(request):
     request.session.modified = True
     
     return redirect('films')
+
+def parse_movies_by_actors(request):
+    messages = []
+    messages_block = []
+
+    media_type = "films"
+
+    films = Film.objects.all()
+    actors = Actor.objects.all()
+
+    ids = []
+    for actor in actors:
+        for id in actor.movies:
+            ids.append(id)
+
+    ids = list(set(ids))
+    ids.extend([film.search_id for film in films])
+
+    ids = list(set(ids))
+
+    load_movies_from_source(request, media_type, messages, messages_block, ids)
+
+    return redirect('films')
+

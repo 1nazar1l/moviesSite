@@ -118,7 +118,7 @@ main {
     display: flex;
 }
 
-.admin_container .parse_media_items_block {
+.admin_container .block {
     width: 60%;
 }
 
@@ -237,25 +237,6 @@ main {
 
 .checkbox_visual:hover {
     background-color: var(--color4);
-}
-
-.admin_container .upgraded_field {
-    width: 450px;
-    margin-bottom: 12px;
-    border: 0;
-    outline: 0;
-    background-color: var(--color3);
-    padding-left: 6px;
-    border-radius: 12px;
-    margin-bottom: 12px;
-    height: 30px;
-    justify-content: space-between;
-    color: rgb(41, 41, 41);
-    font-weight: 600;
-}
-
-.admin_container .upgraded_field option {
-    border-radius: 40px;
 }
 
 .custom_button {
