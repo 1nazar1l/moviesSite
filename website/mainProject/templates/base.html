@@ -52,6 +52,34 @@
             Очистить сообщения
           </button>
         </form>
+        <div class="messages_type">
+          {% for type, num in messages_type.items %}
+
+          {% if type != "clear" %}
+            <div class="message_type_block">
+              {% if type == "success" %}
+                <div class="icon_info success">
+                  <i class="fa-solid fa-circle-check"></i>
+                </div>
+                {% elif type == "error" %}
+                <div class="icon_info error">
+                  <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                {% elif type == "warning" %}
+                <div class="icon_info warning">
+                  {% comment %} <i class="fa-solid fa-exclamation"></i>
+                  <i class="fa-solid fa-circle-exclamation"></i> {% endcomment %}
+                  <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+              {% endif %}
+              <b>{{type|upper}}</b>
+              {{num}}
+            </div>
+
+          {% endif %}
+
+          {% endfor %}
+        </div>
         <div class="messages_block">
           <div class="messages_content">
             {% for message_block in messages %}
