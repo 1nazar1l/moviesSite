@@ -208,11 +208,14 @@ def parse_movies_by_actors(request):
             ids.append(id)
 
     ids = list(set(ids))
-    ids.extend([film.search_id for film in films])
+    print("ids", len(ids))
+    for film in films:
+        ids.remove(film.search_id)
 
     ids = list(set(ids))
+    print("ids", len(ids))
 
-    load_movies_from_source(request, media_type, messages, messages_block, ids)
+    # load_movies_from_source(request, media_type, messages, messages_block, ids)
 
     return redirect('films')
 

@@ -347,89 +347,89 @@ def delete_all_media_items(request, media_type, messages, messages_block):
 
     collect_special_messages_block(messages, messages_block, request)
 
-def start_parsing_media_items(request, media_type, messages, messages_block):
-    vpn_is_connected = request.POST.get('vpn_is_connected')
-    get_media_items_id_list = request.POST.get("get_media_items_id")
-    start_page = request.POST.get('start_page')
-    end_page = request.POST.get('end_page')
-    get_media_items_data = request.POST.get("get_media_items_data")
-    delete_jsons = request.POST.get('delete_jsons')
-    update_db = request.POST.get('update_db')
-    should_download_images = request.POST.get('download_images')
+# def start_parsing_media_items(request, media_type, messages, messages_block):
+    # vpn_is_connected = request.POST.get('vpn_is_connected')
+    # get_media_items_id_list = request.POST.get("get_media_items_id")
+    # start_page = request.POST.get('start_page')
+    # end_page = request.POST.get('end_page')
+    # get_media_items_data = request.POST.get("get_media_items_data")
+    # delete_jsons = request.POST.get('delete_jsons')
+    # update_db = request.POST.get('update_db')
+    # should_download_images = request.POST.get('download_images')
 
-    models = {
-        "films": Film,
-        "serials": Serial,
-        "actors": Actor,
-    }
+#     models = {
+#         "films": Film,
+#         "serials": Serial,
+#         "actors": Actor,
+#     }
 
-    model = models.get(media_type)
+#     model = models.get(media_type)
 
-    if media_type == "films":
-        media_items_ids_root_url = f"{BASE_URL}/movie/popular"
-        media_item_data_root_url = f"{BASE_URL}/movie"
-    elif media_type == "serials":
-        media_items_ids_root_url = f"{BASE_URL}/tv/popular"
-        media_item_data_root_url = f"{BASE_URL}/tv"
-    elif media_type == "actors":
-        media_items_ids_root_url = f"{BASE_URL}/person/popular"
-        media_item_data_root_url = f"{BASE_URL}/person"
+#     if media_type == "films":
+#         media_items_ids_root_url = f"{BASE_URL}/movie/popular"
+#         media_item_data_root_url = f"{BASE_URL}/movie"
+#     elif media_type == "serials":
+#         media_items_ids_root_url = f"{BASE_URL}/tv/popular"
+#         media_item_data_root_url = f"{BASE_URL}/tv"
+#     elif media_type == "actors":
+#         media_items_ids_root_url = f"{BASE_URL}/person/popular"
+#         media_item_data_root_url = f"{BASE_URL}/person"
 
-    folder_path = get_folder_path(media_type, jsons_folder_path)
-    os.makedirs(folder_path, exist_ok=True)
+#     folder_path = get_folder_path(media_type, jsons_folder_path)
+#     os.makedirs(folder_path, exist_ok=True)
 
-    url_for_download_images = "https://media.themoviedb.org/t/p/w220_and_h330_face/"
+#     url_for_download_images = "https://media.themoviedb.org/t/p/w220_and_h330_face/"
     
-    imgs_folder = f"mainProject/static/images/{media_type}"
-    os.makedirs(imgs_folder, exist_ok=True)
+#     imgs_folder = f"mainProject/static/images/{media_type}"
+#     os.makedirs(imgs_folder, exist_ok=True)
 
-    ids_json_filename = f"{media_type}_id.json"
-    ids_json_filepath = os.path.join(folder_path, ids_json_filename)
+#     ids_json_filename = f"{media_type}_id.json"
+#     ids_json_filepath = os.path.join(folder_path, ids_json_filename)
 
-    media_datasets_json_filename = f"{media_type}.json"
-    media_datasets_json_filepath = os.path.join(folder_path, media_datasets_json_filename)
+#     media_datasets_json_filename = f"{media_type}.json"
+#     media_datasets_json_filepath = os.path.join(folder_path, media_datasets_json_filename)
 
-    if not model:
-        create_error_message(messages, media_type, "Модель не найдена")
-        collect_special_messages_block(messages, messages_block, request)
-        return
+#     if not model:
+#         create_error_message(messages, media_type, "Модель не найдена")
+#         collect_special_messages_block(messages, messages_block, request)
+#         return
 
-    if vpn_is_connected and get_media_items_id_list:
-        try:
-            start_time, lead_time = get_media_items_id(media_type, start_page, end_page, media_items_ids_root_url, ids_json_filepath)
-            create_success_message(messages, media_type, start_time, lead_time, "Id объектов получены")
+#     if vpn_is_connected and get_media_items_id_list:
+#         try:
+#             start_time, lead_time = get_media_items_id(media_type, start_page, end_page, media_items_ids_root_url, ids_json_filepath)
+#             create_success_message(messages, media_type, start_time, lead_time, "Id объектов получены")
 
-        except requests.exceptions.ConnectionError:
-            create_error_message(messages, media_type, "VPN не включен!")
+#         except requests.exceptions.ConnectionError:
+#             create_error_message(messages, media_type, "VPN не включен!")
 
-    if vpn_is_connected and get_media_items_data:
-        try:
-            start_time, lead_time = parse_media_items(media_type, media_item_data_root_url, ids_json_filepath, media_datasets_json_filepath, url_for_download_images)
-            create_success_message(messages, media_type, start_time, lead_time, "Данные объектов получены")
+#     if vpn_is_connected and get_media_items_data:
+#         try:
+#             start_time, lead_time = parse_media_items(media_type, media_item_data_root_url, ids_json_filepath, media_datasets_json_filepath, url_for_download_images)
+#             create_success_message(messages, media_type, start_time, lead_time, "Данные объектов получены")
 
-        except Exception as e:
-            create_error_message(messages, media_type, f"Возможно не включен VPN. Ошибка при запросе к TMDB API! {e}")
+#         except Exception as e:
+#             create_error_message(messages, media_type, f"Возможно не включен VPN. Ошибка при запросе к TMDB API! {e}")
 
-    if update_db:
-        start_time, lead_time = transfer_media_items_to_db(messages, media_type, media_datasets_json_filepath, model)
-        create_success_message(messages, media_type, start_time, lead_time, "Объекты занесены в бд")
+#     if update_db:
+#         start_time, lead_time = transfer_media_items_to_db(messages, media_type, media_datasets_json_filepath, model)
+#         create_success_message(messages, media_type, start_time, lead_time, "Объекты занесены в бд")
 
-    if delete_jsons:
-        start_time, lead_time = delete_everything_in_folder(folder_path)
-        create_success_message(messages, media_type, start_time, lead_time, "Папка с json файлами очищена!")
+#     if delete_jsons:
+#         start_time, lead_time = delete_everything_in_folder(folder_path)
+#         create_success_message(messages, media_type, start_time, lead_time, "Папка с json файлами очищена!")
 
-    if vpn_is_connected and should_download_images:
-        start_time, lead_time = download_images(model)
+#     if vpn_is_connected and should_download_images:
+#         start_time, lead_time = download_images(model)
 
-        create_success_message(
-            messages, 
-            media_type, 
-            start_time, 
-            lead_time, 
-            "Фотографии актеров скачаны" if media_type == "actors" else "Постеры скачаны"
-        )
+#         create_success_message(
+#             messages, 
+#             media_type, 
+#             start_time, 
+#             lead_time, 
+#             "Фотографии актеров скачаны" if media_type == "actors" else "Постеры скачаны"
+#         )
 
-    collect_special_messages_block(messages, messages_block, request)
+#     collect_special_messages_block(messages, messages_block, request)
 
 @measure_time
 def parse_films_without_using_jsons(media_type, ids, model, img_url, nums):
@@ -530,3 +530,144 @@ def load_movies_from_source(request, media_type, messages, messages_block, ids):
     create_success_message(messages, media_type, start_time, lead_time, f"Успешно добавлено {nums[0]} объектов!")
 
     collect_special_messages_block(messages, messages_block, request)
+
+@measure_time
+def start_parsing_media_items(request, media_type, messages, messages_block):
+    vpn_is_connected = request.POST.get('vpn_is_connected')
+    start_page = request.POST.get('start_page')
+    end_page = request.POST.get('end_page')
+
+    models = {
+        "films": Film,
+        "serials": Serial,
+        "actors": Actor,
+    }
+
+    url_parts = {
+        "films": "movie",
+        "serials": "tv",
+        "actors": "person",
+    }
+
+    model = models.get(media_type)
+
+    url_part = url_parts.get(media_type)
+
+    img_url = "https://media.themoviedb.org/t/p/w220_and_h330_face/"
+
+    if vpn_is_connected:
+        for page_number in range(int(start_page), int(end_page) + 1):
+            params = {
+                "api_key": api_key,
+                "language": "en",
+                "page": page_number,         
+            }
+
+            ids_url = f"{BASE_URL}/{url_part}/popular"
+            response = requests.get(ids_url, params=params)
+            response.raise_for_status()
+            
+            data = response.json()
+
+            for media_item in data["results"]:
+                is_exist = model.objects.filter(search_id = media_item["id"]).exists()
+
+                if is_exist:
+                    continue
+                
+                data_url = f"{BASE_URL}/{url_part}/{media_item["id"]}"
+
+                if media_type != "actors":
+                    params = {
+                        "api_key": api_key,
+                        "language": "en",
+                    }
+
+                    img_index = "poster_path"
+                else:
+                    params = {
+                        "api_key": api_key,
+                        "language": "en",
+                        "append_to_response": "movie_credits"
+                    }
+
+                    img_index = "profile_path"
+
+                response = requests.get(data_url, params=params)
+                response.raise_for_status()
+
+                media_item_data = response.json()
+
+                if media_type == "actors" and media_item["known_for_department"] != "Acting":
+                    continue
+
+                if media_item_data[img_index] is None:
+                    site_img_path = ""
+                    local_img_path = ""
+                else:
+                    site_img_path = f"{img_url}/{media_item_data[img_index]}"
+                    local_img_path = f"images/{media_type}/{media_item_data["id"]}.jpg"
+
+
+                if media_type == "films":
+                    release_date = media_item_data["release_date"]
+
+                    if media_item_data["release_date"] is None or media_item_data["release_date"] == "":
+                        release_date = date(2050, 1, 1)
+
+                if media_type == "films":
+                    defaults = {
+                        "id": media_item_data["id"],
+                        "title": media_item_data["title"],
+                        "budget": media_item_data["budget"],
+                        "revenue": media_item_data["revenue"],
+                        "overview": media_item_data["overview"],
+                        "site_img_path": site_img_path,
+                        "local_img_path": local_img_path,
+                        "release_date": release_date,
+                        "runtime": media_item_data["runtime"],
+                        "status": media_item_data["status"],
+                        "rating": media_item_data["vote_average"],
+                        "genres": [{"id": genre["id"], "name": genre["name"]} for genre in media_item_data["genres"]]
+                    }
+                elif media_type == "serials":
+                    defaults = {
+                        "id": media_item_data["id"],
+                        "first_air_date": media_item_data["first_air_date"],
+                        "last_air_date": media_item_data["last_air_date"],
+                        "title": media_item_data["name"],
+                        "episodes": media_item_data["number_of_episodes"],
+                        "seasons": media_item_data["number_of_seasons"],
+                        "overview": media_item_data["overview"],
+                        "site_img_path": site_img_path,
+                        "local_img_path": local_img_path,
+                        "status": media_item_data["status"],
+                        "rating": media_item_data["vote_average"],
+                        "genres": [{"id": genre["id"], "name": genre["name"]} for genre in media_item_data["genres"]]
+                    }
+                elif media_type == "actors":
+                    defaults = {
+                        "id": media_item_data["id"],
+                        "name": media_item_data["name"],
+                        "biography": media_item_data["biography"],
+                        "birthday": media_item_data["birthday"],
+                        "deathday": media_item_data["deathday"],
+                        "gender": media_item_data["gender"],
+                        "site_img_path": site_img_path,
+                        "local_img_path": local_img_path,
+                        "movies": [movie["id"] for movie in media_item_data["movie_credits"]["cast"]]
+                    }
+
+                media_item_obj, created = model.objects.get_or_create(
+                    search_id=media_item_data["id"],
+                    defaults=defaults
+                )
+
+                img_filepath = os.path.join("mainProject/static", local_img_path)
+
+                if not os.path.exists(img_filepath):
+                    if site_img_path != "":
+                        p = requests.get(site_img_path)
+                    
+                        with open(img_filepath, "wb") as out:
+                            out.write(p.content)
