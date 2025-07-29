@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block page_title %}
   Список фильмов
@@ -27,6 +28,7 @@
   {% for film in films %}
     <div class="media_block">
       <div class="media_info">
+        {% comment %} <img src="{% static film.local_img_path %}" alt="{{film.site_img_path}}"> {% endcomment %}
         <span><strong>ID:</strong> {{ film.search_id }}</span>
         <span><strong>Название:</strong> {{ film.title }}</span>
         <span><strong>Дата выхода:</strong> {{ film.release_date|date:"Y" }}</span>

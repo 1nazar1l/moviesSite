@@ -327,11 +327,6 @@ main {
     justify-content: center;
 }
 
-/* .messages_type .message_type_block .icon_info {
-    display: flex;
-    align-items: center;
-} */
-
 .messages_block {
     margin-top: 20px;
     background-color: var(--color2);

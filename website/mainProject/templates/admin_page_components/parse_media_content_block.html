@@ -13,22 +13,6 @@
     </div>
   </div>
 
-  <div class="input_block checkbox_type">
-    {% if media_type == "actors" %}
-      <label>Получить id актеров</label>
-    {% elif media_type == "serials" %}  
-      <label>Получить id сериалов</label>
-    {% elif media_type == "films" %}
-      <label>Получить id фильмов</label>
-    {% endif %}
-    <div class="custom_checkbox">
-      <input type="checkbox" name="get_media_items_id" id="get_media_items_id">
-      <label for="get_media_items_id" class="checkbox_visual">
-        <i class="fa-solid fa-check"></i>
-      </label>
-    </div>
-  </div>
-
   <div class="input_block text_type">
     <label>С какой страницы начать</label>
     <input type="text" placeholder="" name="start_page" id="start_page" autocomplete="off" maxlength="3">
@@ -37,59 +21,6 @@
   <div class="input_block text_type">
     <label>Какой страницей закончить</label>
     <input type="text" placeholder="" name="end_page" id="end_page" autocomplete="off" maxlength="3">
-  </div>
-
-  <div class="input_block checkbox_type">
-    {% if media_type == "actors" %}
-      <label>Получить данные об актерах</label>
-    {% elif media_type == "serials" %}  
-      <label>Получить данные о сериалах</label>
-    {% elif media_type == "films" %}
-      <label>Получить данные о фильмах</label>
-    {% endif %}
-    <div class="custom_checkbox">
-      <input type="checkbox" name="get_media_items_data" id="get_media_items_data">
-      <label for="get_media_items_data" class="checkbox_visual">
-        <i class="fa-solid fa-check"></i>
-      </label>
-    </div>
-  </div>
-
-  <div class="input_block checkbox_type">
-    <label>Занести данные в таблицу</label>
-    <div class="custom_checkbox">
-      <input type="checkbox" name="update_db" id="update_db">
-      <label for="update_db" class="checkbox_visual">
-        <i class="fa-solid fa-check"></i>
-      </label>
-    </div>
-  </div>
-
-  <div class="input_block checkbox_type">
-    <label>Удалить временные json файлы</label>
-    <div class="custom_checkbox">
-      <input type="checkbox" name="delete_jsons" id="delete_jsons">
-      <label for="delete_jsons" class="checkbox_visual">
-        <i class="fa-solid fa-check"></i>
-      </label>
-    </div>
-  </div>
-
-  <div class="input_block checkbox_type">
-    {% if media_type == "actors" %}
-      <label>Скачать фотографии актеров</label>
-    {% elif media_type == "serials" %}  
-      <label>Скачать постеры к сериалам</label>
-    {% elif media_type == "films" %}
-      <label>Скачать постеры к фильмам</label>
-    {% endif %}
-
-    <div class="custom_checkbox">
-      <input type="checkbox" name="download_images" id="download_images">
-      <label for="download_images" class="checkbox_visual">
-        <i class="fa-solid fa-check"></i>
-      </label>
-    </div>
   </div>
 
   <button type="submit" class="custom_button continue_button">Начать</button>

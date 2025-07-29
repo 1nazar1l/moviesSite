@@ -2,8 +2,8 @@ from django.shortcuts import render
 from .tools import (
     delete_selected_media_items,
     delete_all_media_items,
-    start_parsing_media_items,
-    load_movies_from_source
+    parsing_media_items,
+    download_movies_by_actors
 )
 
 from .models import Film, Serial, Actor
@@ -157,7 +157,7 @@ def parse_films(request):
 
     media_type = "films"
 
-    start_parsing_media_items(request, media_type, messages, messages_block)
+    parsing_media_items(request, media_type, messages, messages_block)
 
     return redirect('films')
 
@@ -167,7 +167,7 @@ def parse_serials(request):
 
     media_type = "serials"
 
-    start_parsing_media_items(request, media_type, messages, messages_block)
+    parsing_media_items(request, media_type, messages, messages_block)
 
     return redirect('serials')
 
@@ -177,7 +177,7 @@ def parse_actors(request):
 
     media_type = "actors"
 
-    start_parsing_media_items(request, media_type, messages, messages_block)
+    parsing_media_items(request, media_type, messages, messages_block)
 
     return redirect('actors')
 
@@ -208,14 +208,14 @@ def parse_movies_by_actors(request):
             ids.append(id)
 
     ids = list(set(ids))
-    print("ids", len(ids))
+
     for film in films:
-        ids.remove(film.search_id)
+        if film.search_id in ids:
+            ids.remove(film.search_id)
 
     ids = list(set(ids))
-    print("ids", len(ids))
 
-    # load_movies_from_source(request, media_type, messages, messages_block, ids)
+    download_movies_by_actors(request, media_type, messages, messages_block, ids)
 
     return redirect('films')
 

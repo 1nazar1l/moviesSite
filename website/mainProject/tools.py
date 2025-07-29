@@ -1,29 +1,15 @@
 import requests
 import os
-import json
 from environs import env
-from .models import Film, Serial, Actor
-import shutil
-import os
 from datetime import datetime, date
+
+from .models import Film, Serial, Actor
 
 
 env.read_env()
 api_key = env("API_KEY")
 BASE_URL = "https://api.themoviedb.org/3"
-jsons_folder_path = "mainProject/templates/jsons"
 
-
-def measure_time(func):
-    def wrapper(*args, **kwargs):
-        start = datetime.now()
-        func(*args, **kwargs)
-        end = datetime.now()
-        lead_time = end - start
-
-        return start.replace(microsecond=0), lead_time.total_seconds()
-    
-    return wrapper
 
 def create_error_message(messages, media_type, text):
     messages.append({
@@ -55,210 +41,10 @@ def create_success_message(messages, media_type, start_time, lead_time, text):
         "admin": "People"
     })
 
-def get_folder_path(media_type, jsons_folder_path):
-    return f"{jsons_folder_path}/{media_type}"
-
 def collect_special_messages_block(messages, messages_block, request):
     messages_block.append(messages)
     request.session['custom_messages'].extend(messages_block)
     request.session.modified = True
-
-@measure_time
-def delete_everything_in_folder(folder_path):
-    shutil.rmtree(folder_path)
-    os.mkdir(folder_path)    
-
-@measure_time
-def download_images(model):
-    for media_item in model.objects.all():
-        img_filepath = os.path.join("mainProject/static", media_item.local_img_path)
-
-        if not os.path.exists(img_filepath):
-            if media_item.site_img_path != "":
-                p = requests.get(media_item.site_img_path)
-            
-                with open(img_filepath, "wb") as out:
-                    out.write(p.content)
-
-@measure_time
-def get_media_items_id(media_type, start_page, end_page, url, ids_filepath):
-    media_items = []
-    delete_everything_in_folder(get_folder_path(media_type, jsons_folder_path))
-
-    for page_number in range(int(start_page), int(end_page) + 1):
-        params = {
-            "api_key": api_key,
-            "language": "en",
-            "page": page_number,         
-        }
-
-        response = requests.get(url, params=params)
-        response.raise_for_status()
-
-        index = "title" if media_type == "films" else "name"
-        
-        data = response.json()
-
-        for media_item in data["results"]:
-            if media_type == "actors" and media_item["known_for_department"] != "Acting":
-                continue
-
-            media_items.append({
-                "id": media_item["id"],
-                "name": media_item[index],
-                "page_number": page_number,
-            })
-
-    with open(ids_filepath, "w", encoding="utf-8") as f:
-        json.dump(media_items, f, indent=4, ensure_ascii=False)
-
-@measure_time
-def parse_media_items(media_type, root_url, ids_json_filepath, media_datasets_filepath, img_url):
-    media_items = []
-
-    with open(ids_json_filepath, "r", encoding='utf-8') as f:
-        media_items_data = json.load(f)
-
-    for media_item_data in media_items_data:
-        url = f"{root_url}/{media_item_data["id"]}"
-
-        if media_type != "actors":
-            params = {
-                "api_key": api_key,
-                "language": "en",
-            }
-
-            img_index = "poster_path"
-        else:
-            params = {
-                "api_key": api_key,
-                "language": "en",
-                "append_to_response": "movie_credits"
-            }
-
-            img_index = "profile_path"
-
-        response = requests.get(url, params=params)
-        response.raise_for_status()
-
-        media_item = response.json()
-
-        if media_item[img_index] is None:
-            site_img_path = ""
-            local_img_path = ""
-        else:
-            site_img_path = f"{img_url}/{media_item[img_index]}"
-            local_img_path = f"images/{media_type}/{media_item["id"]}.jpg"
-
-        if media_type == "films":
-            media_item_object = {
-                "id": media_item["id"],
-                "title": media_item["title"],
-                "budget": media_item["budget"],
-                "revenue": media_item["revenue"],
-                "genres": [{"id": genre["id"], "name": genre["name"]} for genre in media_item["genres"]],
-                "overview": media_item["overview"],
-                "site_img_path": site_img_path,
-                "local_img_path": local_img_path,
-                "release_date": media_item["release_date"],
-                "runtime": media_item["runtime"],
-                "status": media_item["status"],
-                "vote_average": media_item["vote_average"],
-            }
-        elif media_type == "serials":
-            media_item_object = {
-                "created_by": [{
-                    "id": author["id"], 
-                    "name": author["name"]
-                } for author in media_item["created_by"]],
-                "first_air_date": media_item["first_air_date"],
-                "genres": [{"id": genre["id"], "name": genre["name"]} for genre in media_item["genres"]],
-                "id": media_item["id"],
-                "last_air_date": media_item["last_air_date"],
-                "name": media_item["name"],
-                "networks": [{"id": network["id"], "name": network["name"]} for network in media_item["networks"]],
-                "episodes": media_item["number_of_episodes"],
-                "seasons": media_item["number_of_seasons"],
-                "overview": media_item["overview"],
-                "site_img_path": site_img_path,
-                "local_img_path": local_img_path,
-                "status": media_item["status"],
-                "vote_average": media_item["vote_average"],
-            }
-        elif media_type == "actors":
-            media_item_object = {
-                "biography": media_item["biography"],
-                "birthday": media_item["birthday"],
-                "deathday": media_item["deathday"],
-                "gender": media_item["gender"],
-                "id": media_item["id"],
-                "name": media_item["name"],
-                "site_img_path": site_img_path,
-                "local_img_path": local_img_path,
-                "movies": [movie["id"] for movie in media_item["movie_credits"]["cast"]]
-            }
-
-        media_items.append(media_item_object)
-
-    with open(media_datasets_filepath, "w", encoding="utf-8") as f:
-        json.dump(media_items, f, indent=4, ensure_ascii=False)
-
-@measure_time
-def transfer_media_items_to_db(messages, media_type, media_datasets_filepath, model):
-    if os.path.exists(media_datasets_filepath):
-        with open(media_datasets_filepath, "r", encoding='utf-8') as f:
-            media_items = json.load(f)
-
-        for media_item in media_items:
-            if media_type == "films":
-                defaults = {
-                    "id": media_item["id"],
-                    "title": media_item["title"],
-                    "budget": media_item["budget"],
-                    "revenue": media_item["revenue"],
-                    "overview": media_item["overview"],
-                    "site_img_path": media_item["site_img_path"],
-                    "local_img_path": media_item["local_img_path"],
-                    "release_date": media_item["release_date"],
-                    "runtime": media_item["runtime"],
-                    "status": media_item["status"],
-                    "rating": media_item["vote_average"],
-                }
-            elif media_type == "serials":
-                defaults = {
-                    "id": media_item["id"],
-                    "first_air_date": media_item["first_air_date"],
-                    "last_air_date": media_item["last_air_date"],
-                    "title": media_item["name"],
-                    "episodes": media_item["episodes"],
-                    "seasons": media_item["seasons"],
-                    "overview": media_item["overview"],
-                    "site_img_path": media_item["site_img_path"],
-                    "local_img_path": media_item["local_img_path"],
-                    "status": media_item["status"],
-                    "rating": media_item["vote_average"],
-                }
-            elif media_type == "actors":
-                defaults = {
-                    "id": media_item["id"],
-                    "name": media_item["name"],
-                    "biography": media_item["biography"],
-                    "birthday": media_item["birthday"],
-                    "deathday": media_item["deathday"],
-                    "gender": media_item["gender"],
-                    "site_img_path": media_item["site_img_path"],
-                    "local_img_path": media_item["local_img_path"],
-                    "movies": media_item["movies"]
-                }
-
-            media_item_obj, created = model.objects.get_or_create(
-                search_id=media_item["id"],
-                defaults=defaults
-            )
-
-    else:
-        create_error_message(messages, media_type, "Json файл с данными не был найден, либо был очищен")
-
 
 def delete_selected_media_items(request, media_type, messages, messages_block):
     media_ids = request.POST.getlist('media_ids')
@@ -347,155 +133,7 @@ def delete_all_media_items(request, media_type, messages, messages_block):
 
     collect_special_messages_block(messages, messages_block, request)
 
-# def start_parsing_media_items(request, media_type, messages, messages_block):
-    # vpn_is_connected = request.POST.get('vpn_is_connected')
-    # get_media_items_id_list = request.POST.get("get_media_items_id")
-    # start_page = request.POST.get('start_page')
-    # end_page = request.POST.get('end_page')
-    # get_media_items_data = request.POST.get("get_media_items_data")
-    # delete_jsons = request.POST.get('delete_jsons')
-    # update_db = request.POST.get('update_db')
-    # should_download_images = request.POST.get('download_images')
-
-#     models = {
-#         "films": Film,
-#         "serials": Serial,
-#         "actors": Actor,
-#     }
-
-#     model = models.get(media_type)
-
-#     if media_type == "films":
-#         media_items_ids_root_url = f"{BASE_URL}/movie/popular"
-#         media_item_data_root_url = f"{BASE_URL}/movie"
-#     elif media_type == "serials":
-#         media_items_ids_root_url = f"{BASE_URL}/tv/popular"
-#         media_item_data_root_url = f"{BASE_URL}/tv"
-#     elif media_type == "actors":
-#         media_items_ids_root_url = f"{BASE_URL}/person/popular"
-#         media_item_data_root_url = f"{BASE_URL}/person"
-
-#     folder_path = get_folder_path(media_type, jsons_folder_path)
-#     os.makedirs(folder_path, exist_ok=True)
-
-#     url_for_download_images = "https://media.themoviedb.org/t/p/w220_and_h330_face/"
-    
-#     imgs_folder = f"mainProject/static/images/{media_type}"
-#     os.makedirs(imgs_folder, exist_ok=True)
-
-#     ids_json_filename = f"{media_type}_id.json"
-#     ids_json_filepath = os.path.join(folder_path, ids_json_filename)
-
-#     media_datasets_json_filename = f"{media_type}.json"
-#     media_datasets_json_filepath = os.path.join(folder_path, media_datasets_json_filename)
-
-#     if not model:
-#         create_error_message(messages, media_type, "Модель не найдена")
-#         collect_special_messages_block(messages, messages_block, request)
-#         return
-
-#     if vpn_is_connected and get_media_items_id_list:
-#         try:
-#             start_time, lead_time = get_media_items_id(media_type, start_page, end_page, media_items_ids_root_url, ids_json_filepath)
-#             create_success_message(messages, media_type, start_time, lead_time, "Id объектов получены")
-
-#         except requests.exceptions.ConnectionError:
-#             create_error_message(messages, media_type, "VPN не включен!")
-
-#     if vpn_is_connected and get_media_items_data:
-#         try:
-#             start_time, lead_time = parse_media_items(media_type, media_item_data_root_url, ids_json_filepath, media_datasets_json_filepath, url_for_download_images)
-#             create_success_message(messages, media_type, start_time, lead_time, "Данные объектов получены")
-
-#         except Exception as e:
-#             create_error_message(messages, media_type, f"Возможно не включен VPN. Ошибка при запросе к TMDB API! {e}")
-
-#     if update_db:
-#         start_time, lead_time = transfer_media_items_to_db(messages, media_type, media_datasets_json_filepath, model)
-#         create_success_message(messages, media_type, start_time, lead_time, "Объекты занесены в бд")
-
-#     if delete_jsons:
-#         start_time, lead_time = delete_everything_in_folder(folder_path)
-#         create_success_message(messages, media_type, start_time, lead_time, "Папка с json файлами очищена!")
-
-#     if vpn_is_connected and should_download_images:
-#         start_time, lead_time = download_images(model)
-
-#         create_success_message(
-#             messages, 
-#             media_type, 
-#             start_time, 
-#             lead_time, 
-#             "Фотографии актеров скачаны" if media_type == "actors" else "Постеры скачаны"
-#         )
-
-#     collect_special_messages_block(messages, messages_block, request)
-
-@measure_time
-def parse_films_without_using_jsons(media_type, ids, model, img_url, nums):
-    for id in ids:
-        is_exist = model.objects.filter(search_id = id).exists()
-        if is_exist:
-            continue
-
-        url = f"{BASE_URL}/movie/{id}"
-
-        params = {
-            "api_key": api_key,
-            "language": "en",
-        }
-
-        img_index = "poster_path"
-
-        response = requests.get(url, params=params)
-        response.raise_for_status()
-
-        media_item = response.json()
-
-        if media_item[img_index] is None:
-            site_img_path = ""
-            local_img_path = ""
-        else:
-            site_img_path = f"{img_url}/{media_item[img_index]}"
-            local_img_path = f"images/{media_type}/{media_item["id"]}.jpg"
-
-        if media_item["release_date"] is None or media_item["release_date"] == "":
-            release_date = date(2050, 1, 1)
-        else:
-            release_date = media_item["release_date"]
-
-        defaults = {
-            "search_id": media_item["id"],
-            "title": media_item["title"],
-            "budget": media_item["budget"],
-            "revenue": media_item["revenue"],
-            "overview": media_item["overview"],
-            "site_img_path": site_img_path,
-            "local_img_path": local_img_path,
-            "release_date": release_date,
-            "runtime": media_item["runtime"],
-            "status": media_item["status"],
-            "rating": media_item["vote_average"],
-            "genres": [{"id": genre["id"], "name": genre["name"]} for genre in media_item["genres"]]
-        }
-
-        film, created = model.objects.get_or_create(
-            search_id=media_item["id"],
-            defaults=defaults
-        )
-
-        img_filepath = os.path.join("mainProject/static", local_img_path)
-
-        if not os.path.exists(img_filepath):
-            if site_img_path != "":
-                p = requests.get(site_img_path)
-            
-                with open(img_filepath, "wb") as out:
-                    out.write(p.content)
-
-        nums[0] += 1
-
-def load_movies_from_source(request, media_type, messages, messages_block, ids):
+def download_movies_by_actors(request, media_type, messages, messages_block, ids):
 
     models = {
         "films": Film,
@@ -523,17 +161,111 @@ def load_movies_from_source(request, media_type, messages, messages_block, ids):
         collect_special_messages_block(messages, messages_block, request)
         return
     
-    nums = [0]
+    added_films = 0
 
-    start_time, lead_time = parse_films_without_using_jsons(media_type, ids, model, img_url, nums)
+    start = datetime.now()
 
-    create_success_message(messages, media_type, start_time, lead_time, f"Успешно добавлено {nums[0]} объектов!")
+    for id in ids:
+        is_exist = model.objects.filter(search_id = id).exists()
+        if is_exist:
+            continue
+
+        url = f"{BASE_URL}/movie/{id}"
+
+        params = {
+            "api_key": api_key,
+            "language": "en",
+        }
+
+        img_index = "poster_path"
+
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+
+        media_item = response.json()
+
+        download_media_item(media_type, img_index, media_item, model, img_url)
+        added_films += 1
+    end = datetime.now()
+    lead_time = end - start
+
+    create_success_message(messages, media_type, start, lead_time, f"Успешно добавлено {added_films} объектов!")
 
     collect_special_messages_block(messages, messages_block, request)
 
-@measure_time
-def start_parsing_media_items(request, media_type, messages, messages_block):
-    vpn_is_connected = request.POST.get('vpn_is_connected')
+def download_media_item(media_type, img_index, media_item_data, model, img_url):
+    if media_item_data[img_index] is None:
+        site_img_path = ""
+        local_img_path = ""
+    else:
+        site_img_path = f"{img_url}/{media_item_data[img_index]}"
+        local_img_path = f"images/{media_type}/{media_item_data["id"]}.jpg"
+
+
+    if media_type == "films":
+        release_date = media_item_data["release_date"]
+
+        if media_item_data["release_date"] is None or media_item_data["release_date"] == "":
+            release_date = date(2050, 1, 1)
+
+    if media_type == "films":
+        defaults = {
+            "id": media_item_data["id"],
+            "title": media_item_data["title"],
+            "budget": media_item_data["budget"],
+            "revenue": media_item_data["revenue"],
+            "overview": media_item_data["overview"],
+            "site_img_path": site_img_path,
+            "local_img_path": local_img_path,
+            "release_date": release_date,
+            "runtime": media_item_data["runtime"],
+            "status": media_item_data["status"],
+            "rating": media_item_data["vote_average"],
+            "genres": [{"id": genre["id"], "name": genre["name"]} for genre in media_item_data["genres"]]
+        }
+    elif media_type == "serials":
+        defaults = {
+            "id": media_item_data["id"],
+            "first_air_date": media_item_data["first_air_date"],
+            "last_air_date": media_item_data["last_air_date"],
+            "title": media_item_data["name"],
+            "episodes": media_item_data["number_of_episodes"],
+            "seasons": media_item_data["number_of_seasons"],
+            "overview": media_item_data["overview"],
+            "site_img_path": site_img_path,
+            "local_img_path": local_img_path,
+            "status": media_item_data["status"],
+            "rating": media_item_data["vote_average"],
+            "genres": [{"id": genre["id"], "name": genre["name"]} for genre in media_item_data["genres"]]
+        }
+    elif media_type == "actors":
+        defaults = {
+            "id": media_item_data["id"],
+            "name": media_item_data["name"],
+            "biography": media_item_data["biography"],
+            "birthday": media_item_data["birthday"],
+            "deathday": media_item_data["deathday"],
+            "gender": media_item_data["gender"],
+            "site_img_path": site_img_path,
+            "local_img_path": local_img_path,
+            "movies": [movie["id"] for movie in media_item_data["movie_credits"]["cast"]]
+        }
+
+    media_item_obj, created = model.objects.get_or_create(
+        search_id=media_item_data["id"],
+        defaults=defaults
+    )
+
+    img_filepath = os.path.join("mainProject/static", local_img_path)
+
+    if not os.path.exists(img_filepath):
+        if site_img_path != "":
+            p = requests.get(site_img_path)
+        
+            with open(img_filepath, "wb") as out:
+                out.write(p.content)
+
+def parsing_media_items(request, media_type, messages, messages_block):
     start_page = request.POST.get('start_page')
     end_page = request.POST.get('end_page')
 
@@ -555,8 +287,10 @@ def start_parsing_media_items(request, media_type, messages, messages_block):
 
     img_url = "https://media.themoviedb.org/t/p/w220_and_h330_face/"
 
-    if vpn_is_connected:
+    try:
         for page_number in range(int(start_page), int(end_page) + 1):
+            start = datetime.now()
+
             params = {
                 "api_key": api_key,
                 "language": "en",
@@ -573,6 +307,9 @@ def start_parsing_media_items(request, media_type, messages, messages_block):
                 is_exist = model.objects.filter(search_id = media_item["id"]).exists()
 
                 if is_exist:
+                    continue
+
+                if media_type == "actors" and media_item["known_for_department"] != "Acting":
                     continue
                 
                 data_url = f"{BASE_URL}/{url_part}/{media_item["id"]}"
@@ -598,76 +335,23 @@ def start_parsing_media_items(request, media_type, messages, messages_block):
 
                 media_item_data = response.json()
 
-                if media_type == "actors" and media_item["known_for_department"] != "Acting":
-                    continue
+                download_media_item(media_type, img_index, media_item_data, model, img_url)
 
-                if media_item_data[img_index] is None:
-                    site_img_path = ""
-                    local_img_path = ""
-                else:
-                    site_img_path = f"{img_url}/{media_item_data[img_index]}"
-                    local_img_path = f"images/{media_type}/{media_item_data["id"]}.jpg"
+            end = datetime.now()
+            lead_time = end - start
 
+            create_success_message(
+                messages, 
+                media_type, 
+                str(start.replace(microsecond=0)),
+                str(lead_time.total_seconds()),
+                f"Страница {page_number} успешно скачана!"
+            )
 
-                if media_type == "films":
-                    release_date = media_item_data["release_date"]
+            collect_special_messages_block(messages, messages_block, request)
 
-                    if media_item_data["release_date"] is None or media_item_data["release_date"] == "":
-                        release_date = date(2050, 1, 1)
+    except requests.exceptions.ConnectionError:
+        create_error_message(messages, media_type, "VPN не включен!")
+        collect_special_messages_block(messages, messages_block, request)
+        return
 
-                if media_type == "films":
-                    defaults = {
-                        "id": media_item_data["id"],
-                        "title": media_item_data["title"],
-                        "budget": media_item_data["budget"],
-                        "revenue": media_item_data["revenue"],
-                        "overview": media_item_data["overview"],
-                        "site_img_path": site_img_path,
-                        "local_img_path": local_img_path,
-                        "release_date": release_date,
-                        "runtime": media_item_data["runtime"],
-                        "status": media_item_data["status"],
-                        "rating": media_item_data["vote_average"],
-                        "genres": [{"id": genre["id"], "name": genre["name"]} for genre in media_item_data["genres"]]
-                    }
-                elif media_type == "serials":
-                    defaults = {
-                        "id": media_item_data["id"],
-                        "first_air_date": media_item_data["first_air_date"],
-                        "last_air_date": media_item_data["last_air_date"],
-                        "title": media_item_data["name"],
-                        "episodes": media_item_data["number_of_episodes"],
-                        "seasons": media_item_data["number_of_seasons"],
-                        "overview": media_item_data["overview"],
-                        "site_img_path": site_img_path,
-                        "local_img_path": local_img_path,
-                        "status": media_item_data["status"],
-                        "rating": media_item_data["vote_average"],
-                        "genres": [{"id": genre["id"], "name": genre["name"]} for genre in media_item_data["genres"]]
-                    }
-                elif media_type == "actors":
-                    defaults = {
-                        "id": media_item_data["id"],
-                        "name": media_item_data["name"],
-                        "biography": media_item_data["biography"],
-                        "birthday": media_item_data["birthday"],
-                        "deathday": media_item_data["deathday"],
-                        "gender": media_item_data["gender"],
-                        "site_img_path": site_img_path,
-                        "local_img_path": local_img_path,
-                        "movies": [movie["id"] for movie in media_item_data["movie_credits"]["cast"]]
-                    }
-
-                media_item_obj, created = model.objects.get_or_create(
-                    search_id=media_item_data["id"],
-                    defaults=defaults
-                )
-
-                img_filepath = os.path.join("mainProject/static", local_img_path)
-
-                if not os.path.exists(img_filepath):
-                    if site_img_path != "":
-                        p = requests.get(site_img_path)
-                    
-                        with open(img_filepath, "wb") as out:
-                            out.write(p.content)
