@@ -45,11 +45,12 @@
         <div class="title_block">
           Сообщения и ошибки
         </div>
-        <form action="{% url "clear_messages" %}" method="post">
+        <form action="{% url "clear_messages" %}" method="post" id="clear_messages">
           {% csrf_token %}
           <button type="submit"  class="custom_button delete_messages_button" onclick="return confirm('Продолжить?')">
             Очистить сообщения
           </button>
+          {% block page %}{% endblock page %}
         </form>
         <div class="messages_type">
           {% for type, num in messages_type.items %}

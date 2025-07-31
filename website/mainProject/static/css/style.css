@@ -49,6 +49,14 @@ main {
     padding-top: 100px;
 }
 
+.invisible_block {
+    width: 0;
+    height: 0;
+    display: none;
+    visibility: hidden;
+    pointer-events: none;
+}
+
 .media_container {
     display: flex;
     flex-direction: column;

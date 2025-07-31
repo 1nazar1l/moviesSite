@@ -16,7 +16,7 @@ def home(request):
 def films_admin_panel(request):
     all_films = Film.objects.all()
 
-    films = all_films.order_by('-id')[0:100]
+    films = all_films.order_by('-id')
 
     messages = request.session.get('custom_messages', [])
     messages = messages[::-1]
@@ -190,8 +190,12 @@ def clear_messages(request):
         "message_type": "clear"
     }]]
     request.session.modified = True
+
+    next_url = request.POST.get('next', '/films/')
+
+    return redirect(next_url)
+
     
-    return redirect('films')
 
 def parse_movies_by_actors(request):
     messages = []

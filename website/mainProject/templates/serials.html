@@ -45,3 +45,9 @@
     {% include "admin_page_components/parse_media_content_block.html" with title_text="Парсинг сериалов" media_type="serials"%}
   </form>
 {% endblock parse_media_block %}
+
+{% block page %}
+  <div class="invisible_block">
+    <input type="hidden" name="next" value="{{ request.path }}" form="clear_messages">
+  </div>
+{% endblock page %}
