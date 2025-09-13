@@ -1,13 +1,25 @@
 <!DOCTYPE html>
+{% load static %}
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="{% static "css/normalize.css" %}">
+    <link rel="stylesheet" href="{% static "css/style1.css" %}">
 </head>
 <body>
-    <a href="{% url "films" %}">Фильмы</a>
+    {% comment %} <a href="{% url "films" %}">Фильмы</a>
     <a href="{% url "serials" %}">Сериалы</a>
-    <a href="{% url "actors" %}">Актеры</a>
+    <a href="{% url "actors" %}">Актеры</a> {% endcomment %}
+    <header>
+        <div class="input_block">
+            <input type="text" placeholder="Фильмы, сериалы, персоны">
+            <div class="icon_block">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </div>
+        </div>
+    </header>
 </body>
 </html>

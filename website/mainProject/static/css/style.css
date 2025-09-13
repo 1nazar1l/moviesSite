@@ -46,7 +46,8 @@ header {
 }
 
 main {
-    padding-top: 100px;
+    display: flex;
+
 }
 
 .invisible_block {
@@ -55,6 +56,18 @@ main {
     display: none;
     visibility: hidden;
     pointer-events: none;
+}
+
+.filter_block {
+    width: 20%;
+    /* background-color: red; */
+    padding-top: 100px;
+}
+
+.main_block {
+    width: 80%;
+    padding-top: 100px;
+    height: fit-content;
 }
 
 .media_container {
@@ -124,11 +137,12 @@ main {
     padding: 20px;
     width: 100%;
     display: flex;
+    justify-content: space-between;
 }
 
-.admin_container .block {
+/* .admin_container .block {
     width: 60%;
-}
+} */
 
 .parse_media_items_block form {
     margin-bottom: 36px;
@@ -306,7 +320,7 @@ main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 40%;
+    /* width: 40%; */
 }
 
 .messages_type {

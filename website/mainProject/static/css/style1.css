@@ -1,0 +1,36 @@
+body {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+header {
+    width: 100%;
+    height: 72px;
+    background-color: #141414;
+    padding: 15px 40px;
+
+}
+
+header .input_block {
+    display: flex;
+    width: fit-content;
+}
+
+header input {
+    background-color: #373737;
+    color: #999999;
+    border: 0;
+    outline: 0;
+    border-radius: 12px;
+    padding: 8px 10px;
+
+}
+
+header .input_block .icon_block {
+    width: 20px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

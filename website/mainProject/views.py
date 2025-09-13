@@ -10,6 +10,8 @@ from .models import Film, Serial, Actor
 
 from django.shortcuts import redirect
 
+from django.db.models import Q
+
 def home(request):
     return render(request, "home.html")
 
@@ -31,6 +33,13 @@ def films_admin_panel(request):
     for message_block in messages:
         for message in message_block:
             messages_type[message["message_type"]] += 1
+
+    id_search = request.GET.get("id_search")
+
+    if id_search:
+        films = films.filter(
+            Q(search_id__icontains=id_search)
+        )
 
     return render(request, "films.html", context={
         "films": films,

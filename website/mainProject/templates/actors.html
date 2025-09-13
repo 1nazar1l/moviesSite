@@ -54,3 +54,33 @@
     <input type="hidden" name="next" value="{{ request.path }}" form="clear_messages">
   </div>
 {% endblock page %}
+
+{% block filter_block %}
+<div class="filter_content">
+  <div>
+    <input type="text" placeholder="Поиск по id">
+  </div>
+  <div>
+    <input type="text" placeholder="Поиск по имени">
+  </div>
+  <div>
+    <span>День рождения</span>
+    <input type="date">
+  </div>
+  <div>
+    <span>Дата когда скончался</span>
+    <input type="date">
+  </div>
+  <div>
+    <span>Пол</span>
+    <div>
+      <span>Мужчина</span>
+      <input type="checkbox">
+    </div>
+    <div>
+      <span>Женщина</span>
+      <input type="checkbox">
+    </div>
+  </div>
+</div>
+{% endblock filter_block %}

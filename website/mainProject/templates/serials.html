@@ -51,3 +51,41 @@
     <input type="hidden" name="next" value="{{ request.path }}" form="clear_messages">
   </div>
 {% endblock page %}
+
+{% block filter_block %}
+<div class="filter_content">
+  <div>
+    <input type="text" placeholder="Поиск по id">
+  </div>
+  <div>
+    <input type="text" placeholder="Поиск по названию">
+  </div>
+  <div>
+    <span>Впервые в эфире</span>
+    <input type="range">
+  </div>
+  <div>
+    <span>Закончили свой сериал</span>
+    <input type="range">
+  </div>
+  <div>
+    <span>Колличество эпизодов</span>
+    <input type="range">
+  </div>
+  <div>
+    <span>Колличество сезонов</span>
+    <input type="range">
+  </div>
+  <div>
+    <span>Вышел ли сериал</span>
+    <input type="checkbox">
+  </div>
+  <div>
+    <span>Рейтинг</span>
+    <input type="range">
+  </div>
+  <div>
+    <span>Жанры(тут будет выпадающий список)</span>
+  </div>
+</div>
+{% endblock filter_block %}

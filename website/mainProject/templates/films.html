@@ -65,3 +65,52 @@
     <input type="hidden" name="next" value="{{ request.path }}" form="clear_messages">
   </div>
 {% endblock page %}
+
+{% block filter_block %}
+<form action="{% url "films" %}">
+
+  <div class="filter_content">
+    <div>
+      <input type="text" placeholder="Поиск по id" name="id_search">
+    </div>
+    <div>
+      <input type="text" placeholder="Поиск по названию">
+    </div>
+    <div>
+      <span>Бюджет</span>
+      <input type="text" placeholder="От">
+      <input type="text" placeholder="До">
+    </div>
+    <div>
+      <span>Выручка</span>
+      <input type="text" placeholder="От">
+      <input type="text" placeholder="До">
+    </div>
+    <div>
+      <span>Год выхода</span>
+      <input type="date">
+      <input type="date">
+    </div>
+    <div>
+      <span>Продолжительность</span>
+      <input type="text" placeholder="От">
+      <input type="text" placeholder="До">
+    </div>
+    <div>
+      <span>Вышел ли фильм</span>
+      <input type="checkbox">
+    </div>
+    <div>
+      <span>Рейтинг</span>
+      <input type="text" placeholder="От">
+      <input type="text" placeholder="До">
+    </div>
+    <div>
+      <span>Жанры(тут будет выпадающий список)</span>
+    </div>
+  </div>
+  {% comment %} <button type="submit">Отправить</button> {% endcomment %}
+
+  <button type="submit">Отправить</button>
+</form>
+{% endblock filter_block %}

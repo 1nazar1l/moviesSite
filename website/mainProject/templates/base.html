@@ -18,124 +18,126 @@
     <a href="{% url "actors" %}">Актеры</a>
   </header>
   <main>
-    <div class="media_container">
-        <div class="title_block">
-          <p>{% block title %}{% endblock title %}</p>
-        </div>
-        <div class="buttons_block">
-          {% block delete_buttons_block %}{% endblock delete_buttons_block %}
-        </div>
-      <div class="media_items_block">
-        <div class="media_items_content">
-          {% block media_block %}{% endblock media_block %}
+    <div class="filter_block">
+      {% block filter_block %}{% endblock filter_block %}
+    </div>
+    <div class="main_block">
+      <div class="media_container">
+          <div class="title_block">
+            <p>{% block title %}{% endblock title %}</p>
+          </div>
+          <div class="buttons_block">
+            {% block delete_buttons_block %}{% endblock delete_buttons_block %}
+          </div>
+        <div class="media_items_block">
+          <div class="media_items_content">
+            {% block media_block %}{% endblock media_block %}
+          </div>
         </div>
       </div>
-    </div>
-    <div class="admin_container">
-      <div class="block">
-        <div class="parse_media_items_block">
-          {% block parse_media_block %}{% endblock parse_media_block %}
+      <div class="admin_container">
+        <div class="block">
+          <div class="parse_media_items_block">
+            {% block parse_media_block %}{% endblock parse_media_block %}
+          </div>
+      
+          <div class="parse_media_items_block">
+            {% block parsing_movies_by_actors_block %}{% endblock parsing_movies_by_actors_block %}
+          </div>
         </div>
-        
-        <div class="parse_media_items_block">
-          {% block parsing_movies_by_actors_block %}{% endblock parsing_movies_by_actors_block %}
-        </div>
-      </div>  
-      <div class="messages_container">
-        <div class="title_block">
-          Сообщения и ошибки
-        </div>
-        <form action="{% url "clear_messages" %}" method="post" id="clear_messages">
-          {% csrf_token %}
-          <button type="submit"  class="custom_button delete_messages_button" onclick="return confirm('Продолжить?')">
-            Очистить сообщения
-          </button>
-          {% block page %}{% endblock page %}
-        </form>
-        <div class="messages_type">
-          {% for type, num in messages_type.items %}
-
-          {% if type != "clear" %}
-            <div class="message_type_block">
-              {% if type == "success" %}
-                <div class="icon_info success">
-                  <i class="fa-solid fa-circle-check"></i>
-                </div>
-                {% elif type == "error" %}
-                <div class="icon_info error">
-                  <i class="fa-solid fa-triangle-exclamation"></i>
-                </div>
-                {% elif type == "warning" %}
-                <div class="icon_info warning">
-                  <i class="fa-solid fa-triangle-exclamation"></i>
-                </div>
-              {% endif %}
-              <b>{{type|upper}}</b>
-              {{num}}
-            </div>
-
-          {% endif %}
-
-          {% endfor %}
-        </div>
-        <div class="messages_block">
-          <div class="messages_content">
-            {% for message_block in messages %}
-                {% for message in message_block %}
-                {% if message.message_type != "clear" %}
-                  <div class="message_block">
-                    <div class="main_info">
-                      <div class="text_info">
-                        <div>
-                          {% if message.media_type == "actors" %}
-                            <b>Откуда:</b> Актеры
-                          {% elif message.media_type == "serials" %}  
-                            <b>Откуда:</b> Сериалы
-                          {% elif message.media_type == "films" %}
-                            <b>Откуда:</b> Фильмы
-                          {% endif %}
-                        </div>
-                        <div>
-                          <b>Админ:</b> {{message.admin}}
-                        </div>
-                      </div>
-                      {% if message.message_type == "success" %}
-                      <div class="icon_info success">
-                        <i class="fa-solid fa-circle-check"></i>
-                      </div>
-                      {% elif message.message_type == "error" %}
-                      <div class="icon_info error">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                      </div>
-                      {% elif message.message_type == "warning" %}
-                      <div class="icon_info warning">
-                        <i class="fa-solid fa-exclamation"></i>
-                      </div>
-                      {% endif %}
-                    </div>
-                    <div class="message_border"></div>
-                    <div class="text">
-                      {{message.text}}
-                    </div>
-                    <div class="message_border"></div>
-                    <div class="other_info">
-                      <div>
-                        <b>Когда произошло: </b>
-                        {{message.when_happened}}
-                      </div>
-                      <div>
-                        <b>Продолжительность:</b>
-                        {{message.time_to_complete}} с.
-                      </div>
-                    </div>
+        <div class="messages_container">
+          <div class="title_block">
+            Сообщения и ошибки
+          </div>
+          <form action="{% url "clear_messages" %}" method="post" id="clear_messages">
+            {% csrf_token %}
+            <button type="submit"  class="custom_button delete_messages_button" onclick="return confirm('Продолжить?')">
+              Очистить сообщения
+            </button>
+            {% block page %}{% endblock page %}
+          </form>
+          <div class="messages_type">
+            {% for type, num in messages_type.items %}
+            {% if type != "clear" %}
+              <div class="message_type_block">
+                {% if type == "success" %}
+                  <div class="icon_info success">
+                    <i class="fa-solid fa-circle-check"></i>
                   </div>
-                {% else %}
-                  <div class="message_block">
-                    Сообщения очищены
+                  {% elif type == "error" %}
+                  <div class="icon_info error">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                  </div>
+                  {% elif type == "warning" %}
+                  <div class="icon_info warning">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
                   </div>
                 {% endif %}
-                {% endfor %}
+                <b>{{type|upper}}</b>
+                {{num}}
+              </div>
+            {% endif %}
             {% endfor %}
+          </div>
+          <div class="messages_block">
+            <div class="messages_content">
+              {% for message_block in messages %}
+                  {% for message in message_block %}
+                  {% if message.message_type != "clear" %}
+                    <div class="message_block">
+                      <div class="main_info">
+                        <div class="text_info">
+                          <div>
+                            {% if message.media_type == "actors" %}
+                              <b>Откуда:</b> Актеры
+                            {% elif message.media_type == "serials" %}
+                              <b>Откуда:</b> Сериалы
+                            {% elif message.media_type == "films" %}
+                              <b>Откуда:</b> Фильмы
+                            {% endif %}
+                          </div>
+                          <div>
+                            <b>Админ:</b> {{message.admin}}
+                          </div>
+                        </div>
+                        {% if message.message_type == "success" %}
+                        <div class="icon_info success">
+                          <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        {% elif message.message_type == "error" %}
+                        <div class="icon_info error">
+                          <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        {% elif message.message_type == "warning" %}
+                        <div class="icon_info warning">
+                          <i class="fa-solid fa-exclamation"></i>
+                        </div>
+                        {% endif %}
+                      </div>
+                      <div class="message_border"></div>
+                      <div class="text">
+                        {{message.text}}
+                      </div>
+                      <div class="message_border"></div>
+                      <div class="other_info">
+                        <div>
+                          <b>Когда произошло: </b>
+                          {{message.when_happened}}
+                        </div>
+                        <div>
+                          <b>Продолжительность:</b>
+                          {{message.time_to_complete}} с.
+                        </div>
+                      </div>
+                    </div>
+                  {% else %}
+                    <div class="message_block">
+                      Сообщения очищены
+                    </div>
+                  {% endif %}
+                  {% endfor %}
+              {% endfor %}
+            </div>
           </div>
         </div>
       </div>
