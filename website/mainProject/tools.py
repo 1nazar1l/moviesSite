@@ -42,6 +42,9 @@ def create_success_message(messages, media_type, start_time, lead_time, text):
     })
 
 def collect_special_messages_block(messages, messages_block, request):
+    if 'custom_messages' not in request.session:
+        request.session['custom_messages'] = []
+        
     messages_block.append(messages)
     request.session['custom_messages'].extend(messages_block)
     request.session.modified = True
@@ -256,11 +259,16 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url):
         defaults=defaults
     )
 
+    directory = local_img_path.split("/")
+    directory = f"mainProject/static/{directory[0]}/{directory[1]}"
+    os.makedirs(directory, exist_ok=True)
+
     img_filepath = os.path.join("mainProject/static", local_img_path)
 
     if not os.path.exists(img_filepath):
         if site_img_path != "":
             p = requests.get(site_img_path)
+            print(p.content)
         
             with open(img_filepath, "wb") as out:
                 out.write(p.content)
