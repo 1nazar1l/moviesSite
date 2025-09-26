@@ -1,0 +1,291 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block css %}
+  <link rel="stylesheet" href="{% static "main/css/normalize.css" %}">
+  <link rel="stylesheet" href="{% static "main/css/base.css" %}">
+  <link rel="stylesheet" href="{% static "main/css/index.css" %}">
+{% endblock css %}
+{% block header_nav %}
+  <nav>
+    <ul>
+      <li><a href="films.html">Фильмы</a></li>
+      <li><a href="#">Сериалы</a></li>
+      <li><a href="#">Актеры</a></li>
+    </ul>
+  </nav>
+{% endblock header_nav %}
+
+{% block sidebar_nav %}
+  <nav>
+    <ul>
+      <li><a href="films.html">Фильмы</a></li>
+      <li><a href="#">Сериалы</a></li>
+      <li><a href="#">Актеры</a></li>
+    </ul>
+  </nav>
+{% endblock sidebar_nav %}
+
+{% block auth_header_profile_url %}
+  <div class="profile-block">
+    <span>GigaNiga</span>
+    <div class="profile-icon">
+      <!-- <i class="fa-solid fa-circle-user"></i> -->
+      <div class="circle">
+        <img src="{% static 'main/images/1007734.jpg' %}" alt="">
+      </div>
+    </div>
+  </div>
+{% endblock auth_header_profile_url %}
+
+{% block not_auth_header_profile_url %}
+  <button class="auth-btn" onclick="window.location.href='auth.html'">Войти</button>
+{% endblock not_auth_header_profile_url %}
+
+{% block auth_sidebar_profile_url %}
+  <div class="profile-block">
+    <span>GigaNiga</span>
+    <div class="profile-icon">
+      <!-- <i class="fa-solid fa-circle-user"></i> -->
+      <div class="circle">
+        <img src="{% static 'main/images/1007734.jpg' %}" alt="">
+      </div>
+    </div>
+  </div>
+{% endblock auth_sidebar_profile_url %}
+
+{% block not_auth_sidebar_profile_url %}
+  <button class="auth-btn" onclick="window.location.href='auth.html'">Войти</button>
+{% endblock not_auth_sidebar_profile_url %}
+
+{% block main_content %}
+  <section class="hero">
+    <h1>Откройте для себя мир кино</h1>
+    <p>
+      Тысячи фильмов и сериалов в одной подборке. Находите новое, сохраняйте
+      любимое, делитесь впечатлениями.
+    </p>
+    <div class="search_block">
+      <input type="text" placeholder="Поиск фильма, сериала, актера..." />
+      <button class="search_btn">Поиск</button>
+      <i class="fa-solid fa-magnifying-glass"></i>
+    </div>
+  </section>
+
+  <div class="content">
+    <section class="section section1">
+      <h2 class="section-title">Популярные фильмы</h2>
+      <div class="cards-carousel">
+        <!-- Карточки фильмов -->
+        <a href="page.html">
+          <div class="card">
+            <div class="card-img">
+              <img src="{% static './images/1007734.jpg' %}" alt="">
+              <!-- <i class="fas fa-film"></i> -->
+            </div>
+            <div class="card-content">
+              <h3 class="card-title">Интерстеллар</h3>
+              <p class="card-meta">2014 • Фантастика</p>
+            </div>
+          </div>
+        </a>
+        <div class="card">
+          <div class="card-img">
+            <i class="fas fa-film"></i>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Интерстеллар</h3>
+            <p class="card-meta">2014 • Фантастика</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img">
+            <i class="fas fa-film"></i>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Интерстеллар</h3>
+            <p class="card-meta">2014 • Фантастика</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img">
+            <i class="fas fa-film"></i>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Интерстеллар</h3>
+            <p class="card-meta">2014 • Фантастика</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img">
+            <i class="fas fa-film"></i>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Начало</h3>
+            <p class="card-meta">2010 • Триллер</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img">
+            <i class="fas fa-film"></i>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Побег из Шоушенка</h3>
+            <p class="card-meta">1994 • Драма</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img">
+            <i class="fas fa-film"></i>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Крестный отец</h3>
+            <p class="card-meta">1972 • Криминал</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img">
+            <i class="fas fa-film"></i>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Темный рыцарь</h3>
+            <p class="card-meta">2008 • Боевик</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img">
+            <i class="fas fa-film"></i>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Форрест Гамп</h3>
+            <p class="card-meta">1994 • Драма</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section section2">
+      <h2 class="section-title">Новые сериалы</h2>
+      <div class="cards-carousel">
+        <!-- Карточки сериалов -->
+        <a href="">
+          <div class="card">
+            <div class="card-img">
+              <i class="fas fa-tv"></i>
+            </div>
+            <div class="card-content">
+              <h3 class="card-title">Игра престолов</h3>
+              <p class="card-meta">2011-2019 • Фэнтези</p>
+            </div>
+          </div>
+        </a>
+        <div class="card">
+          <div class="card-img">
+            <i class="fas fa-tv"></i>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Во все тяжкие</h3>
+            <p class="card-meta">2008-2013 • Драма</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img">
+            <i class="fas fa-tv"></i>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Очень странные дела</h3>
+            <p class="card-meta">2016-2024 • Фантастика</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img">
+            <i class="fas fa-tv"></i>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Друзья</h3>
+            <p class="card-meta">1994-2004 • Комедия</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img">
+            <i class="fas fa-tv"></i>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Черное зеркало</h3>
+            <p class="card-meta">2011-2023 • Антология</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img">
+            <i class="fas fa-tv"></i>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Клан Сопрано</h3>
+            <p class="card-meta">1999-2007 • Криминал</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section section3">
+      <h2 class="section-title">Скоро выйдет</h2>
+      <div class="cards-carousel">
+        <!-- Карточки предстоящих релизов -->
+        <a href="">
+          <div class="card">
+            <div class="card-img">
+              <i class="fas fa-star"></i>
+            </div>
+            <div class="card-content">
+              <h3 class="card-title">Дюна: Часть вторая</h3>
+              <p class="card-meta">2024 • Фантастика</p>
+            </div>
+          </div>
+        </a>
+        <div class="card">
+          <div class="card-img">
+            <i class="fas fa-star"></i>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Миссия невыполнима 8</h3>
+            <p class="card-meta">2024 • Боевик</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img">
+            <i class="fas fa-star"></i>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Джокер: Безумие на двоих</h3>
+            <p class="card-meta">2024 • Триллер</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img">
+            <i class="fas fa-star"></i>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Гадкий я 4</h3>
+            <p class="card-meta">2024 • Мультфильм</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img">
+            <i class="fas fa-star"></i>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Форсаж 11</h3>
+            <p class="card-meta">2024 • Боевик</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img">
+            <i class="fas fa-star"></i>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Мстители: Новый мировой порядок</h3>
+            <p class="card-meta">2024 • Фантастика</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+{% endblock main_content %}

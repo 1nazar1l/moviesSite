@@ -7,5 +7,6 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('mainProject.urls')),
+    path('adminPanel/', include('mainProject.urls')),
+    path('', include('mainSite.urls'))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MovieMarks</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    {% block css %}{% endblock css %}
+  </head>
+  <body>
+    <header id="header">
+      <div class="pc-content">
+        <a href="#" class="logo">MovieMarks</a>
+        {% block header_nav %}{% endblock header_nav %}
+        <div class="header-controls">
+          <div class="theme-toggle" id="themeToggle"></div>
+          {% block not_auth_header_profile_url %}{% endblock not_auth_header_profile_url %}
+        </div>
+      </div>
+      <div class="phone-content">
+        <a href="#" class="logo">MovieMarks</a>
+        <div class="sidebar">
+          <div class="header-controls">
+            {% block auth_sidebar_profile_url %}{% endblock auth_sidebar_profile_url %}
+          </div>
+          {% block sidebar_nav %}{% endblock sidebar_nav %}
+        </div>
+        <div class="main-buttons">
+          <div class="theme-toggle" id="themeToggle"></div>
+          <div class="burger-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      {% block main_content %}{% endblock main_content %}
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <span class="footer-title">О нас</span>
+          <p>
+            MovieMarks - это ваш надежный гид в мире кино и сериалов. Мы
+            помогаем находить и сохранять лучший контент.
+          </p>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-vk"></i></a>
+            <a href="#"><i class="fab fa-telegram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h3>
+            <span class="footer-title">Навигация</span>
+          </h3>
+          <ul class="footer-links">
+            <li><a href="#">Главная</a></li>
+            <li><a href="#">Фильмы</a></li>
+            <li><a href="#">Сериалы</a></li>
+            <li><a href="#">Актеры</a></li>
+            <li><a href="#">Новости</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3><span class="footer-title">Помощь</span></h3>
+          <ul class="footer-links">
+            <li><a href="#">Обратная связь</a></li>
+            <li><a href="#">Политика конфиденциальности</a></li>
+            <li><a href="#">Условия использования</a></li>
+            <li><a href="#">FAQ</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="copyright">
+        <p>&copy; 2023 MovieMarks. Все права защищены.</p>
+      </div>
+    </footer>
+    <script src="{% static "main/js/script.js" %}"></script>
+  </body>
+</html>
