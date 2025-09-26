@@ -1,0 +1,97 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block css %}
+  <link rel="stylesheet" href="{% static "main/css/normalize.css" %}">
+  <link rel="stylesheet" href="{% static "main/css/base.css" %}">
+  <link rel="stylesheet" href="{% static "main/css/auth.css" %}">
+{% endblock css %}
+
+{% block script %}
+  <script src="{% static "main/js/base.js" %}"></script>
+  <script src="{% static "main/js/auth.js" %}"></script>
+{% endblock script %}
+
+{% block header_nav %}
+  <nav>
+    <ul>
+      <li><a href="{% url "mainPage" %}">Главная</a></li>
+      <li><a href="films.html">Фильмы</a></li>
+      <li><a href="#">Сериалы</a></li>
+      <li><a href="#">Актеры</a></li>
+    </ul>
+  </nav>
+{% endblock header_nav %}
+
+{% block sidebar_nav %}
+  <nav>
+    <ul>
+      <li><a href="{% url "mainPage" %}">Главная</a></li>
+      <li><a href="films.html">Фильмы</a></li>
+      <li><a href="#">Сериалы</a></li>
+      <li><a href="#">Актеры</a></li>
+    </ul>
+  </nav>
+{% endblock sidebar_nav %}
+
+{% block not_auth_header_profile_url %}
+  <a class="auth-btn" href="{% url "mainPage" %}">На главную</a>
+{% endblock not_auth_header_profile_url %}
+
+
+{% block not_auth_sidebar_profile_url %}
+  <a class="auth-btn" href="{% url "mainPage" %}">На главную</a>
+{% endblock not_auth_sidebar_profile_url %}
+
+{% block main_content %}
+  <div class="auth-container">
+      <div class="auth-card">
+          <div class="auth-header">
+              <h1 class="auth-title">Вход в аккаунт</h1>
+              <p class="auth-subtitle">Введите свои данные для входа в систему</p>
+          </div>
+          
+          <form class="auth-form" id="loginForm">
+              <div class="form-group">
+                  <label for="email" class="form-label">Электронная почта</label>
+                  <input type="email" id="email" class="form-input" placeholder="example@mail.com" required>
+              </div>
+              
+              <div class="form-group">
+                  <label for="password" class="form-label">Пароль</label>
+                  <div class="password-container">
+                      <input type="password" id="password" class="form-input" placeholder="Введите пароль" required>
+                      <button type="button" class="toggle-password" id="togglePassword">
+                          <i class="far fa-eye"></i>
+                      </button>
+                  </div>
+              </div>
+              
+              <div class="remember-forgot">
+                  <label class="remember-me">
+                      <input type="checkbox" id="remember">
+                      Запомнить меня
+                  </label>
+                  <a href="#" class="forgot-password">Забыли пароль?</a>
+              </div>
+              
+              <button type="submit" class="submit-btn">Войти</button>
+          </form>
+          
+          <div class="auth-divider">
+              <span>или войдите с помощью</span>
+          </div>
+          
+          <div class="social-auth">
+              <button class="social-btn google">
+                  <i class="fab fa-google"></i>
+                  Войти через Google
+              </button>
+          </div>
+          
+          <div class="auth-footer">
+              <p>Еще нет аккаунта? <a href="reg.html">Зарегистрироваться</a></p>
+          </div>
+      </div>
+  </div>
+{% endblock main_content %}

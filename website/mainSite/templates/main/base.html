@@ -15,7 +15,7 @@
   <body>
     <header id="header">
       <div class="pc-content">
-        <a href="#" class="logo">MovieMarks</a>
+        <a href="{% url "mainPage" %}" class="logo">MovieMarks</a>
         {% block header_nav %}{% endblock header_nav %}
         <div class="header-controls">
           <div class="theme-toggle" id="themeToggle"></div>
@@ -86,6 +86,6 @@
         <p>&copy; 2023 MovieMarks. Все права защищены.</p>
       </div>
     </footer>
-    <script src="{% static "main/js/script.js" %}"></script>
+    {% block script %}{% endblock script %}
   </body>
 </html>

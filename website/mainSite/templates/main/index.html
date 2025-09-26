@@ -6,6 +6,12 @@
   <link rel="stylesheet" href="{% static "main/css/base.css" %}">
   <link rel="stylesheet" href="{% static "main/css/index.css" %}">
 {% endblock css %}
+
+{% block script %}
+  <script src="{% static "main/js/base.js" %}"></script>
+  <script src="{% static "main/js/index.js" %}"></script>
+{% endblock script %}
+
 {% block header_nav %}
   <nav>
     <ul>
@@ -39,7 +45,7 @@
 {% endblock auth_header_profile_url %}
 
 {% block not_auth_header_profile_url %}
-  <button class="auth-btn" onclick="window.location.href='auth.html'">Войти</button>
+  <a class="auth-btn" href="{% url "authPage" %}">Войти</a>
 {% endblock not_auth_header_profile_url %}
 
 {% block auth_sidebar_profile_url %}
@@ -55,7 +61,7 @@
 {% endblock auth_sidebar_profile_url %}
 
 {% block not_auth_sidebar_profile_url %}
-  <button class="auth-btn" onclick="window.location.href='auth.html'">Войти</button>
+  <a class="auth-btn" href="{% url "authPage" %}">Войти</a>
 {% endblock not_auth_sidebar_profile_url %}
 
 {% block main_content %}
