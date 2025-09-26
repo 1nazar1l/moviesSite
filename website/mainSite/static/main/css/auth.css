@@ -223,5 +223,34 @@
         flex-direction: column;
         gap: 0.75rem;
         align-items: flex-start;
+    }    
+}
+
+@media (max-width: 425px) {
+    .auth-card {
+        padding: 1rem 0.5rem;
+    }
+
+    .auth-title {
+        margin: 0;
+        margin-top: 10px;
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+    }
+
+    .auth-header {
+        margin-bottom: 1rem;
+    }
+
+    .form-group {
+        gap: 0.7rem;
+    }
+
+    .auth-form {
+        gap: 1.2rem;
+    }
+
+    .auth-subtitle {
+        font-size: 0.85rem;
     }
 }

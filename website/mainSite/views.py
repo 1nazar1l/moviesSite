@@ -5,3 +5,6 @@ def mainPage(request):
 
 def authPage(request):
     return render(request, "main/auth.html")
+
+def regPage(request):
+    return render(request, "main/reg.html")

@@ -9,7 +9,7 @@
 
 {% block script %}
   <script src="{% static "main/js/base.js" %}"></script>
-  <script src="{% static "main/js/auth.js" %}"></script>
+  <script src="{% static "main/js/reg.js" %}"></script>
 {% endblock script %}
 
 {% block header_nav %}
@@ -47,11 +47,16 @@
   <div class="auth-container">
       <div class="auth-card">
           <div class="auth-header">
-              <h1 class="auth-title">Вход в аккаунт</h1>
-              <p class="auth-subtitle">Введите свои данные для входа в систему</p>
+              <h1 class="auth-title">Создание аккаунта</h1>
+              <p class="auth-subtitle">Введите свои данные для регистрации</p>
           </div>
           
-          <form class="auth-form" id="loginForm">
+          <form class="auth-form" id="regForm">
+              <div class="form-group">
+                  <label for="nickname" class="form-label">Никнейм</label>
+                  <input type="text" id="nickname" class="form-input" placeholder="User13920" required>
+              </div>
+
               <div class="form-group">
                   <label for="email" class="form-label">Электронная почта</label>
                   <input type="email" id="email" class="form-input" placeholder="example@mail.com" required>
@@ -66,31 +71,22 @@
                       </button>
                   </div>
               </div>
-              
-              <div class="remember-forgot">
-                  <label class="remember-me">
-                      <input type="checkbox" id="remember">
-                      Запомнить меня
-                  </label>
-                  <a href="#" class="forgot-password">Забыли пароль?</a>
+
+              <div class="form-group">
+                  <label for="confirm-password" class="form-label">Подтвердите пароль</label>
+                  <div class="password-container">
+                      <input type="password" id="confirm-password" class="form-input" placeholder="Подтвердите пароль" required>
+                      <button type="button" class="toggle-password" id="toggleConfirmPassword">
+                          <i class="far fa-eye"></i>
+                      </button>
+                  </div>
               </div>
-              
-              <button type="submit" class="submit-btn">Войти</button>
+
+              <button type="submit" class="submit-btn">Зарегистрироваться</button>
           </form>
           
-          <div class="auth-divider">
-              <span>или войдите с помощью</span>
-          </div>
-          
-          <div class="social-auth">
-              <button class="social-btn google">
-                  <i class="fab fa-google"></i>
-                  Войти через Google
-              </button>
-          </div>
-          
           <div class="auth-footer">
-              <p>Еще нет аккаунта? <a href="{% url "regPage" %}">Зарегистрироваться</a></p>
+              <p>Есть аккаунт? <a href="{% url "authPage" %}">Войти</a></p>
           </div>
       </div>
   </div>

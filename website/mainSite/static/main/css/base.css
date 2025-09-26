@@ -91,6 +91,10 @@ header.hidden {
     background-image: linear-gradient(to right, #89CDA5, #01B3E4);
 }
 
+.auth-btn {
+    text-align: center;
+}
+
 nav ul {
     display: flex;
     list-style: none;
