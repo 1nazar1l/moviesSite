@@ -11,4 +11,5 @@ urlpatterns = [
     path('films/', views.filmsPage, name='filmsPage'),
     path('search/', views.searchPage, name='searchPage'),
     path('profile/', views.profilePage, name='profilePage'),
+    path('item/', views.itemPage, name='itemPage'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

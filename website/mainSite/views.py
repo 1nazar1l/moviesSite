@@ -17,3 +17,6 @@ def searchPage(request):
 
 def profilePage(request):
     return render(request, "main/profile.html")
+
+def itemPage(request):
+    return render(request, "main/item.html")

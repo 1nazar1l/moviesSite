@@ -1,0 +1,329 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block css %}
+  <link rel="stylesheet" href="{% static "main/css/normalize.css" %}">
+  <link rel="stylesheet" href="{% static "main/css/base.css" %}">
+  <link rel="stylesheet" href="{% static "main/css/item.css" %}">
+{% endblock css %}
+
+{% block script %}
+  <script src="{% static "main/js/base.js" %}"></script>
+  <script src="{% static "main/js/item.js" %}"></script>
+{% endblock script %}
+
+{% block header_nav %}
+  <nav>
+    <ul>
+      <li><a href="{% url "mainPage" %}">Главная</a></li>
+      <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
+      <li><a href="#">Сериалы</a></li>
+      <li><a href="#">Актеры</a></li>
+    </ul>
+  </nav>
+{% endblock header_nav %}
+
+{% block sidebar_nav %}
+  <nav>
+    <ul>
+      <li><a href="{% url "mainPage" %}">Главная</a></li>
+      <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
+      <li><a href="#">Сериалы</a></li>
+      <li><a href="#">Актеры</a></li>
+    </ul>
+  </nav>
+{% endblock sidebar_nav %}
+
+{% block auth_header_profile_url %}
+  <div class="profile-block">
+    <span>GigaNiga</span>
+    <div class="profile-icon">
+      <!-- <i class="fa-solid fa-circle-user"></i> -->
+      <div class="circle">
+        <img src="{% static 'main/images/1007734.jpg' %}" alt="">
+      </div>
+    </div>
+  </div>
+{% endblock auth_header_profile_url %}
+
+{% block not_auth_header_profile_url %}
+  <a class="auth-btn" href="{% url "authPage" %}">Войти</a>
+{% endblock not_auth_header_profile_url %}
+
+{% block auth_sidebar_profile_url %}
+  <div class="profile-block">
+    <span>GigaNiga</span>
+    <div class="profile-icon">
+      <!-- <i class="fa-solid fa-circle-user"></i> -->
+      <div class="circle">
+        <img src="{% static 'main/images/1007734.jpg' %}" alt="">
+      </div>
+    </div>
+  </div>
+{% endblock auth_sidebar_profile_url %}
+
+{% block not_auth_sidebar_profile_url %}
+  <a class="auth-btn" href="{% url "authPage" %}">Войти</a>
+{% endblock not_auth_sidebar_profile_url %}
+
+{% block main_content %}
+  <div class="movie-details">
+    <a href="{% url "mainPage" %}" class="back-link">
+      <i class="fas fa-arrow-left"></i>
+      Назад к каталогу
+    </a>
+
+    <div class="movie-container">
+      <div class="movie-poster">
+        <img src="{% static 'main/images/1007734.jpg' %}" alt="">
+      </div>
+
+      <div class="movie-info">
+        <h1 class="movie-title">Интерстеллар</h1>
+
+        <div class="movie-meta">
+          <div class="movie-meta-item">
+            <i class="far fa-calendar"></i>
+            <span>2014</span>
+          </div>
+          <div class="movie-meta-item">
+            <i class="far fa-clock"></i>
+            <span>169 мин</span>
+          </div>
+          <div class="rating">
+            <i class="fas fa-star"></i>
+            <span>8.6/10</span>
+          </div>
+        </div>
+
+        <div class="genres">
+          <span class="genre">Фантастика</span>
+          <span class="genre">Драма</span>
+          <span class="genre">Приключения</span>
+        </div>
+
+        <p class="movie-description">
+          Когда засуха, пыльные бури и вымирание растений приводят
+          человечество к продовольственному кризису, коллектив
+          исследователей и учёных отправляется сквозь червоточину (которая
+          предположительно соединяет области пространства-времени через
+          большое расстояние) в путешествие, чтобы превзойти прежние
+          ограничения для космических путешествий человека и найти планету с
+          подходящими для человечества условиями.
+        </p>
+
+        <div class="details-grid">
+          <div class="detail-card">
+            <div class="detail-title">Дата выхода</div>
+            <div class="detail-value">26 октября 2014</div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-title">Бюджет</div>
+            <div class="detail-value">$165 млн</div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-title">Выручка</div>
+            <div class="detail-value">$677 млн</div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-title">Продолжительность</div>
+            <div class="detail-value">169 минут</div>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="btn btn-primary">
+            <i class="fas fa-play"></i>
+            Смотреть трейлер
+          </button>
+          <button class="btn btn-secondary" id="addToFavorites">
+            <i class="far fa-bookmark"></i>
+            В избранное
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="cast-section">
+      <h2 class="section-title">В главных ролях</h2>
+      <div class="cast-grid">
+        <div class="cast-card">
+          <div class="cast-photo">
+            <i class="fas fa-user fa-3x"></i>
+          </div>
+          <div class="cast-info">
+            <div class="cast-name">Мэттью Макконахи</div>
+            <div class="cast-character">Купер</div>
+          </div>
+        </div>
+        <div class="cast-card">
+          <div class="cast-photo">
+            <i class="fas fa-user fa-3x"></i>
+          </div>
+          <div class="cast-info">
+            <div class="cast-name">Энн Хэтэуэй</div>
+            <div class="cast-character">Амелия Брэнд</div>
+          </div>
+        </div>
+        <div class="cast-card">
+          <div class="cast-photo">
+            <i class="fas fa-user fa-3x"></i>
+          </div>
+          <div class="cast-info">
+            <div class="cast-name">Джессика Честейн</div>
+            <div class="cast-character">Мёрф</div>
+          </div>
+        </div>
+        <div class="cast-card">
+          <div class="cast-photo">
+            <i class="fas fa-user fa-3x"></i>
+          </div>
+          <div class="cast-info">
+            <div class="cast-name">Майкл Кейн</div>
+            <div class="cast-character">Профессор Брэнд</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Секция комментариев -->
+    <div class="comments-section">
+      <div class="comments-header">
+        <h2 class="section-title">Комментарии</h2>
+        <span class="comments-count" id="commentsCount">3 комментария</span>
+      </div>
+
+      <!-- Форма добавления комментария -->
+      <div class="add-comment-form" id="commentForm">
+        <div class="comment-form-group">
+          <textarea class="comment-textarea" placeholder="Напишите ваш комментарий..." id="commentText"></textarea>
+        </div>
+        <div class="comment-form-actions">
+          <div>
+            <label for="commentRating">Ваша оценка: </label>
+            <select class="rating-select" id="commentRating">
+              <option value="5">5 ★</option>
+              <option value="4">4 ★</option>
+              <option value="3">3 ★</option>
+              <option value="2">2 ★</option>
+              <option value="1">1 ★</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" id="submitComment">
+            <i class="fas fa-paper-plane"></i>
+            Отправить
+          </button>
+        </div>
+      </div>
+
+      <!-- Список комментариев -->
+      <div class="comments-list" id="commentsList">
+        <!-- Комментарий 1 -->
+        <div class="comment-card">
+          <div class="comment-header">
+            <div class="comment-user">
+              <div class="user-avatar">К</div>
+              <div class="user-info">
+                <div class="user-name">Киноман007</div>
+                <div class="comment-date">2 дня назад</div>
+              </div>
+            </div>
+            <div class="comment-rating">
+              <i class="fas fa-star"></i>
+              <span>5.0</span>
+            </div>
+          </div>
+          <div class="comment-content">
+            Один из лучших научно-фантастических фильмов всех времен! Визуальные эффекты просто потрясающие, а сюжет заставляет задуматься о нашем месте во Вселенной. Особенно впечатлили сцены с черной дырой - они были созданы на основе реальных научных расчетов!
+          </div>
+          <div class="comment-actions">
+            <button class="comment-action">
+              <i class="far fa-thumbs-up"></i>
+              <span>12</span>
+            </button>
+            <button class="comment-action">
+              <i class="far fa-thumbs-down"></i>
+              <span>2</span>
+            </button>
+            <button class="comment-action">
+              <i class="far fa-flag"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Комментарий 2 -->
+        <div class="comment-card">
+          <div class="comment-header">
+            <div class="comment-user">
+              <div class="user-avatar">А</div>
+              <div class="user-info">
+                <div class="user-name">Астрофизик</div>
+                <div class="comment-date">1 неделю назад</div>
+              </div>
+            </div>
+            <div class="comment-rating">
+              <i class="fas fa-star"></i>
+              <span>4.5</span>
+            </div>
+          </div>
+          <div class="comment-content">
+            Как человек, интересующийся космосом, могу сказать, что научная составляющая фильма на высоте. Конечно, есть некоторые художественные допущения, но в целом физика представлена очень достоверно. Музыка Ханса Циммера идеально дополняет космическую атмосферу.
+          </div>
+          <div class="comment-actions">
+            <button class="comment-action">
+              <i class="far fa-thumbs-up"></i>
+              <span>8</span>
+            </button>
+            <button class="comment-action">
+              <i class="far fa-thumbs-down"></i>
+              <span>1</span>
+            </button>
+            <button class="comment-action">
+              <i class="far fa-flag"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Комментарий 3 -->
+        <div class="comment-card">
+          <div class="comment-header">
+            <div class="comment-user">
+              <div class="user-avatar">М</div>
+              <div class="user-info">
+                <div class="user-name">Мария_Кино</div>
+                <div class="comment-date">2 недели назад</div>
+              </div>
+            </div>
+            <div class="comment-rating">
+              <i class="fas fa-star"></i>
+              <span>4.0</span>
+            </div>
+          </div>
+          <div class="comment-content">
+            Эмоциональная глубина фильма поражает. Отношения отца и дочери показаны невероятно трогательно. Плакала в нескольких сценах. Рекомендую смотреть в хорошем качестве с объемным звуком - это совершенно другой опыт!
+          </div>
+          <div class="comment-actions">
+            <button class="comment-action">
+              <i class="far fa-thumbs-up"></i>
+              <span>15</span>
+            </button>
+            <button class="comment-action">
+              <i class="far fa-thumbs-down"></i>
+              <span>0</span>
+            </button>
+            <button class="comment-action">
+              <i class="far fa-flag"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Сообщение когда нет комментариев -->
+      <div class="no-comments" id="noComments" style="display: none;">
+        <i class="far fa-comments"></i>
+        <h3>Пока нет комментариев</h3>
+        <p>Будьте первым, кто оставит отзыв об этом фильме!</p>
+      </div>
+    </div>
+  </div>
+{% endblock main_content %}
