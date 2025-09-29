@@ -1,0 +1,248 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block css %}
+  <link rel="stylesheet" href="{% static "main/css/normalize.css" %}">
+  <link rel="stylesheet" href="{% static "main/css/base.css" %}">
+  <link rel="stylesheet" href="{% static "main/css/profile.css" %}">
+{% endblock css %}
+
+{% block script %}
+  <script src="{% static "main/js/base.js" %}"></script>
+  <script src="{% static "main/js/profile.js" %}"></script>
+{% endblock script %}
+
+{% block header_nav %}
+  <nav>
+    <ul>
+      <li><a href="{% url "mainPage" %}">Главная</a></li>
+      <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
+      <li><a href="#">Сериалы</a></li>
+      <li><a href="#">Актеры</a></li>
+    </ul>
+  </nav>
+{% endblock header_nav %}
+
+{% block sidebar_nav %}
+  <nav>
+    <ul>
+      <li><a href="{% url "mainPage" %}">Главная</a></li>
+      <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
+      <li><a href="#">Сериалы</a></li>
+      <li><a href="#">Актеры</a></li>
+    </ul>
+  </nav>
+{% endblock sidebar_nav %}
+
+{% block not_auth_header_profile_url %}
+  <a class="auth-btn" href="{% url "mainPage" %}">На главную</a>
+{% endblock not_auth_header_profile_url %}
+
+
+{% block not_auth_sidebar_profile_url %}
+  <a class="auth-btn" href="{% url "mainPage" %}">На главную</a>
+{% endblock not_auth_sidebar_profile_url %}
+
+{% block main_content %}
+  <div class="profile-page">
+    <div class="profile-container">
+        <!-- Боковая панель профиля -->
+        <div class="profile-sidebar">
+            <div class="profile-card">
+                <div class="avatar-container">
+                    <div class="avatar" id="userAvatar">К</div>
+                    <div class="avatar-edit" id="editAvatar">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                </div>
+                <h2 class="profile-name" id="userName">Киноман007</h2>
+                <p class="profile-email" id="userEmail">kinoman@moviemarks.ru</p>
+                
+                <div class="profile-stats">
+                    <div class="stat">
+                        <div class="stat-value" id="favoritesCount">12</div>
+                        <div class="stat-label">В избранном</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="reviewsCount">8</div>
+                        <div class="stat-label">Рецензий</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="activityDays">47</div>
+                        <div class="stat-label">Дней с нами</div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-secondary" id="changePasswordBtn">
+                    <i class="fas fa-key"></i>
+                    Сменить пароль
+                </button>
+            </div>
+            
+            <button class="btn btn-primary" id="saveProfileBtn">
+                <i class="fas fa-save"></i>
+                Сохранить изменения
+            </button>
+        </div>
+        
+        <!-- Основное содержимое профиля -->
+        <div class="profile-content">
+            <div class="edit-form">
+                <h3 class="section-title">Редактирование профиля</h3>
+                
+                <div class="form-group">
+                    <label class="form-label" for="username">Никнейм</label>
+                    <input type="text" id="username" class="form-input" value="Киноман007">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="email">Электронная почта</label>
+                    <input type="email" id="email" class="form-input" value="kinoman@moviemarks.ru">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="bio">О себе</label>
+                    <textarea id="bio" class="form-input" rows="4" placeholder="Расскажите о себе...">Любитель качественного кино, особенно научной фантастики и драмы. Смотрю фильмы каждый вечер!</textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button class="btn btn-primary" id="saveChangesBtn">
+                        <i class="fas fa-save"></i>
+                        Сохранить изменения
+                    </button>
+                    <button class="btn btn-secondary" id="cancelChangesBtn">
+                        <i class="fas fa-times"></i>
+                        Отмена
+                    </button>
+                </div>
+            </div>
+            
+            <div class="favorites-section">
+                <h3 class="section-title">Мое избранное</h3>
+                
+                <div class="favorites-grid" id="favoritesGrid">
+                    <!-- Карточки избранных фильмов -->
+                    <div class="movie-card" onclick="window.location.href='movie-details.html'">
+                        <div class="remove-favorite" data-movie-id="1">
+                            <i class="fas fa-times"></i>
+                        </div>
+                        <div class="movie-poster">
+                            <i class="fas fa-film"></i>
+                        </div>
+                        <div class="movie-info">
+                            <h3 class="movie-title">Интерстеллар</h3>
+                            <div class="movie-meta">
+                                <span>2014</span>
+                                <span class="movie-rating">
+                                    <i class="fas fa-star"></i>
+                                    8.6
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="movie-card" onclick="window.location.href='movie-details.html'">
+                        <div class="remove-favorite" data-movie-id="2">
+                            <i class="fas fa-times"></i>
+                        </div>
+                        <div class="movie-poster">
+                            <i class="fas fa-film"></i>
+                        </div>
+                        <div class="movie-info">
+                            <h3 class="movie-title">Начало</h3>
+                            <div class="movie-meta">
+                                <span>2010</span>
+                                <span class="movie-rating">
+                                    <i class="fas fa-star"></i>
+                                    8.8
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="movie-card" onclick="window.location.href='movie-details.html'">
+                        <div class="remove-favorite" data-movie-id="3">
+                            <i class="fas fa-times"></i>
+                        </div>
+                        <div class="movie-poster">
+                            <i class="fas fa-film"></i>
+                        </div>
+                        <div class="movie-info">
+                            <h3 class="movie-title">Побег из Шоушенка</h3>
+                            <div class="movie-meta">
+                                <span>1994</span>
+                                <span class="movie-rating">
+                                    <i class="fas fa-star"></i>
+                                    9.3
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="movie-card" onclick="window.location.href='movie-details.html'">
+                        <div class="remove-favorite" data-movie-id="4">
+                            <i class="fas fa-times"></i>
+                        </div>
+                        <div class="movie-poster">
+                            <i class="fas fa-film"></i>
+                        </div>
+                        <div class="movie-info">
+                            <h3 class="movie-title">Темный рыцарь</h3>
+                            <div class="movie-meta">
+                                <span>2008</span>
+                                <span class="movie-rating">
+                                    <i class="fas fa-star"></i>
+                                    9.0
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="empty-favorites" id="emptyFavorites" style="display: none;">
+                    <i class="fas fa-heart-broken"></i>
+                    <h3>В избранном пока пусто</h3>
+                    <p>Добавляйте фильмы в избранное, чтобы они появились здесь</p>
+                    <button class="btn btn-primary" onclick="window.location.href='films.html'">
+                        <i class="fas fa-search"></i>
+                        Найти фильмы
+                    </button>
+                </div>
+            </div>
+            
+            <div class="recent-activity">
+                <h3 class="section-title">Недавняя активность</h3>
+                <ul class="activity-list">
+                    <li class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-text">Добавили "Интерстеллар" в избранное</div>
+                            <div class="activity-time">2 часа назад</div>
+                        </div>
+                    </li>
+                    <li class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-text">Оценили "Начало" на 5 звезд</div>
+                            <div class="activity-time">Вчера</div>
+                        </div>
+                    </li>
+                    <li class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-comment"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-text">Оставили рецензию на "Побег из Шоушенка"</div>
+                            <div class="activity-time">3 дня назад</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+  </div>
+{% endblock main_content %}

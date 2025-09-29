@@ -33,15 +33,17 @@
 {% endblock sidebar_nav %}
 
 {% block auth_header_profile_url %}
-  <div class="profile-block">
-    <span>GigaNiga</span>
-    <div class="profile-icon">
-      <!-- <i class="fa-solid fa-circle-user"></i> -->
-      <div class="circle">
-        <img src="{% static 'main/images/1007734.jpg' %}" alt="">
+  <a href="{% url "profilePage" %}">
+    <div class="profile-block">
+      <span>GigaNiga</span>
+      <div class="profile-icon">
+        <!-- <i class="fa-solid fa-circle-user"></i> -->
+        <div class="circle">
+          <img src="{% static 'main/images/1007734.jpg' %}" alt="">
+        </div>
       </div>
     </div>
-  </div>
+  </a>
 {% endblock auth_header_profile_url %}
 
 {% block not_auth_header_profile_url %}

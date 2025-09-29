@@ -10,4 +10,5 @@ urlpatterns = [
     path('reg/', views.regPage, name='regPage'),
     path('films/', views.filmsPage, name='filmsPage'),
     path('search/', views.searchPage, name='searchPage'),
+    path('profile/', views.profilePage, name='profilePage'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

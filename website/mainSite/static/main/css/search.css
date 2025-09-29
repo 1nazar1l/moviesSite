@@ -215,14 +215,6 @@
 /* Адаптивность */
 
 @media (max-width: 768px) {
-    nav ul {
-        gap: 1rem;
-    }
-
-    .logo {
-        font-size: 1.5rem;
-    }
-
     .search-results-page {
         padding: 1rem;
     }
@@ -243,23 +235,6 @@
 }
 
 @media (max-width: 576px) {
-    header {
-        padding: 0 1rem;
-    }
-
-    footer {
-        padding: 2rem 1rem;
-    }
-
-    .header-controls {
-        gap: 1rem;
-    }
-
-    nav ul {
-        gap: 0.5rem;
-        font-size: 0.9rem;
-    }
-
     .content-grid {
         grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     }

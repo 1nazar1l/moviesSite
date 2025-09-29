@@ -14,3 +14,6 @@ def filmsPage(request):
 
 def searchPage(request):
     return render(request, "main/search.html")
+
+def profilePage(request):
+    return render(request, "main/profile.html")
