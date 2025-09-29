@@ -1,0 +1,247 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block css %}
+  <link rel="stylesheet" href="{% static "main/css/normalize.css" %}">
+  <link rel="stylesheet" href="{% static "main/css/base.css" %}">
+  <link rel="stylesheet" href="{% static "main/css/search.css" %}">
+{% endblock css %}
+
+{% block script %}
+  <script src="{% static "main/js/base.js" %}"></script>
+  <script src="{% static "main/js/search.js" %}"></script>
+{% endblock script %}
+
+{% block header_nav %}
+  <nav>
+    <ul>
+      <li><a href="{% url "mainPage" %}">Главная</a></li>
+      <li><a href="films.html">Фильмы</a></li>
+      <li><a href="#">Сериалы</a></li>
+      <li><a href="#">Актеры</a></li>
+    </ul>
+  </nav>
+{% endblock header_nav %}
+
+{% block sidebar_nav %}
+  <nav>
+    <ul>
+      <li><a href="{% url "mainPage" %}">Главная</a></li>
+      <li><a href="films.html">Фильмы</a></li>
+      <li><a href="#">Сериалы</a></li>
+      <li><a href="#">Актеры</a></li>
+    </ul>
+  </nav>
+{% endblock sidebar_nav %}
+
+{% block auth_header_profile_url %}
+  <div class="profile-block">
+    <span>GigaNiga</span>
+    <div class="profile-icon">
+      <!-- <i class="fa-solid fa-circle-user"></i> -->
+      <div class="circle">
+        <img src="{% static 'main/images/1007734.jpg' %}" alt="">
+      </div>
+    </div>
+  </div>
+{% endblock auth_header_profile_url %}
+
+{% block not_auth_header_profile_url %}
+  <a class="auth-btn" href="{% url "authPage" %}">Войти</a>
+{% endblock not_auth_header_profile_url %}
+
+{% block auth_sidebar_profile_url %}
+  <div class="profile-block">
+    <span>GigaNiga</span>
+    <div class="profile-icon">
+      <!-- <i class="fa-solid fa-circle-user"></i> -->
+      <div class="circle">
+        <img src="{% static 'main/images/1007734.jpg' %}" alt="">
+      </div>
+    </div>
+  </div>
+{% endblock auth_sidebar_profile_url %}
+
+{% block not_auth_sidebar_profile_url %}
+  <a class="auth-btn" href="{% url "authPage" %}">Войти</a>
+{% endblock not_auth_sidebar_profile_url %}
+
+{% block main_content %}
+  <div class="search-results-page">
+  <div class="search-header">
+    <a href="{% url "mainPage" %}" class="back-link">
+      <i class="fas fa-arrow-left"></i>
+      Назад на главную
+    </a>
+
+    <div class="search-info">
+      <div>
+        <h1 class="search-query">
+          Результаты поиска: <span id="searchQuery">Интерстеллар</span>
+        </h1>
+        <p class="results-count">
+          Найдено <span id="resultsCount">8</span> результатов
+        </p>
+      </div>
+
+      <div class="sort-options">
+        <span class="sort-label">Сортировка:</span>
+        <select class="sort-select" id="sortSelect">
+          <option value="relevance">По релевантности</option>
+          <option value="rating">По рейтингу</option>
+          <option value="release_date">По дате выхода</option>
+          <option value="title">По названию</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-grid" id="searchResults">
+    <div
+      class="movie-card"
+      onclick="window.location.href='movie-details.html'"
+    >
+      <div class="movie-poster">
+        <i class="fas fa-film"></i>
+      </div>
+      <div class="movie-info">
+        <h3 class="movie-title">Интерстеллар</h3>
+        <div class="movie-meta">
+          <span>2014</span>
+          <span class="movie-rating">
+            <i class="fas fa-star"></i>
+            8.6
+          </span>
+        </div>
+        <div class="movie-genres">
+          <span class="genre-tag">Фантастика</span>
+          <span class="genre-tag">Драма</span>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="movie-card"
+      onclick="window.location.href='movie-details.html'"
+    >
+      <div class="movie-poster">
+        <i class="fas fa-film"></i>
+      </div>
+      <div class="movie-info">
+        <h3 class="movie-title">Начало</h3>
+        <div class="movie-meta">
+          <span>2010</span>
+          <span class="movie-rating">
+            <i class="fas fa-star"></i>
+            8.8
+          </span>
+        </div>
+        <div class="movie-genres">
+          <span class="genre-tag">Фантастика</span>
+          <span class="genre-tag">Триллер</span>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="movie-card"
+      onclick="window.location.href='movie-details.html'"
+    >
+      <div class="movie-poster">
+        <i class="fas fa-film"></i>
+      </div>
+      <div class="movie-info">
+        <h3 class="movie-title">Прибытие</h3>
+        <div class="movie-meta">
+          <span>2016</span>
+          <span class="movie-rating">
+            <i class="fas fa-star"></i>
+            7.9
+          </span>
+        </div>
+        <div class="movie-genres">
+          <span class="genre-tag">Фантастика</span>
+          <span class="genre-tag">Драма</span>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="movie-card"
+      onclick="window.location.href='movie-details.html'"
+    >
+      <div class="movie-poster">
+        <i class="fas fa-film"></i>
+      </div>
+      <div class="movie-info">
+        <h3 class="movie-title">Марсианин</h3>
+        <div class="movie-meta">
+          <span>2015</span>
+          <span class="movie-rating">
+            <i class="fas fa-star"></i>
+            8.0
+          </span>
+        </div>
+        <div class="movie-genres">
+          <span class="genre-tag">Фантастика</span>
+          <span class="genre-tag">Приключения</span>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="movie-card"
+      onclick="window.location.href='movie-details.html'"
+    >
+      <div class="movie-poster">
+        <i class="fas fa-film"></i>
+      </div>
+      <div class="movie-info">
+        <h3 class="movie-title">Гравитация</h3>
+        <div class="movie-meta">
+          <span>2013</span>
+          <span class="movie-rating">
+            <i class="fas fa-star"></i>
+            7.7
+          </span>
+        </div>
+        <div class="movie-genres">
+          <span class="genre-tag">Фантастика</span>
+          <span class="genre-tag">Триллер</span>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="movie-card"
+      onclick="window.location.href='movie-details.html'"
+    >
+      <div class="movie-poster">
+        <i class="fas fa-film"></i>
+      </div>
+      <div class="movie-info">
+        <h3 class="movie-title">Первый мститель: Противостояние</h3>
+        <div class="movie-meta">
+          <span>2016</span>
+          <span class="movie-rating">
+            <i class="fas fa-star"></i>
+            7.8
+          </span>
+        </div>
+        <div class="movie-genres">
+          <span class="genre-tag">Фантастика</span>
+          <span class="genre-tag">Боевик</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Блок для случая, когда результатов нет -->
+  <div class="no-results" id="noResults">
+    <div class="no-results-icon">
+      <i class="fas fa-search"></i>
+    </div>
+    <p class="no-results-text">По вашему запросу ничего не найдено</p>
+    <p>Попробуйте изменить поисковый запрос или проверьте правописание</p>
+  </div>
+{% endblock main_content %}

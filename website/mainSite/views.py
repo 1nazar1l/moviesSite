@@ -11,3 +11,6 @@ def regPage(request):
 
 def filmsPage(request):
     return render(request, "main/items.html")
+
+def searchPage(request):
+    return render(request, "main/search.html")
