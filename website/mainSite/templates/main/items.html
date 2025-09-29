@@ -1,0 +1,404 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block css %}
+  <link rel="stylesheet" href="{% static "main/css/normalize.css" %}">
+  <link rel="stylesheet" href="{% static "main/css/base.css" %}">
+  <link rel="stylesheet" href="{% static "main/css/items.css" %}">
+{% endblock css %}
+
+{% block script %}
+  <script src="{% static "main/js/base.js" %}"></script>
+  <script src="{% static "main/js/items.js" %}"></script>
+{% endblock script %}
+
+{% block header_nav %}
+  <nav>
+    <ul>
+      <li><a href="{% url "mainPage" %}">Главная</a></li>
+      <li><a href="films.html">Фильмы</a></li>
+      <li><a href="#">Сериалы</a></li>
+      <li><a href="#">Актеры</a></li>
+    </ul>
+  </nav>
+{% endblock header_nav %}
+
+{% block sidebar_nav %}
+  <nav>
+    <ul>
+      <li><a href="{% url "mainPage" %}">Главная</a></li>
+      <li><a href="films.html">Фильмы</a></li>
+      <li><a href="#">Сериалы</a></li>
+      <li><a href="#">Актеры</a></li>
+    </ul>
+  </nav>
+{% endblock sidebar_nav %}
+
+{% block auth_header_profile_url %}
+  <div class="profile-block">
+    <span>GigaNiga</span>
+    <div class="profile-icon">
+      <!-- <i class="fa-solid fa-circle-user"></i> -->
+      <div class="circle">
+        <img src="{% static 'main/images/1007734.jpg' %}" alt="">
+      </div>
+    </div>
+  </div>
+{% endblock auth_header_profile_url %}
+
+{% block not_auth_header_profile_url %}
+  <a class="auth-btn" href="{% url "authPage" %}">Войти</a>
+{% endblock not_auth_header_profile_url %}
+
+{% block auth_sidebar_profile_url %}
+  <div class="profile-block">
+    <span>GigaNiga</span>
+    <div class="profile-icon">
+      <!-- <i class="fa-solid fa-circle-user"></i> -->
+      <div class="circle">
+        <img src="{% static 'main/images/1007734.jpg' %}" alt="">
+      </div>
+    </div>
+  </div>
+{% endblock auth_sidebar_profile_url %}
+
+{% block not_auth_sidebar_profile_url %}
+  <a class="auth-btn" href="{% url "authPage" %}">Войти</a>
+{% endblock not_auth_sidebar_profile_url %}
+
+{% block main_content %}
+  <div class="catalog-page">
+    <!-- Фильтр -->
+    <aside class="filter-sidebar">
+      <h2 class="filter-title">Фильтр</h2>
+      <form class="filter-form" id="filterForm">
+        <div class="filter-group">
+          <input
+            type="text"
+            class="filter-input"
+            placeholder="Поиск по названию"
+            name="title_search"
+          />
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Бюджет</label>
+          <div class="range-inputs">
+            <input
+              type="text"
+              class="filter-input"
+              placeholder="От"
+              name="budget_min"
+            />
+            <input
+              type="text"
+              class="filter-input"
+              placeholder="До"
+              name="budget_max"
+            />
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Выручка</label>
+          <div class="range-inputs">
+            <input
+              type="text"
+              class="filter-input"
+              placeholder="От"
+              name="revenue_min"
+            />
+            <input
+              type="text"
+              class="filter-input"
+              placeholder="До"
+              name="revenue_max"
+            />
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Год выхода</label>
+          <div class="range-inputs">
+            <input
+              type="date"
+              class="filter-input"
+              name="release_date_min"
+            />
+            <input
+              type="date"
+              class="filter-input"
+              name="release_date_max"
+            />
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Продолжительность (мин)</label>
+          <div class="range-inputs">
+            <input
+              type="text"
+              class="filter-input"
+              placeholder="От"
+              name="duration_min"
+            />
+            <input
+              type="text"
+              class="filter-input"
+              placeholder="До"
+              name="duration_max"
+            />
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <div class="checkbox-group">
+            <input type="checkbox" id="released" name="released" checked />
+            <label for="released" class="filter-label">Уже вышел</label>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Рейтинг</label>
+          <div class="range-inputs">
+            <input
+              type="text"
+              class="filter-input"
+              placeholder="От"
+              name="rating_min"
+            />
+            <input
+              type="text"
+              class="filter-input"
+              placeholder="До"
+              name="rating_max"
+            />
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Жанры</label>
+          <div class="select-wrapper">
+            <select class="filter-select" name="genres" multiple>
+              <option value="action">Боевик</option>
+              <option value="comedy">Комедия</option>
+              <option value="drama">Драма</option>
+              <option value="fantasy">Фэнтези</option>
+              <option value="horror">Ужасы</option>
+              <option value="romance">Мелодрама</option>
+              <option value="sci-fi">Фантастика</option>
+              <option value="thriller">Триллер</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn">Применить фильтры</button>
+        <button type="button" class="reset-btn" id="resetFilters">
+          Сбросить
+        </button>
+      </form>
+    </aside>
+
+    <!-- Контент -->
+    <div class="content-area">
+      <div class="content-header">
+        <h1 class="page-title">Фильмы</h1>
+        <div class="sort-options">
+          <span class="sort-label">Сортировка:</span>
+          <select class="sort-select" id="sortSelect">
+            <option value="popular">По популярности</option>
+            <option value="rating">По рейтингу</option>
+            <option value="release_date">По дате выхода</option>
+            <option value="title">По названию</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="movies-grid" id="moviesGrid">
+        <!-- Карточки фильмов -->
+        <div
+          class="movie-card"
+          onclick="window.location.href='movie-details.html'"
+        >
+          <div class="movie-poster">
+            <i class="fas fa-film"></i>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">Интерстеллар</h3>
+            <div class="movie-meta">
+              <span>2014</span>
+              <span class="movie-rating">
+                <i class="fas fa-star"></i>
+                8.6
+              </span>
+            </div>
+            <div class="movie-genres">
+              <span class="genre-tag">Фантастика</span>
+              <span class="genre-tag">Драма</span>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="movie-card"
+          onclick="window.location.href='movie-details.html'"
+        >
+          <div class="movie-poster">
+            <i class="fas fa-film"></i>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">Начало</h3>
+            <div class="movie-meta">
+              <span>2010</span>
+              <span class="movie-rating">
+                <i class="fas fa-star"></i>
+                8.8
+              </span>
+            </div>
+            <div class="movie-genres">
+              <span class="genre-tag">Фантастика</span>
+              <span class="genre-tag">Триллер</span>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="movie-card"
+          onclick="window.location.href='movie-details.html'"
+        >
+          <div class="movie-poster">
+            <i class="fas fa-film"></i>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">Побег из Шоушенка</h3>
+            <div class="movie-meta">
+              <span>1994</span>
+              <span class="movie-rating">
+                <i class="fas fa-star"></i>
+                9.3
+              </span>
+            </div>
+            <div class="movie-genres">
+              <span class="genre-tag">Драма</span>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="movie-card"
+          onclick="window.location.href='movie-details.html'"
+        >
+          <div class="movie-poster">
+            <i class="fas fa-film"></i>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">Крестный отец</h3>
+            <div class="movie-meta">
+              <span>1972</span>
+              <span class="movie-rating">
+                <i class="fas fa-star"></i>
+                9.2
+              </span>
+            </div>
+            <div class="movie-genres">
+              <span class="genre-tag">Криминал</span>
+              <span class="genre-tag">Драма</span>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="movie-card"
+          onclick="window.location.href='movie-details.html'"
+        >
+          <div class="movie-poster">
+            <i class="fas fa-film"></i>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">Темный рыцарь</h3>
+            <div class="movie-meta">
+              <span>2008</span>
+              <span class="movie-rating">
+                <i class="fas fa-star"></i>
+                9.0
+              </span>
+            </div>
+            <div class="movie-genres">
+              <span class="genre-tag">Боевик</span>
+              <span class="genre-tag">Криминал</span>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="movie-card"
+          onclick="window.location.href='movie-details.html'"
+        >
+          <div class="movie-poster">
+            <i class="fas fa-film"></i>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">Форрест Гамп</h3>
+            <div class="movie-meta">
+              <span>1994</span>
+              <span class="movie-rating">
+                <i class="fas fa-star"></i>
+                8.8
+              </span>
+            </div>
+            <div class="movie-genres">
+              <span class="genre-tag">Драма</span>
+              <span class="genre-tag">Мелодрама</span>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="movie-card"
+          onclick="window.location.href='movie-details.html'"
+        >
+          <div class="movie-poster">
+            <i class="fas fa-film"></i>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">Бойцовский клуб</h3>
+            <div class="movie-meta">
+              <span>1999</span>
+              <span class="movie-rating">
+                <i class="fas fa-star"></i>
+                8.8
+              </span>
+            </div>
+            <div class="movie-genres">
+              <span class="genre-tag">Драма</span>
+              <span class="genre-tag">Триллер</span>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="movie-card"
+          onclick="window.location.href='movie-details.html'"
+        >
+          <div class="movie-poster">
+            <i class="fas fa-film"></i>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">Зеленая миля</h3>
+            <div class="movie-meta">
+              <span>1999</span>
+              <span class="movie-rating">
+                <i class="fas fa-star"></i>
+                9.1
+              </span>
+            </div>
+            <div class="movie-genres">
+              <span class="genre-tag">Драма</span>
+              <span class="genre-tag">Фэнтези</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock main_content %}

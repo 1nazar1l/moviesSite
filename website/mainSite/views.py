@@ -8,3 +8,6 @@ def authPage(request):
 
 def regPage(request):
     return render(request, "main/reg.html")
+
+def filmsPage(request):
+    return render(request, "main/items.html")

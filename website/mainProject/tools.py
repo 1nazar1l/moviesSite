@@ -259,10 +259,6 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url):
         defaults=defaults
     )
 
-    directory = local_img_path.split("/")
-    directory = f"mainProject/static/{directory[0]}/{directory[1]}"
-    os.makedirs(directory, exist_ok=True)
-
     img_filepath = os.path.join("mainProject/static", local_img_path)
 
     if not os.path.exists(img_filepath):
@@ -294,6 +290,9 @@ def parsing_media_items(request, media_type, messages, messages_block):
     url_part = url_parts.get(media_type)
 
     img_url = "https://media.themoviedb.org/t/p/w220_and_h330_face/"
+
+    directory = f"mainProject/static/images/{media_type}"
+    os.makedirs(directory, exist_ok=True)
 
     try:
         for page_number in range(int(start_page), int(end_page) + 1):
