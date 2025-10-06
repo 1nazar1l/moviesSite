@@ -1,4 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    
+    togglePassword.addEventListener('click', () => {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        
+        const icon = togglePassword.querySelector('i');
+        icon.classList.toggle('fa-eye');
+        icon.classList.toggle('fa-eye-slash');
+    });
+    
     const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
     const confirmPasswordInput = document.getElementById('confirm-password');
     
@@ -12,31 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const regForm = document.getElementById('regForm');
-    
-    regForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        const email = document.getElementById('email').value;
-        const nickname = document.getElementById('nickname').value;
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirm-password').value;
-
-        console.log(email)
-        console.log(nickname)
-        console.log(password)
-        console.log(confirmPassword)
-        
-        if (password != confirmPassword) {
-            alert('Пароли не совпадают')
-        }
-        else {
-            // Здесь должна быть логика отправки данных на сервер
-            
-            // Временная имитация успешного входа
-            alert('Вход выполнен успешно!');
-            window.location.href = 'index.html';
-        }
-    });
     
     // Обработка кнопок социальных сетей
     document.querySelectorAll('.social-btn').forEach(btn => {

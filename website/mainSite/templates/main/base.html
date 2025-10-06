@@ -19,14 +19,24 @@
         {% block header_nav %}{% endblock header_nav %}
         <div class="header-controls">
           <div class="theme-toggle" id="themeToggle"></div>
-          {% block auth_header_profile_url %}{% endblock auth_header_profile_url %}
+          {% if username != "" %}
+            {% block auth_header_profile_url%}{% endblock auth_header_profile_url %}
+          {% else %}
+            {% block not_auth_header_profile_url %}{% endblock not_auth_header_profile_url %}
+            {{ username }}
+          {% endif %}
         </div>
       </div>
       <div class="phone-content">
         <a href="#" class="logo">MovieMarks</a>
         <div class="sidebar">
           <div class="header-controls">
-            {% block not_auth_sidebar_profile_url %}{% endblock not_auth_sidebar_profile_url %}
+            {% if username != "" %}
+              {% block auth_sidebar_profile_url %}{% endblock auth_sidebar_profile_url %}
+            {% else %}
+              {% block not_auth_sidebar_profile_url %}{% endblock not_auth_sidebar_profile_url %}
+              {{ username }}
+            {% endif %}
           </div>
           {% block sidebar_nav %}{% endblock sidebar_nav %}
         </div>

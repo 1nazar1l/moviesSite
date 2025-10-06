@@ -34,14 +34,14 @@
   </nav>
 {% endblock sidebar_nav %}
 
-{% block not_auth_header_profile_url %}
+{% block auth_header_profile_url %}
   <a class="auth-btn" href="{% url "mainPage" %}">На главную</a>
-{% endblock not_auth_header_profile_url %}
+{% endblock auth_header_profile_url %}
 
 
-{% block not_auth_sidebar_profile_url %}
+{% block auth_sidebar_profile_url %}
   <a class="auth-btn" href="{% url "mainPage" %}">На главную</a>
-{% endblock not_auth_sidebar_profile_url %}
+{% endblock auth_sidebar_profile_url %}
 
 {% block main_content %}
   <div class="profile-page">
@@ -50,13 +50,12 @@
         <div class="profile-sidebar">
             <div class="profile-card">
                 <div class="avatar-container">
-                    <div class="avatar" id="userAvatar">К</div>
+                    <div class="avatar" id="userAvatar">{{username|first|upper}}</div>
                     <div class="avatar-edit" id="editAvatar">
                         <i class="fas fa-camera"></i>
                     </div>
                 </div>
-                <h2 class="profile-name" id="userName">Киноман007</h2>
-                <p class="profile-email" id="userEmail">kinoman@moviemarks.ru</p>
+                <h2 class="profile-name" id="userName">{{username}}</h2>
                 
                 <div class="profile-stats">
                     <div class="stat">
@@ -72,17 +71,13 @@
                         <div class="stat-label">Дней с нами</div>
                     </div>
                 </div>
-                
-                <button class="btn btn-secondary" id="changePasswordBtn">
-                    <i class="fas fa-key"></i>
-                    Сменить пароль
-                </button>
             </div>
-            
-            <button class="btn btn-primary" id="saveProfileBtn">
-                <i class="fas fa-save"></i>
-                Сохранить изменения
-            </button>
+            <a href="{% url "signOut" %}">
+                <button class="btn btn-primary" id="signOut">
+                    <i class="fa-solid fa-door-open"></i>
+                    Выйти из аккаунта
+                </button>
+            </a>
         </div>
         
         <!-- Основное содержимое профиля -->
@@ -109,10 +104,6 @@
                     <button class="btn btn-primary" id="saveChangesBtn">
                         <i class="fas fa-save"></i>
                         Сохранить изменения
-                    </button>
-                    <button class="btn btn-secondary" id="cancelChangesBtn">
-                        <i class="fas fa-times"></i>
-                        Отмена
                     </button>
                 </div>
             </div>

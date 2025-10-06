@@ -361,4 +361,3 @@ def parsing_media_items(request, media_type, messages, messages_block):
         create_error_message(messages, media_type, "VPN не включен!")
         collect_special_messages_block(messages, messages_block, request)
         return
-
