@@ -28,12 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Изменения профиля сохранены!');
     });
 
-    // Отмена изменений
-    cancelChangesBtn.addEventListener('click', () => {
-        document.getElementById('username').value = 'Киноман007';
-        document.getElementById('email').value = 'kinoman@moviemarks.ru';
-        document.getElementById('bio').value = 'Любитель качественного кино, особенно научной фантастики и драмы. Смотрю фильмы каждый вечер!';
-    });
 
     // Смена пароля
     changePasswordBtn.addEventListener('click', () => {

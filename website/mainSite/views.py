@@ -24,37 +24,39 @@ def regPage(request):
         request.session['first_visit'] = False
         return render(request, "main/reg.html", context={
             "message": "",
-            "username": "",
-            "first": request.session['first_visit'],
+            "username": ""
         })
     else:
         username = request.POST.get('username')
         password = request.POST.get('password')
         email = request.POST.get('email')
 
-        if not email:
-            email = ""
+        message = ""
+        request.session['username'] = ""
+        error_username = ""
 
-        if username or username == "":
+        path = "main/reg.html"
+
+        if username:
             media_item_obj, created = User.objects.get_or_create(username=username)
 
-            message = ""
 
             if not created:
                 message = "exist"
+                error_username = username
             else:
                 media_item_obj.email = email
                 media_item_obj.password = password
                 media_item_obj.save()
-        else:
-            message = "exist"
-        
-        request.session['username'] = username
 
-        return render(request, "main/reg.html", context={
+                request.session['username'] = username
+
+                path = "main/index.html"
+        
+        return render(request, path, context={
             "message": message,
             "username": request.session['username'],
-            "first": request.session['first_visit'],
+            "error_username": error_username,
         })
 
 def filmsPage(request):

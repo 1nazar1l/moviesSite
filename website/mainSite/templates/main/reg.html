@@ -69,7 +69,7 @@
       <div class="auth-card">
           <div class="auth-header">
               {% if message == "exist" %}
-                <p class="auth-subtitle">Пользователь с таким именем уже существует</p>
+                <p class="auth-subtitle">Пользователь с таким именем({{error_username}}) уже существует</p>
               {% endif %}
               <h1 class="auth-title">Создание аккаунта</h1>
               <p class="auth-subtitle">Введите свои данные для регистрации</p>
@@ -78,8 +78,8 @@
           <form class="auth-form" id="regForm" action="{% url 'regPage' %}" method="post">
               {% csrf_token %}
               <div class="form-group">
-                  <label for="username" class="form-label">Никнейм</label>
-                  <input name="username" type="text" id="username" class="form-input" placeholder="User13920" required>
+                  <p class="form-label">Никнейм(от 5 до 11 символов)</p>
+                  <input name="username" type="text" id="usernameInput" class="form-input" placeholder="User13920" required>
               </div>
 
               <div class="form-group">
@@ -107,7 +107,7 @@
                   </div>
               </div>
 
-              <button type="submit" class="submit-btn">Зарегистрироваться</button>
+              <button type="submit" id="submit-btn" class="submit-btn">Зарегистрироваться</button>
           </form>
           
           <div class="auth-footer">

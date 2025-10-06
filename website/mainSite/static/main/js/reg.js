@@ -23,7 +23,50 @@ document.addEventListener('DOMContentLoaded', () => {
         icon.classList.toggle('fa-eye-slash');
     });
 
+    const usernameInput = document.getElementById('usernameInput')
+    console.log(usernameInput.value)
+
+    function checkPasswordMatch() {
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+        
+        if (password === '' || confirmPassword === '') {
+            return false;
+        }
+        
+        if (password === confirmPassword) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function checkUsernameMatch() {
+        const username = usernameInput.value
+        if (username.length < 5) {
+            alert("Никнейм слишком короткий")
+            return false
+        }
+        else if (username.length > 11) {
+            alert("Никнейм слишком длинный")
+            return false
+        }
+        else {
+            return true
+        }
+    }
+
     const regForm = document.getElementById('regForm');
+
+    regForm.addEventListener('submit', function(event) {
+        if (!checkPasswordMatch()) {
+            event.preventDefault();
+            alert('Пожалуйста, убедитесь, что пароли совпадают');
+        }
+        else if(!checkUsernameMatch(event)) {
+            event.preventDefault();
+        }
+    });
     
     // Обработка кнопок социальных сетей
     document.querySelectorAll('.social-btn').forEach(btn => {
