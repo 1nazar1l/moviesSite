@@ -1,5 +1,5 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import get_user_model
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import get_user_model, authenticate, login
 
 def mainPage(request):
     if 'username' not in request.session:
@@ -10,54 +10,66 @@ def mainPage(request):
     })
 
 def authPage(request):
-    request.session['first_visit'] = True
-    if 'username' not in request.session:
-        request.session['username'] = ""
+    error_message = ""
 
-    return render(request, "main/auth.html", context={
-        "username": request.session['username']
-    })
+    if request.POST:
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+
+        if user:
+            login(request, user=user)
+
+            request.session['username'] = username
+            return redirect("mainPage")
+        else:
+            error_message = "Такого пользователя не существует"
+    
+
+            return render(request, "main/auth.html", context={
+                "username": request.session['username'],
+                "error_message": error_message
+            })
+    else:        
+        return render(request, "main/auth.html", context={
+            "username": request.session['username'],
+            "error_message": error_message
+        })
 
 def regPage(request):
     User = get_user_model()
-    if request.session['first_visit']:
-        request.session['first_visit'] = False
-        return render(request, "main/reg.html", context={
-            "message": "",
-            "username": ""
-        })
-    else:
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        email = request.POST.get('email')
 
-        message = ""
-        request.session['username'] = ""
-        error_username = ""
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+    email = request.POST.get('email')
 
-        path = "main/reg.html"
+    message = ""
+    request.session['username'] = ""
+    error_username = ""
 
-        if username:
-            media_item_obj, created = User.objects.get_or_create(username=username)
+    path = "main/reg.html"
+
+    if username:
+        user, created = User.objects.get_or_create(username=username)
 
 
-            if not created:
-                message = "exist"
-                error_username = username
-            else:
-                media_item_obj.email = email
-                media_item_obj.password = password
-                media_item_obj.save()
+        if not created:
+            message = "exist"
+            error_username = username
+        else:
+            user.email = email
+            user.password = password
+            user.save()
 
-                request.session['username'] = username
+            request.session['username'] = username
 
-                path = "main/index.html"
-        
-        return render(request, path, context={
-            "message": message,
-            "username": request.session['username'],
-            "error_username": error_username,
-        })
+            path = "main/index.html"
+    
+    return render(request, path, context={
+        "message": message,
+        "username": request.session['username'],
+        "error_username": error_username,
+    })
 
 def filmsPage(request):
     if 'username' not in request.session:

@@ -69,19 +69,21 @@
       <div class="auth-card">
           <div class="auth-header">
               <h1 class="auth-title">Вход в аккаунт</h1>
+              <p>{{error_message}}</p>
               <p class="auth-subtitle">Введите свои данные для входа в систему</p>
           </div>
           
-          <form class="auth-form" id="loginForm">
+          <form class="auth-form" id="loginForm" action="{% url 'authPage' %}" method="post">
+            {% csrf_token %}
               <div class="form-group">
-                  <label for="email" class="form-label">Электронная почта</label>
-                  <input type="email" id="email" class="form-input" placeholder="example@mail.com" required>
+                  <label for="username" class="form-label">Никнейм</label>
+                  <input name="username" type="text" id="username" class="form-input" placeholder="User13920" required>
               </div>
               
               <div class="form-group">
                   <label for="password" class="form-label">Пароль</label>
                   <div class="password-container">
-                      <input type="password" id="password" class="form-input" placeholder="Введите пароль" required>
+                      <input type="password" name="password" id="password" class="form-input" placeholder="Введите пароль" required>
                       <button type="button" class="toggle-password" id="togglePassword">
                           <i class="far fa-eye"></i>
                       </button>
