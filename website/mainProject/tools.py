@@ -264,7 +264,6 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url):
     if not os.path.exists(img_filepath):
         if site_img_path != "":
             p = requests.get(site_img_path)
-            print(p.content)
         
             with open(img_filepath, "wb") as out:
                 out.write(p.content)

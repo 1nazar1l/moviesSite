@@ -77,184 +77,54 @@
   </section>
 
   <div class="content">
+    
     <section class="section section1">
-      <h2 class="section-title">Популярные фильмы</h2>
-      <div class="cards-carousel">
-        <!-- Карточки фильмов -->
-        <a href="{% url "itemPage" %}">
-          <div class="card">
-            <div class="card-img">
-              <img src="{% static 'main/images/1007734.jpg' %}" alt="">
-              <!-- <i class="fas fa-film"></i> -->
-            </div>
-            <div class="card-content">
-              <h3 class="card-title">Интерстеллар</h3>
-              <p class="card-meta">2014 • Фантастика</p>
-            </div>
-          </div>
-        </a>
-        <div class="card">
-          <div class="card-img">
-            <i class="fas fa-film"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Интерстеллар</h3>
-            <p class="card-meta">2014 • Фантастика</p>
-          </div>
+      {% if films|length > 0 %}
+        <h2 class="section-title">Популярные фильмы</h2>
+        <div class="cards-carousel">
+          {% for film in films %}
+            <a href="{% url "itemPage" %}">
+              <div class="card">
+                <div class="card-img">
+                  {% if film.local_img_path == "" %}
+                    <i class="fas fa-film"></i>
+                  {% else %}
+                    <img src="{% static 'images/films/' %}{{ film.search_id }}.jpg" alt="{{ film.title }}">
+                  {% endif %}
+                </div>
+                <div class="card-content">
+                  <h3 class="card-title">{{film.title}}</h3>
+                  <p class="card-meta">{{ film.release_date|date:"Y" }} • {{film.genres}}</p>
+                </div>
+              </div>
+            </a>
+          {% endfor %}
         </div>
-        <div class="card">
-          <div class="card-img">
-            <i class="fas fa-film"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Интерстеллар</h3>
-            <p class="card-meta">2014 • Фантастика</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-img">
-            <i class="fas fa-film"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Интерстеллар</h3>
-            <p class="card-meta">2014 • Фантастика</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-img">
-            <i class="fas fa-film"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Интерстеллар</h3>
-            <p class="card-meta">2014 • Фантастика</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-img">
-            <i class="fas fa-film"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Интерстеллар</h3>
-            <p class="card-meta">2014 • Фантастика</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-img">
-            <i class="fas fa-film"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Интерстеллар</h3>
-            <p class="card-meta">2014 • Фантастика</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-img">
-            <i class="fas fa-film"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Начало</h3>
-            <p class="card-meta">2010 • Триллер</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-img">
-            <i class="fas fa-film"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Побег из Шоушенка</h3>
-            <p class="card-meta">1994 • Драма</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-img">
-            <i class="fas fa-film"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Крестный отец</h3>
-            <p class="card-meta">1972 • Криминал</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-img">
-            <i class="fas fa-film"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Темный рыцарь</h3>
-            <p class="card-meta">2008 • Боевик</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-img">
-            <i class="fas fa-film"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Форрест Гамп</h3>
-            <p class="card-meta">1994 • Драма</p>
-          </div>
-        </div>
-      </div>
+      {% endif %}
     </section>
     <section class="section section2">
-      <h2 class="section-title">Новые сериалы</h2>
-      <div class="cards-carousel">
-        <!-- Карточки сериалов -->
-        <a href="">
-          <div class="card">
-            <div class="card-img">
-              <i class="fas fa-tv"></i>
+      {% if films|length > 0 %}
+        <h2 class="section-title">Новые сериалы</h2>
+        <div class="cards-carousel">
+        {% for serial in serials %}
+          <a href="{% url "itemPage" %}">
+            <div class="card">
+              <div class="card-img">
+                {% if serial.local_img_path == "" %}
+                  <i class="fas fa-film"></i>
+                {% else %}
+                  <img src="{% static 'images/serials/' %}{{ serial.search_id }}.jpg" alt="{{ serial.title }}">
+                {% endif %}
+              </div>
+              <div class="card-content">
+                <h3 class="card-title">{{serial.title}}</h3>
+                <p class="card-meta">{{ serial.first_air_date|date:"Y" }}-{{ serial.last_air_date|date:"Y" }} • {{serial.genres}}</p>
+              </div>
             </div>
-            <div class="card-content">
-              <h3 class="card-title">Игра престолов</h3>
-              <p class="card-meta">2011-2019 • Фэнтези</p>
-            </div>
-          </div>
-        </a>
-        <div class="card">
-          <div class="card-img">
-            <i class="fas fa-tv"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Во все тяжкие</h3>
-            <p class="card-meta">2008-2013 • Драма</p>
-          </div>
+          </a>
+        {% endfor %}
         </div>
-        <div class="card">
-          <div class="card-img">
-            <i class="fas fa-tv"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Очень странные дела</h3>
-            <p class="card-meta">2016-2024 • Фантастика</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-img">
-            <i class="fas fa-tv"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Друзья</h3>
-            <p class="card-meta">1994-2004 • Комедия</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-img">
-            <i class="fas fa-tv"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Черное зеркало</h3>
-            <p class="card-meta">2011-2023 • Антология</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-img">
-            <i class="fas fa-tv"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Клан Сопрано</h3>
-            <p class="card-meta">1999-2007 • Криминал</p>
-          </div>
-        </div>
-      </div>
+      {% endif %}
     </section>
     <section class="section section3">
       <h2 class="section-title">Скоро выйдет</h2>

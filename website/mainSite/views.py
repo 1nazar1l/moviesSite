@@ -1,12 +1,39 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model, authenticate, login
 
+from mainProject.models import Film, Serial
+import os
+
 def mainPage(request):
+    films = Film.objects.all()
+    films = films[10:]
+    serials = Serial.objects.all()
+    serials = serials[10:]
+
+    root = "C:/Users/Nazar/Desktop/moviesSite/website/mainProject/static"
+
+    for film in films:
+        img_path = os.path.join(root, film.local_img_path)
+        print(img_path)
+        if not os.path.exists(img_path):
+            film.local_img_path = ""
+        
+        film.genres = film.genres[0]["name"]
+
+
+    for serial in serials:
+        img_path = os.path.join(root, serial.local_img_path)
+        if not os.path.exists(img_path):
+            serial.local_img_path = ""
+
+        serial.genres = serial.genres[0]["name"]
     if 'username' not in request.session:
         request.session['username'] = ""
 
     return render(request, "main/index.html", context={
-        "username": request.session['username']
+        "username": request.session['username'],
+        "films": films,
+        "serials": serials
     })
 
 def authPage(request):
