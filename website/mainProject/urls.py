@@ -1,11 +1,12 @@
 from django.urls import path, include
 from . import views
+from mainSite.views import mainPage
 
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('', views.home, name='home'),
+    path('', mainPage, name='mainPage'),
     path('clear_messages/', views.clear_messages, name='clear_messages'),
 
     path('films/', views.films_admin_panel, name='films'),

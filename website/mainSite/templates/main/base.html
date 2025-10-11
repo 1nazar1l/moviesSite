@@ -19,11 +19,10 @@
         {% block header_nav %}{% endblock header_nav %}
         <div class="header-controls">
           <div class="theme-toggle" id="themeToggle"></div>
-          {% if username != "" %}
+          {% if request.user.is_authenticated %}
             {% block auth_header_profile_url%}{% endblock auth_header_profile_url %}
           {% else %}
             {% block not_auth_header_profile_url %}{% endblock not_auth_header_profile_url %}
-            {{ username }}
           {% endif %}
         </div>
       </div>

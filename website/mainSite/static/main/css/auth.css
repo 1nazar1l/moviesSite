@@ -1,6 +1,3 @@
-
-
-/* Основной контент - страница авторизации */
 .auth-container {
     display: flex;
     justify-content: center;
@@ -206,6 +203,22 @@
 
 .auth-footer a:hover {
     opacity: 0.8;
+}
+
+.auth-subtitle.password-error {
+    display: none;
+}
+
+.auth-subtitle.username-error {
+    display: none;
+}
+
+.auth-subtitle.password-error.active{
+    display: block;
+}
+
+.auth-subtitle.username-error.active {
+    display: block;
 }
 
 @media (max-width: 768px) {

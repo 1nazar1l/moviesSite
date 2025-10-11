@@ -19,6 +19,9 @@
       <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
       <li><a href="#">Сериалы</a></li>
       <li><a href="#">Актеры</a></li>
+      {% if request.user.is_superuser %}
+      <li><a href="{% url "adminPanel" %}">Админ панель</a></li>
+      {% endif %}
     </ul>
   </nav>
 {% endblock header_nav %}
@@ -30,6 +33,9 @@
       <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
       <li><a href="#">Сериалы</a></li>
       <li><a href="#">Актеры</a></li>
+      {% if request.user.is_superuser %}
+      <li><a href="{% url "adminPanel" %}">Админ панель</a></li>
+      {% endif %}
     </ul>
   </nav>
 {% endblock sidebar_nav %}
@@ -50,7 +56,7 @@
         <div class="profile-sidebar">
             <div class="profile-card">
                 <div class="avatar-container">
-                    <div class="avatar" id="userAvatar">{{username|first|upper}}</div>
+                    <div class="avatar" id="userAvatar">{{icon}}</div>
                     <div class="avatar-edit" id="editAvatar">
                         <i class="fas fa-camera"></i>
                     </div>

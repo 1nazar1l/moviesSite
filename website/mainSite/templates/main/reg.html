@@ -19,6 +19,9 @@
       <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
       <li><a href="#">Сериалы</a></li>
       <li><a href="#">Актеры</a></li>
+      {% if request.user.is_superuser %}
+      <li><a href="{% url "adminPanel" %}">Админ панель</a></li>
+      {% endif %}
     </ul>
   </nav>
 {% endblock header_nav %}
@@ -30,6 +33,9 @@
       <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
       <li><a href="#">Сериалы</a></li>
       <li><a href="#">Актеры</a></li>
+      {% if request.user.is_superuser %}
+      <li><a href="{% url "adminPanel" %}">Админ панель</a></li>
+      {% endif %}
     </ul>
   </nav>
 {% endblock sidebar_nav %}
@@ -71,6 +77,8 @@
               {% if message == "exist" %}
                 <p class="auth-subtitle">Пользователь с таким именем({{error_username}}) уже существует</p>
               {% endif %}
+              <p class="auth-subtitle password-error"></p>
+              <p class="auth-subtitle username-error">Никнейм не подходит</p>
               <h1 class="auth-title">Создание аккаунта</h1>
               <p class="auth-subtitle">Введите свои данные для регистрации</p>
           </div>
@@ -79,7 +87,7 @@
               {% csrf_token %}
               <div class="form-group">
                   <p class="form-label">Никнейм(от 5 до 11 символов)</p>
-                  <input name="username" type="text" id="usernameInput" class="form-input" placeholder="User13920" required>
+                  <input name="username" type="text" id="usernameInput" class="form-input" placeholder="User13920" autocomplete="off" required>
               </div>
 
               <div class="form-group">
@@ -88,9 +96,17 @@
               </div>
               
               <div class="form-group">
-                  <label for="password" class="form-label">Пароль</label>
+                  <label for="password" class="form-label" id="passwordRating">Пароль</label>
                   <div class="password-container">
-                      <input name="password" type="password" id="password" class="form-input" placeholder="Введите пароль" required>
+                      <input 
+                      title="Нельзя вводить такие символы:;!-+@#$%'&*,()" 
+                      name="password" 
+                      type="password" 
+                      id="password" 
+                      class="form-input" 
+                      placeholder="Введите пароль"
+                      autocomplete="off"
+                      required>
                       <button type="button" class="toggle-password" id="togglePassword">
                           <i class="far fa-eye"></i>
                       </button>
@@ -100,7 +116,7 @@
               <div class="form-group">
                   <label for="confirm-password" class="form-label">Подтвердите пароль</label>
                   <div class="password-container">
-                      <input type="password" id="confirm-password" class="form-input" placeholder="Подтвердите пароль" required>
+                      <input type="password" id="confirm-password" class="form-input" placeholder="Подтвердите пароль" autocomplete="off" required>
                       <button type="button" class="toggle-password" id="toggleConfirmPassword">
                           <i class="far fa-eye"></i>
                       </button>

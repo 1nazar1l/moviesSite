@@ -12,9 +12,6 @@ from django.shortcuts import redirect
 
 from django.db.models import Q
 
-def home(request):
-    return render(request, "home.html")
-
 def films_admin_panel(request):
     all_films = Film.objects.all()
 

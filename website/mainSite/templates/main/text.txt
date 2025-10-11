@@ -1,3 +1,0 @@
-{% block profile_url %}
-  <button class="auth-btn" onclick="window.location.href='auth.html'">Войти</button>
-{% endblock profile_url %}
