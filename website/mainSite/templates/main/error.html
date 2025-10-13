@@ -1,0 +1,83 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block css %}
+  <link rel="stylesheet" href="{% static "main/css/normalize.css" %}">
+  <link rel="stylesheet" href="{% static "main/css/base.css" %}">
+  <link rel="stylesheet" href="{% static "main/css/error.css" %}">
+{% endblock css %}
+
+{% block script %}
+  <script src="{% static "main/js/base.js" %}"></script>
+  <script src="{% static "main/js/error.js" %}"></script>
+{% endblock script %}
+
+{% block header_nav %}
+  <nav>
+    <ul>
+      <li><a href="{% url "mainPage" %}">Главная</a></li>
+      <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
+      <li><a href="{% url "serialsPage" %}">Сериалы</a></li>
+      <li><a href="{% url "actorsPage" %}">Актеры</a></li>
+      {% if request.user.is_superuser %}
+      <li><a href="{% url "adminPanel" %}">Админ панель</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+{% endblock header_nav %}
+
+{% block sidebar_nav %}
+  <nav>
+    <ul>
+      <li><a href="{% url "mainPage" %}">Главная</a></li>
+      <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
+      <li><a href="{% url "serialsPage" %}">Сериалы</a></li>
+      <li><a href="{% url "actorsPage" %}">Актеры</a></li>
+      {% if request.user.is_superuser %}
+      <li><a href="{% url "adminPanel" %}">Админ панель</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+{% endblock sidebar_nav %}
+
+{% block auth_header_profile_url %}
+  <a href="{% url "profilePage" %}">
+    <div class="profile-block">
+      <span>{{username}}</span>
+      <div class="profile-icon">
+        <i class="fa-solid fa-circle-user"></i>
+      </div>
+    </div>
+  </a>
+{% endblock auth_header_profile_url %}
+
+{% block not_auth_header_profile_url %}
+  <a class="auth-btn" href="{% url "authPage" %}">Войти</a>
+{% endblock not_auth_header_profile_url %}
+
+{% block auth_sidebar_profile_url %}
+  <a href="{% url "profilePage" %}">
+    <div class="profile-block">
+      <span>{{username}}</span>
+      <div class="profile-icon">
+        <i class="fa-solid fa-circle-user"></i>
+      </div>
+    </div>
+  </a>
+{% endblock auth_sidebar_profile_url %}
+
+{% block not_auth_sidebar_profile_url %}
+  <a class="auth-btn" href="{% url "authPage" %}">Войти</a>
+{% endblock not_auth_sidebar_profile_url %}
+
+{% block main_content %}
+  <div class="error-container">
+    <div class="error-icon">⚠️</div>
+    <h1 class="error-code" id="error-code">404</h1>
+    <h2 class="error-title" id="error-title">Страница не найдена</h2>
+    <p class="error-description" id="error-description">
+      К сожалению, запрашиваемая страница не существует. Возможно, она была
+      удалена или перемещена.
+    </p>
+  </div>
+{% endblock main_content %}

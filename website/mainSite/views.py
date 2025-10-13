@@ -160,8 +160,6 @@ def itemPage(request, media_type, search_id):
     if media_type == "film" or media_type == "serial" or media_type == "actor":
         media_type = f"{media_type}s"
     
-    print("media_type", media_type)
-
     models = {
         "films": Film,
         "serials": Serial,
@@ -174,4 +172,9 @@ def itemPage(request, media_type, search_id):
         "username": request.user,
         "item": item,
         "media_type": media_type
+    })
+
+def errorPage(request, media_type=""):        
+    return render(request, "main/error.html", context={
+        "username": request.user
     })
