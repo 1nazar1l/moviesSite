@@ -220,6 +220,11 @@
     justify-content: center;
     color: var(--secondary);
     font-size: 3rem;
+    overflow: hidden;
+}
+
+.movie-poster img {
+    width: 100%;
 }
 
 .movie-info {

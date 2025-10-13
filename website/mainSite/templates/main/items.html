@@ -15,10 +15,9 @@
 {% block header_nav %}
   <nav>
     <ul>
-      <li><a href="{% url "mainPage" %}">Главная</a></li>
       <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
-      <li><a href="#">Сериалы</a></li>
-      <li><a href="#">Актеры</a></li>
+      <li><a href="{% url "serialsPage" %}">Сериалы</a></li>
+      <li><a href="{% url "actorsPage" %}">Актеры</a></li>
       {% if request.user.is_superuser %}
       <li><a href="{% url "adminPanel" %}">Админ панель</a></li>
       {% endif %}
@@ -29,10 +28,9 @@
 {% block sidebar_nav %}
   <nav>
     <ul>
-      <li><a href="{% url "mainPage" %}">Главная</a></li>
-      <li><a href="films.html">Фильмы</a></li>
-      <li><a href="#">Сериалы</a></li>
-      <li><a href="#">Актеры</a></li>
+      <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
+      <li><a href="{% url "serialsPage" %}">Сериалы</a></li>
+      <li><a href="{% url "actorsPage" %}">Актеры</a></li>
       {% if request.user.is_superuser %}
       <li><a href="{% url "adminPanel" %}">Админ панель</a></li>
       {% endif %}
@@ -206,202 +204,84 @@
     <!-- Контент -->
     <div class="content-area">
       <div class="content-header">
+        {% if media_type == "films" %}
         <h1 class="page-title">Фильмы</h1>
+        {% elif media_type == "serials" %}
+        <h1 class="page-title">Сериалы</h1>
+        {% elif media_type == "actors" %}
+        <h1 class="page-title">Актеры</h1>
+        {% endif %}
         <div class="sort-options">
           <span class="sort-label">Сортировка:</span>
-          <select class="sort-select" id="sortSelect">
-            <option value="popular">По популярности</option>
-            <option value="rating">По рейтингу</option>
-            <option value="release_date">По дате выхода</option>
-            <option value="title">По названию</option>
-          </select>
+          {% if media_type != "actors" %}
+            <select class="sort-select" id="sortSelect">
+              <option value="popular">По популярности</option>
+              <option value="rating">По рейтингу</option>
+              <option value="release_date">По дате выхода</option>
+              <option value="title">По названию</option>
+            </select>
+          {% else %}
+            <select class="sort-select" id="sortSelect">
+              <option value="popular">По популярности</option>
+              <option value="rating">По рейтингу</option>
+              <option value="release_date">По дате рождения</option>
+              <option value="title">По имени</option>
+            </select>
+          {% endif %}
         </div>
       </div>
 
       <div class="movies-grid" id="moviesGrid">
         <!-- Карточки фильмов -->
-        <div
-          class="movie-card"
-          onclick="window.location.href='movie-details.html'"
-        >
-          <div class="movie-poster">
-            <i class="fas fa-film"></i>
-          </div>
-          <div class="movie-info">
-            <h3 class="movie-title">Интерстеллар</h3>
-            <div class="movie-meta">
-              <span>2014</span>
-              <span class="movie-rating">
-                <i class="fas fa-star"></i>
-                8.6
-              </span>
+        {% for item in items %}        
+          <div
+            class="movie-card"
+            onclick="window.location.href='movie-details.html'"
+          >
+            <div class="movie-poster">
+              {% if item.local_img_path == "" %}
+                {% if media_type != "actors" %}
+                  <i class="fas fa-film"></i>
+                {% else %}
+                  <i class="fas fa-star"></i>
+                {% endif %}
+              {% else %}
+                  <img src="{% static 'images/' %}{{ media_type }}/{{ item.search_id }}.jpg" alt="{{ film.title }}">
+              {% endif %}
             </div>
-            <div class="movie-genres">
-              <span class="genre-tag">Фантастика</span>
-              <span class="genre-tag">Драма</span>
-            </div>
-          </div>
-        </div>
+            <div class="movie-info">
+              {% if media_type != "actors" %}
+                <h3 class="movie-title">{{item.title}}</h3>
+              {% else %}
+                <h3 class="movie-title">{{item.name}}</h3>
+              {% endif %}
+              <div class="movie-meta">
+                {% if media_type == "films" %}
+                  <span>{{item.release_date}}</span>
+                {% elif media_type == "serials" %}
+                  <span>{{item.first_air_date}}-{{item.last_air_date}}</span>
+                {% elif media_type == "actors" %}
+                  <span>{{item.birthday}}</span>
+                {% endif %}
 
-        <div
-          class="movie-card"
-          onclick="window.location.href='movie-details.html'"
-        >
-          <div class="movie-poster">
-            <i class="fas fa-film"></i>
-          </div>
-          <div class="movie-info">
-            <h3 class="movie-title">Начало</h3>
-            <div class="movie-meta">
-              <span>2010</span>
-              <span class="movie-rating">
-                <i class="fas fa-star"></i>
-                8.8
-              </span>
-            </div>
-            <div class="movie-genres">
-              <span class="genre-tag">Фантастика</span>
-              <span class="genre-tag">Триллер</span>
+                {% if media_type != "actors" %}
+                  <span class="movie-rating">
+                    <i class="fas fa-star"></i>
+                    {{item.rating}}
+                  </span>
+                {% endif %}
+              </div>
+              {% if media_type != "actors" %}
+               <div class="movie-genres">
+                {% for genre in item.genres %}
+                  <span class="genre-tag">{{genre.name}}</span>
+                {% endfor %}
+                </div>
+              {% endif %}
             </div>
           </div>
-        </div>
+        {% endfor %}
 
-        <div
-          class="movie-card"
-          onclick="window.location.href='movie-details.html'"
-        >
-          <div class="movie-poster">
-            <i class="fas fa-film"></i>
-          </div>
-          <div class="movie-info">
-            <h3 class="movie-title">Побег из Шоушенка</h3>
-            <div class="movie-meta">
-              <span>1994</span>
-              <span class="movie-rating">
-                <i class="fas fa-star"></i>
-                9.3
-              </span>
-            </div>
-            <div class="movie-genres">
-              <span class="genre-tag">Драма</span>
-            </div>
-          </div>
-        </div>
-
-        <div
-          class="movie-card"
-          onclick="window.location.href='movie-details.html'"
-        >
-          <div class="movie-poster">
-            <i class="fas fa-film"></i>
-          </div>
-          <div class="movie-info">
-            <h3 class="movie-title">Крестный отец</h3>
-            <div class="movie-meta">
-              <span>1972</span>
-              <span class="movie-rating">
-                <i class="fas fa-star"></i>
-                9.2
-              </span>
-            </div>
-            <div class="movie-genres">
-              <span class="genre-tag">Криминал</span>
-              <span class="genre-tag">Драма</span>
-            </div>
-          </div>
-        </div>
-
-        <div
-          class="movie-card"
-          onclick="window.location.href='movie-details.html'"
-        >
-          <div class="movie-poster">
-            <i class="fas fa-film"></i>
-          </div>
-          <div class="movie-info">
-            <h3 class="movie-title">Темный рыцарь</h3>
-            <div class="movie-meta">
-              <span>2008</span>
-              <span class="movie-rating">
-                <i class="fas fa-star"></i>
-                9.0
-              </span>
-            </div>
-            <div class="movie-genres">
-              <span class="genre-tag">Боевик</span>
-              <span class="genre-tag">Криминал</span>
-            </div>
-          </div>
-        </div>
-
-        <div
-          class="movie-card"
-          onclick="window.location.href='movie-details.html'"
-        >
-          <div class="movie-poster">
-            <i class="fas fa-film"></i>
-          </div>
-          <div class="movie-info">
-            <h3 class="movie-title">Форрест Гамп</h3>
-            <div class="movie-meta">
-              <span>1994</span>
-              <span class="movie-rating">
-                <i class="fas fa-star"></i>
-                8.8
-              </span>
-            </div>
-            <div class="movie-genres">
-              <span class="genre-tag">Драма</span>
-              <span class="genre-tag">Мелодрама</span>
-            </div>
-          </div>
-        </div>
-
-        <div
-          class="movie-card"
-          onclick="window.location.href='movie-details.html'"
-        >
-          <div class="movie-poster">
-            <i class="fas fa-film"></i>
-          </div>
-          <div class="movie-info">
-            <h3 class="movie-title">Бойцовский клуб</h3>
-            <div class="movie-meta">
-              <span>1999</span>
-              <span class="movie-rating">
-                <i class="fas fa-star"></i>
-                8.8
-              </span>
-            </div>
-            <div class="movie-genres">
-              <span class="genre-tag">Драма</span>
-              <span class="genre-tag">Триллер</span>
-            </div>
-          </div>
-        </div>
-
-        <div
-          class="movie-card"
-          onclick="window.location.href='movie-details.html'"
-        >
-          <div class="movie-poster">
-            <i class="fas fa-film"></i>
-          </div>
-          <div class="movie-info">
-            <h3 class="movie-title">Зеленая миля</h3>
-            <div class="movie-meta">
-              <span>1999</span>
-              <span class="movie-rating">
-                <i class="fas fa-star"></i>
-                9.1
-              </span>
-            </div>
-            <div class="movie-genres">
-              <span class="genre-tag">Драма</span>
-              <span class="genre-tag">Фэнтези</span>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>

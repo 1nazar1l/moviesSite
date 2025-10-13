@@ -15,10 +15,9 @@
 {% block header_nav %}
   <nav>
     <ul>
-      <li><a href="{% url "mainPage" %}">Главная</a></li>
-      <li><a href="films.html">Фильмы</a></li>
-      <li><a href="#">Сериалы</a></li>
-      <li><a href="#">Актеры</a></li>
+      <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
+      <li><a href="{% url "serialsPage" %}">Сериалы</a></li>
+      <li><a href="{% url "actorsPage" %}">Актеры</a></li>
       {% if request.user.is_superuser %}
       <li><a href="{% url "adminPanel" %}">Админ панель</a></li>
       {% endif %}
@@ -29,10 +28,9 @@
 {% block sidebar_nav %}
   <nav>
     <ul>
-      <li><a href="{% url "mainPage" %}">Главная</a></li>
-      <li><a href="films.html">Фильмы</a></li>
-      <li><a href="#">Сериалы</a></li>
-      <li><a href="#">Актеры</a></li>
+      <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
+      <li><a href="{% url "serialsPage" %}">Сериалы</a></li>
+      <li><a href="{% url "actorsPage" %}">Актеры</a></li>
       {% if request.user.is_superuser %}
       <li><a href="{% url "adminPanel" %}">Админ панель</a></li>
       {% endif %}

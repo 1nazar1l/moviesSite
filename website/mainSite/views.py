@@ -1,9 +1,17 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model, authenticate, login, logout
 
-from mainProject.models import Film, Serial
+from mainProject.models import Film, Serial, Actor
 from django.db.models import Q
 import os
+
+
+def check_path(item):
+    root = "C:/Users/Nazar/Desktop/moviesSite/website/mainProject/static"
+    img_path = os.path.join(root, item.local_img_path)
+
+    if not os.path.exists(img_path):
+        item.local_img_path = ""
 
 def mainPage(request):
     films = Film.objects.all()
@@ -11,20 +19,13 @@ def mainPage(request):
     serials = Serial.objects.all()
     serials = serials.order_by('rating')[:10]
 
-    root = "C:/Users/Nazar/Desktop/moviesSite/website/mainProject/static"
-
     for film in films:
-        img_path = os.path.join(root, film.local_img_path)
-
-        if not os.path.exists(img_path):
-            film.local_img_path = ""
+        check_path(film)
         
         film.genres = film.genres[0]["name"]
 
     for serial in serials:
-        img_path = os.path.join(root, serial.local_img_path)
-        if not os.path.exists(img_path):
-            serial.local_img_path = ""
+        check_path(serial)
 
         serial.genres = serial.genres[0]["name"]
         
@@ -86,12 +87,43 @@ def regPage(request):
     })
 
 def filmsPage(request):
+    films = Film.objects.all()
+
+    for film in films:
+        check_path(film)
+
+    media_type = "films"
     return render(request, "main/items.html", context={
-        "username": request.user
+        "username": request.user,
+        "items": films,
+        "media_type": media_type
+    })
+
+def serialsPage(request):
+    serials = Serial.objects.all()
+    for serial in serials:
+        check_path(serial)
+
+    media_type = "serials"
+    return render(request, "main/items.html", context={
+        "username": request.user,
+        "items": serials,
+        "media_type": media_type
+    })
+
+def actorsPage(request):
+    actors = Actor.objects.all()
+    for actor in actors:
+        check_path(actor)
+        
+    media_type = "actors"
+    return render(request, "main/items.html", context={
+        "username": request.user,
+        "items": actors,
+        "media_type": media_type
     })
 
 def searchPage(request):
-    items = []
     search = request.POST.get('search')
     if search:
         films = Film.objects.filter(
