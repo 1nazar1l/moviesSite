@@ -5,7 +5,6 @@ from datetime import datetime, date
 
 from .models import Film, Serial, Actor
 
-
 env.read_env()
 api_key = env("API_KEY")
 BASE_URL = "https://api.themoviedb.org/3"
@@ -311,7 +310,6 @@ def parsing_media_items(request, media_type, messages, messages_block):
 
             for media_item in data["results"]:
                 is_exist = model.objects.filter(search_id = media_item["id"]).exists()
-
                 if is_exist:
                     continue
 
@@ -340,6 +338,9 @@ def parsing_media_items(request, media_type, messages, messages_block):
                 response.raise_for_status()
 
                 media_item_data = response.json()
+
+                if media_item_data["budget"] == 0:
+                    continue
 
                 download_media_item(media_type, img_index, media_item_data, model, img_url)
 

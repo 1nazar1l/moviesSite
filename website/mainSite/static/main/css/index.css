@@ -130,6 +130,10 @@ main .search_block.active {
     transform: translateY(0);
 }
 
+main .search_block.active .search-form {
+    width: 100%;
+}
+
 main .search_block input {
     width: 100%;
     border-radius: 30px;

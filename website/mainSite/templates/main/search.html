@@ -81,17 +81,16 @@
     <div class="search-info">
       <div>
         <h1 class="search-query">
-          Результаты поиска: <span id="searchQuery">Интерстеллар</span>
+          Результаты поиска: <span id="searchQuery">{{search_title}}</span>
         </h1>
         <p class="results-count">
-          Найдено <span id="resultsCount">8</span> результатов
+          Найдено <span id="resultsCount">{{results_count}}</span> результатов
         </p>
       </div>
 
       <div class="sort-options">
         <span class="sort-label">Сортировка:</span>
         <select class="sort-select" id="sortSelect">
-          <option value="relevance">По релевантности</option>
           <option value="rating">По рейтингу</option>
           <option value="release_date">По дате выхода</option>
           <option value="title">По названию</option>
@@ -99,153 +98,82 @@
       </div>
     </div>
   </div>
+  {% if results_count != 0 %}  
+    <div class="content-grid" id="searchResults">
+      {% if films|length > 0 %}
+        {% for film in films %}
+        
+          <div
+            class="movie-card"
+            onclick="window.location.href='movie-details.html'"
+          >
+            <div class="movie-poster">
+              {% if film.local_img_path == "" %}
+                <i class="fas fa-film"></i>
+              {% else %}
+                <img src="{% static 'images/films/' %}{{ film.search_id }}.jpg" alt="{{ film.title }}">
+              {% endif %}
+            </div>
+            <div class="movie-info">
+              <h3 class="movie-title">{{film.title}}</h3>
+              <div class="movie-meta">
+                <span>{{film.release_date}}</span>
+                <span class="movie-rating">
+                  <i class="fas fa-star"></i>
+                  {{film.rating}}
+                </span>
+              </div>
+              <div class="movie-genres">
+                {% for genre in film.genres %}
+                  <span class="genre-tag">{{genre.name}}</span>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
 
-  <div class="content-grid" id="searchResults">
-    <div
-      class="movie-card"
-      onclick="window.location.href='movie-details.html'"
-    >
-      <div class="movie-poster">
-        <i class="fas fa-film"></i>
-      </div>
-      <div class="movie-info">
-        <h3 class="movie-title">Интерстеллар</h3>
-        <div class="movie-meta">
-          <span>2014</span>
-          <span class="movie-rating">
-            <i class="fas fa-star"></i>
-            8.6
-          </span>
-        </div>
-        <div class="movie-genres">
-          <span class="genre-tag">Фантастика</span>
-          <span class="genre-tag">Драма</span>
-        </div>
-      </div>
+      {% if serials|length > 0 %}
+        {% for serial in serials %}
+        
+          <div
+            class="movie-card"
+            onclick="window.location.href='movie-details.html'"
+          >
+            <div class="movie-poster">
+              {% if serial.local_img_path == "" %}
+                <i class="fas fa-film"></i>
+              {% else %}
+                <img src="{% static 'images/serials/' %}{{ serial.search_id }}.jpg" alt="{{ serial.title }}">
+              {% endif %}
+            </div>
+            <div class="movie-info">
+              <h3 class="movie-title">{{serial.title}}</h3>
+              <div class="movie-meta">
+                <span>{{serial.release_date}}</span>
+                <span class="movie-rating">
+                  <i class="fas fa-star"></i>
+                  {{serial.rating}}
+                </span>
+              </div>
+              <div class="movie-genres">
+                {% for genre in serial.genres %}
+                  <span class="genre-tag">{{genre.name}}</span>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
     </div>
+  {% else %}
+    <div class="no-results" id="noResults">
+      <div class="no-results-icon">
+        <i class="fas fa-search"></i>
+      </div>
+      <p class="no-results-text">По вашему запросу ничего не найдено</p>
+      <p>Попробуйте изменить поисковый запрос или проверьте правописание</p>
+    </div>
+  {% endif %}
 
-    <div
-      class="movie-card"
-      onclick="window.location.href='movie-details.html'"
-    >
-      <div class="movie-poster">
-        <i class="fas fa-film"></i>
-      </div>
-      <div class="movie-info">
-        <h3 class="movie-title">Начало</h3>
-        <div class="movie-meta">
-          <span>2010</span>
-          <span class="movie-rating">
-            <i class="fas fa-star"></i>
-            8.8
-          </span>
-        </div>
-        <div class="movie-genres">
-          <span class="genre-tag">Фантастика</span>
-          <span class="genre-tag">Триллер</span>
-        </div>
-      </div>
-    </div>
-
-    <div
-      class="movie-card"
-      onclick="window.location.href='movie-details.html'"
-    >
-      <div class="movie-poster">
-        <i class="fas fa-film"></i>
-      </div>
-      <div class="movie-info">
-        <h3 class="movie-title">Прибытие</h3>
-        <div class="movie-meta">
-          <span>2016</span>
-          <span class="movie-rating">
-            <i class="fas fa-star"></i>
-            7.9
-          </span>
-        </div>
-        <div class="movie-genres">
-          <span class="genre-tag">Фантастика</span>
-          <span class="genre-tag">Драма</span>
-        </div>
-      </div>
-    </div>
-
-    <div
-      class="movie-card"
-      onclick="window.location.href='movie-details.html'"
-    >
-      <div class="movie-poster">
-        <i class="fas fa-film"></i>
-      </div>
-      <div class="movie-info">
-        <h3 class="movie-title">Марсианин</h3>
-        <div class="movie-meta">
-          <span>2015</span>
-          <span class="movie-rating">
-            <i class="fas fa-star"></i>
-            8.0
-          </span>
-        </div>
-        <div class="movie-genres">
-          <span class="genre-tag">Фантастика</span>
-          <span class="genre-tag">Приключения</span>
-        </div>
-      </div>
-    </div>
-
-    <div
-      class="movie-card"
-      onclick="window.location.href='movie-details.html'"
-    >
-      <div class="movie-poster">
-        <i class="fas fa-film"></i>
-      </div>
-      <div class="movie-info">
-        <h3 class="movie-title">Гравитация</h3>
-        <div class="movie-meta">
-          <span>2013</span>
-          <span class="movie-rating">
-            <i class="fas fa-star"></i>
-            7.7
-          </span>
-        </div>
-        <div class="movie-genres">
-          <span class="genre-tag">Фантастика</span>
-          <span class="genre-tag">Триллер</span>
-        </div>
-      </div>
-    </div>
-
-    <div
-      class="movie-card"
-      onclick="window.location.href='movie-details.html'"
-    >
-      <div class="movie-poster">
-        <i class="fas fa-film"></i>
-      </div>
-      <div class="movie-info">
-        <h3 class="movie-title">Первый мститель: Противостояние</h3>
-        <div class="movie-meta">
-          <span>2016</span>
-          <span class="movie-rating">
-            <i class="fas fa-star"></i>
-            7.8
-          </span>
-        </div>
-        <div class="movie-genres">
-          <span class="genre-tag">Фантастика</span>
-          <span class="genre-tag">Боевик</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Блок для случая, когда результатов нет -->
-  <div class="no-results" id="noResults">
-    <div class="no-results-icon">
-      <i class="fas fa-search"></i>
-    </div>
-    <p class="no-results-text">По вашему запросу ничего не найдено</p>
-    <p>Попробуйте изменить поисковый запрос или проверьте правописание</p>
-  </div>
 {% endblock main_content %}

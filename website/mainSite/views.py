@@ -2,13 +2,14 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model, authenticate, login, logout
 
 from mainProject.models import Film, Serial
+from django.db.models import Q
 import os
 
 def mainPage(request):
     films = Film.objects.all()
-    films = films[10:]
+    films = films.order_by('-rating')[:10]
     serials = Serial.objects.all()
-    serials = serials[10:]
+    serials = serials.order_by('rating')[:10]
 
     root = "C:/Users/Nazar/Desktop/moviesSite/website/mainProject/static"
 
@@ -90,8 +91,22 @@ def filmsPage(request):
     })
 
 def searchPage(request):
+    items = []
+    search = request.POST.get('search')
+    if search:
+        films = Film.objects.filter(
+            title__icontains=search
+        )
+        serials = Serial.objects.filter(
+            title__icontains=search
+        )
+
     return render(request, "main/search.html", context={
-        "username": request.user
+        "username": request.user,
+        "films": films,
+        "serials": serials,
+        "search_title": search.capitalize(),
+        "results_count": len(films) + len(serials),
     })
 
 def profilePage(request):

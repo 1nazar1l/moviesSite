@@ -91,10 +91,17 @@
     justify-content: center;
     color: var(--secondary);
     font-size: 3rem;
+    overflow: hidden;
+}
+
+.movie-poster img {
+    width: 100%;
+    margin-bottom: 20px;
 }
 
 .movie-info {
     padding: 1rem;
+    z-index: 20;
 }
 
 .movie-title {

@@ -76,9 +76,12 @@
       любимое, делитесь впечатлениями.
     </p>
     <div class="search_block">
-      <input type="text" placeholder="Поиск фильма, сериала, актера..." />
-      <a href="{% url "searchPage" %}"><button class="search_btn">Поиск</button></a>
-      <i class="fa-solid fa-magnifying-glass"></i>
+      <form action="{% url "searchPage" %}" method="post" class="search-form">
+        {% csrf_token %}
+        <input name="search" type="text" name="submit" placeholder="Поиск фильма, сериала, актера..." />
+        <button class="search_btn" type="submit">Поиск</button>
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </form>
     </div>
   </section>
 
