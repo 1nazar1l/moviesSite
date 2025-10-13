@@ -15,6 +15,7 @@
 {% block header_nav %}
   <nav>
     <ul>
+      <li><a href="{% url "mainPage" %}">Главная</a></li>
       <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
       <li><a href="{% url "serialsPage" %}">Сериалы</a></li>
       <li><a href="{% url "actorsPage" %}">Актеры</a></li>
@@ -28,6 +29,7 @@
 {% block sidebar_nav %}
   <nav>
     <ul>
+      <li><a href="{% url "mainPage" %}">Главная</a></li>
       <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
       <li><a href="{% url "serialsPage" %}">Сериалы</a></li>
       <li><a href="{% url "actorsPage" %}">Актеры</a></li>
@@ -232,54 +234,51 @@
       </div>
 
       <div class="movies-grid" id="moviesGrid">
-        <!-- Карточки фильмов -->
-        {% for item in items %}        
-          <div
-            class="movie-card"
-            onclick="window.location.href='movie-details.html'"
-          >
-            <div class="movie-poster">
-              {% if item.local_img_path == "" %}
-                {% if media_type != "actors" %}
-                  <i class="fas fa-film"></i>
-                {% else %}
-                  <i class="fas fa-star"></i>
-                {% endif %}
-              {% else %}
-                  <img src="{% static 'images/' %}{{ media_type }}/{{ item.search_id }}.jpg" alt="{{ film.title }}">
-              {% endif %}
-            </div>
-            <div class="movie-info">
-              {% if media_type != "actors" %}
-                <h3 class="movie-title">{{item.title}}</h3>
-              {% else %}
-                <h3 class="movie-title">{{item.name}}</h3>
-              {% endif %}
-              <div class="movie-meta">
-                {% if media_type == "films" %}
-                  <span>{{item.release_date}}</span>
-                {% elif media_type == "serials" %}
-                  <span>{{item.first_air_date}}-{{item.last_air_date}}</span>
-                {% elif media_type == "actors" %}
-                  <span>{{item.birthday}}</span>
-                {% endif %}
-
-                {% if media_type != "actors" %}
-                  <span class="movie-rating">
+        {% for item in items %}       
+          <a href="{% url 'itemPage' media_type item.search_id %}">
+            <div class="movie-card">
+              <div class="movie-poster">
+                {% if item.local_img_path == "" %}
+                  {% if media_type != "actors" %}
+                    <i class="fas fa-film"></i>
+                  {% else %}
                     <i class="fas fa-star"></i>
-                    {{item.rating}}
-                  </span>
+                  {% endif %}
+                {% else %}
+                    <img src="{% static 'images/' %}{{ media_type }}/{{ item.search_id }}.jpg" alt="{{ film.title }}">
                 {% endif %}
               </div>
-              {% if media_type != "actors" %}
-               <div class="movie-genres">
-                {% for genre in item.genres %}
-                  <span class="genre-tag">{{genre.name}}</span>
-                {% endfor %}
+              <div class="movie-info">
+                {% if media_type != "actors" %}
+                  <h3 class="movie-title">{{item.title}}</h3>
+                {% else %}
+                  <h3 class="movie-title">{{item.name}}</h3>
+                {% endif %}
+                <div class="movie-meta">
+                  {% if media_type == "films" %}
+                    <span>{{item.release_date}}</span>
+                  {% elif media_type == "serials" %}
+                    <span>{{item.first_air_date}}-{{item.last_air_date}}</span>
+                  {% elif media_type == "actors" %}
+                    <span>{{item.birthday}}</span>
+                  {% endif %}
+                  {% if media_type != "actors" %}
+                    <span class="movie-rating">
+                      <i class="fas fa-star"></i>
+                      {{item.rating}}
+                    </span>
+                  {% endif %}
                 </div>
-              {% endif %}
+                {% if media_type != "actors" %}
+                 <div class="movie-genres">
+                  {% for genre in item.genres %}
+                    <span class="genre-tag">{{genre.name}}</span>
+                  {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
             </div>
-          </div>
+          </a>
         {% endfor %}
 
       </div>

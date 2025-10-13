@@ -32,7 +32,12 @@ def mainPage(request):
     return render(request, "main/index.html", context={
         "username": request.user,
         "films": films,
-        "serials": serials
+        "serials": serials,
+        "types": {
+            "film": "film",
+            "serial": "serial",
+            "actor": "actor"
+        }
     })
 
 def authPage(request):
@@ -151,7 +156,22 @@ def signOut(request):
     logout(request)
     return redirect("mainPage")
 
-def itemPage(request):
+def itemPage(request, media_type, search_id):
+    if media_type == "film" or media_type == "serial" or media_type == "actor":
+        media_type = f"{media_type}s"
+    
+    print("media_type", media_type)
+
+    models = {
+        "films": Film,
+        "serials": Serial,
+        "actors": Actor,
+    }
+
+    model = models.get(media_type)
+    item = model.objects.get(search_id=search_id)
     return render(request, "main/item.html", context={
-        "username": request.user
+        "username": request.user,
+        "item": item,
+        "media_type": media_type
     })

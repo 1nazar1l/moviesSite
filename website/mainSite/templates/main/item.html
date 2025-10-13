@@ -15,6 +15,7 @@
 {% block header_nav %}
   <nav>
     <ul>
+      <li><a href="{% url "mainPage" %}">Главная</a></li>
       <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
       <li><a href="{% url "serialsPage" %}">Сериалы</a></li>
       <li><a href="{% url "actorsPage" %}">Актеры</a></li>
@@ -28,6 +29,7 @@
 {% block sidebar_nav %}
   <nav>
     <ul>
+      <li><a href="{% url "mainPage" %}">Главная</a></li>
       <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
       <li><a href="{% url "serialsPage" %}">Сериалы</a></li>
       <li><a href="{% url "actorsPage" %}">Актеры</a></li>
@@ -77,75 +79,109 @@
 
     <div class="movie-container">
       <div class="movie-poster">
-        <img src="{% static 'main/images/1007734.jpg' %}" alt="">
+        {% if item.local_img_path == "" %}
+          {% if media_type != "actors" %}
+            <i class="fas fa-film"></i>
+          {% else %}
+            <i class="fas fa-star"></i>
+          {% endif %}
+        {% else %}
+            <img src="{% static 'images/' %}{{ media_type }}/{{ item.search_id }}.jpg" alt="{{ film.title }}">
+        {% endif %}
       </div>
 
       <div class="movie-info">
-        <h1 class="movie-title">Интерстеллар</h1>
-
+        {% if media_type != "actors" %}
+          <h3 class="movie-title">{{item.title}}</h3>
+        {% else %}
+          <h3 class="movie-title">{{item.name}}</h3>
+        {% endif %}
         <div class="movie-meta">
           <div class="movie-meta-item">
             <i class="far fa-calendar"></i>
-            <span>2014</span>
-          </div>
-          <div class="movie-meta-item">
-            <i class="far fa-clock"></i>
-            <span>169 мин</span>
+            {% if media_type == "films" %}
+              <span>{{item.release_date}}</span>
+            {% elif media_type == "serials" %}
+              <span>{{item.first_air_date}}-{{item.last_air_date}}</span>
+            {% elif media_type == "actors" %}
+              <span>{{item.birthday}}</span>
+            {% endif %}
           </div>
           <div class="rating">
             <i class="fas fa-star"></i>
-            <span>8.6/10</span>
+            <span>
+            {% if media_type != "actors" %}
+                {{item.rating|floatformat:1}}
+            {% endif %}
+            /10
+          </span>
           </div>
         </div>
 
-        <div class="genres">
-          <span class="genre">Фантастика</span>
-          <span class="genre">Драма</span>
-          <span class="genre">Приключения</span>
-        </div>
+        {% if media_type != "actors" %}
+          <div class="genres">
+            {% for genre in item.genres %}
+              <span class="genre">{{genre.name}}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
 
-        <p class="movie-description">
-          Когда засуха, пыльные бури и вымирание растений приводят
-          человечество к продовольственному кризису, коллектив
-          исследователей и учёных отправляется сквозь червоточину (которая
-          предположительно соединяет области пространства-времени через
-          большое расстояние) в путешествие, чтобы превзойти прежние
-          ограничения для космических путешествий человека и найти планету с
-          подходящими для человечества условиями.
-        </p>
+        {% if media_type != "actors" %}
+          <p class="movie-description">{{item.overview}}</p>
+        {% else %}
+          <p class="movie-description">{{item.biography}}</p>
+        {% endif %}
 
         <div class="details-grid">
+          {% if media_type == "films" %}
           <div class="detail-card">
             <div class="detail-title">Дата выхода</div>
-            <div class="detail-value">26 октября 2014</div>
+            <div class="detail-value">{{item.release_date}}</div>
           </div>
+          {% elif media_type == "serials" %}
           <div class="detail-card">
-            <div class="detail-title">Бюджет</div>
-            <div class="detail-value">$165 млн</div>
+            <div class="detail-title">Дата выхода</div>
+            <div class="detail-value">{{item.first_air_date}}</div>
           </div>
+          {% elif media_type == "actors" %}
           <div class="detail-card">
-            <div class="detail-title">Выручка</div>
-            <div class="detail-value">$677 млн</div>
+            <div class="detail-title">Дата рождения</div>
+            <div class="detail-value">{{item.birthday}}</div>
           </div>
-          <div class="detail-card">
-            <div class="detail-title">Продолжительность</div>
-            <div class="detail-value">169 минут</div>
-          </div>
-        </div>
+          {% endif %}
+          {% if media_type == "films" %}
+            <div class="detail-card">
+              <div class="detail-title">Бюджет</div>
+              <div class="detail-value">{{ item.budget|add:"0"|floatformat:"0"|slice:":-6" }}м</div>
+            </div>
+            <div class="detail-card">
+              <div class="detail-title">Выручка</div>
+              <div class="detail-value">{{ item.revenue|add:"0"|floatformat:"0"|slice:":-6" }}м</div>
+            </div>
+            <div class="detail-card">
+              <div class="detail-title">Продолжительность</div>
+              <div class="detail-value">{{item.runtime}} мин</div>
+            </div>
+          {% endif %}
 
-        <div class="action-buttons">
-          <button class="btn btn-primary">
-            <i class="fas fa-play"></i>
-            Смотреть трейлер
-          </button>
-          <button class="btn btn-secondary" id="addToFavorites">
-            <i class="far fa-bookmark"></i>
-            В избранное
-          </button>
+          {% if media_type == "serials" %}
+            <div class="detail-card">
+              <div class="detail-title">Сезонов</div>
+              <div class="detail-value">{{item.seasons}}</div>
+            </div>
+            <div class="detail-card">
+              <div class="detail-title">Эпизодов</div>
+              <div class="detail-value">{{item.episodes}}</div>
+            </div>
+          {% endif %}
+
+          {% if media_type == "actors" %}
+          {% endif %}
         </div>
       </div>
     </div>
-
+    {% if media_type == "films" %}
+    
     <div class="cast-section">
       <h2 class="section-title">В главных ролях</h2>
       <div class="cast-grid">
@@ -187,6 +223,8 @@
         </div>
       </div>
     </div>
+
+    {% endif %}
 
     <!-- Секция комментариев -->
     <div class="comments-section">

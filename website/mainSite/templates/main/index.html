@@ -92,7 +92,7 @@
         <h2 class="section-title">Популярные фильмы</h2>
         <div class="cards-carousel">
           {% for film in films %}
-            <a href="{% url "itemPage" %}">
+            <a href="{% url 'itemPage' types.film film.search_id %}">
               <div class="card">
                 <div class="card-img">
                   {% if film.local_img_path == "" %}
@@ -112,11 +112,11 @@
       {% endif %}
     </section>
     <section class="section section2">
-      {% if films|length > 0 %}
+      {% if serials|length > 0 %}
         <h2 class="section-title">Новые сериалы</h2>
         <div class="cards-carousel">
         {% for serial in serials %}
-          <a href="{% url "itemPage" %}">
+          <a href="{% url "itemPage" types.serial serial.search_id%}">
             <div class="card">
               <div class="card-img">
                 {% if serial.local_img_path == "" %}
