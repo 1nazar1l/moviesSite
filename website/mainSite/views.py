@@ -136,13 +136,17 @@ def searchPage(request):
         serials = Serial.objects.filter(
             title__icontains=search
         )
+        actors = Actor.objects.filter(
+            name__icontains=search
+        )
 
     return render(request, "main/search.html", context={
         "username": request.user,
         "films": films,
         "serials": serials,
+        "actors": actors,
         "search_title": search.capitalize(),
-        "results_count": len(films) + len(serials),
+        "results_count": len(films) + len(serials) + len(actors),
     })
 
 def profilePage(request):
