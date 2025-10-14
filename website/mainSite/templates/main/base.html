@@ -74,11 +74,10 @@
             <span class="footer-title">Навигация</span>
           </h3>
           <ul class="footer-links">
-            <li><a href="#">Главная</a></li>
-            <li><a href="#">Фильмы</a></li>
-            <li><a href="#">Сериалы</a></li>
-            <li><a href="#">Актеры</a></li>
-            <li><a href="#">Новости</a></li>
+            <li><a href="{% url "mainPage" %}">Главная</a></li>
+            <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
+            <li><a href="{% url "serialsPage" %}">Сериалы</a></li>
+            <li><a href="{% url "actorsPage" %}">Актеры</a></li>
           </ul>
         </div>
         <div class="footer-section">
