@@ -1,10 +1,9 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model, authenticate, login, logout
 
 from mainProject.models import Film, Serial, Actor
 from django.db.models import Q
 import os
-
 
 def check_path(item):
     root = "C:/Users/Nazar/Desktop/moviesSite/website/mainProject/static"

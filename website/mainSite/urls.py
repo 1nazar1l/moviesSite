@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path, include, re_path
 from . import views
 from mainProject.views import films_admin_panel
 
@@ -12,10 +12,10 @@ urlpatterns = [
     path('films/', views.filmsPage, name='filmsPage'),
     path('serials/', views.serialsPage, name='serialsPage'),
     path('actors/', views.actorsPage, name='actorsPage'),
-    path('<str:media_type>/<int:search_id>', views.itemPage, name='itemPage'),
-    path('<str:media_type>/', views.errorPage, name='errorPage'),
     path('search/', views.searchPage, name='searchPage'),
     path('profile/', views.profilePage, name='profilePage'),
     path('profile/signOut', views.signOut, name='signOut'),
     path('adminPanel/films', films_admin_panel, name='adminPanel'),
+    path('<str:media_type>/<int:search_id>', views.itemPage, name='itemPage'),
+    path('<str:media_type>/', views.errorPage, name='errorPage'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
