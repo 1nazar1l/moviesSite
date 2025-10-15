@@ -30,11 +30,10 @@
         <a href="{% url "mainPage" %}" class="logo">MovieMarks</a>
         <div class="sidebar">
           <div class="header-controls">
-            {% if username != "" %}
+            {% if request.user.is_authenticated %}
               {% block auth_sidebar_profile_url %}{% endblock auth_sidebar_profile_url %}
             {% else %}
               {% block not_auth_sidebar_profile_url %}{% endblock not_auth_sidebar_profile_url %}
-              {{ username }}
             {% endif %}
           </div>
           {% block sidebar_nav %}{% endblock sidebar_nav %}

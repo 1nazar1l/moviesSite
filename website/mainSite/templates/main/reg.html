@@ -75,7 +75,7 @@
       <div class="auth-card">
           <div class="auth-header">
               {% if message == "exist" %}
-                <p class="auth-subtitle">Пользователь с таким именем({{error_username}}) уже существует</p>
+                <p class="auth-subtitle">{{message_text}}</p>
               {% endif %}
               <p class="auth-subtitle password-error"></p>
               <p class="auth-subtitle username-error">Никнейм не подходит</p>

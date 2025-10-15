@@ -60,8 +60,10 @@ def authPage(request):
 
 def regPage(request):
     User = get_user_model()
+    emails = list(set(User.objects.values_list("email")))
+    emails = [email[0] for email in emails]
     message = ""
-    error_username = ""
+    message_text = ""
 
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -70,24 +72,28 @@ def regPage(request):
 
         if username:
             if User.objects.filter(username=username).exists():
+                message_text = f"Пользователь с таким именем({username}) уже существует"
                 message = "exist"
-                error_username = username
             else:
-                user = User.objects.create_user(
-                    username=username,
-                    email=email,
-                    password=password  
-                )
-                
-                user = authenticate(request, username=username, password=password)
-                if user is not None:
-                    login(request, user)
-                    return redirect("mainPage")
+                if email in emails:
+                    message_text = f"Пользователь с такой почтой({email}) уже существует"
+                    message = "exist"
+                else:
+                    user = User.objects.create_user(
+                        username=username,
+                        email=email,
+                        password=password  
+                    )
+                    
+                    user = authenticate(request, username=username, password=password)
+                    if user is not None:
+                        login(request, user)
+                        return redirect("mainPage")
 
     return render(request, "main/reg.html", {
         "message": message,
         "username": request.user,
-        "error_username": error_username,
+        "message_text": message_text,
     })
 
 def filmsPage(request):
