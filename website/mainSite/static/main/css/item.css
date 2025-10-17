@@ -210,6 +210,11 @@
 
 .cast-info {
     padding: 1rem;
+    z-index: 100;
+    position: relative;
+    background-color: var(--background);
+    opacity: 0.8;
+    flex: 1;
 }
 
 .cast-name {

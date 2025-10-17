@@ -180,50 +180,30 @@
         </div>
       </div>
     </div>
-    {% if media_type == "films" %}
-    
-    <div class="cast-section">
-      <h2 class="section-title">В главных ролях</h2>
-      <div class="cast-grid">
-        <div class="cast-card">
-          <div class="cast-photo">
-            <i class="fas fa-user fa-3x"></i>
-          </div>
-          <div class="cast-info">
-            <div class="cast-name">Мэттью Макконахи</div>
-            <div class="cast-character">Купер</div>
-          </div>
-        </div>
-        <div class="cast-card">
-          <div class="cast-photo">
-            <i class="fas fa-user fa-3x"></i>
-          </div>
-          <div class="cast-info">
-            <div class="cast-name">Энн Хэтэуэй</div>
-            <div class="cast-character">Амелия Брэнд</div>
-          </div>
-        </div>
-        <div class="cast-card">
-          <div class="cast-photo">
-            <i class="fas fa-user fa-3x"></i>
-          </div>
-          <div class="cast-info">
-            <div class="cast-name">Джессика Честейн</div>
-            <div class="cast-character">Мёрф</div>
-          </div>
-        </div>
-        <div class="cast-card">
-          <div class="cast-photo">
-            <i class="fas fa-user fa-3x"></i>
-          </div>
-          <div class="cast-info">
-            <div class="cast-name">Майкл Кейн</div>
-            <div class="cast-character">Профессор Брэнд</div>
-          </div>
+    {% if media_type == "films" and item.actors|length != 0 %}
+      <div class="cast-section">
+        <h2 class="section-title">В главных ролях</h2>
+        <div class="cast-grid">
+          {% for actor in item.actors %}
+            <div class="cast-card">
+              <div class="cast-photo">
+                {% if actor.local_img_path != "" %}
+                  <img src="{% static 'images/' %}{{ media_type }}/{{ actor.id }}.jpg" alt="{{ actor.name }}">
+                {% elif actor.site_img_path != "" %}
+                  <img src="{{actor.site_img_path}}" alt="">
+                {% else %}
+                  <i class="fas fa-user fa-3x"></i>
+                {% endif %}
+              </div>
+              <div class="cast-info">
+                <div class="cast-name">{{actor.first_name}}</div>
+                <div class="cast-character">{{actor.second_name}}</div>
+              </div>
+            </div>
+          {% endfor %}
+
         </div>
       </div>
-    </div>
-
     {% endif %}
 
     <!-- Секция комментариев -->

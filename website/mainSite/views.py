@@ -7,10 +7,15 @@ import os
 
 def check_path(item):
     root = "C:/Users/Nazar/Desktop/moviesSite/website/mainProject/static"
-    img_path = os.path.join(root, item.local_img_path)
-
-    if not os.path.exists(img_path):
-        item.local_img_path = ""
+    
+    if hasattr(item, 'local_img_path'):
+        img_path = os.path.join(root, item.local_img_path)
+        if not os.path.exists(img_path):
+            item.local_img_path = ""
+    else:
+        img_path = os.path.join(root, item["local_img_path"])
+        if not os.path.exists(img_path):
+            item["local_img_path"] = ""
 
 def mainPage(request):
     films = Film.objects.all()
@@ -177,6 +182,11 @@ def itemPage(request, media_type, search_id):
 
     model = models.get(media_type)
     item = model.objects.get(search_id=search_id)
+    if media_type == "films":
+        check_path(item)
+        for actor in item.actors:
+            check_path(actor)
+
     return render(request, "main/item.html", context={
         "username": request.user,
         "item": item,
