@@ -252,6 +252,30 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url, 
         }
 
     elif media_type == "serials":
+        actors = []
+        for actor in cast:
+            if actor["profile_path"] is None:
+                site_actor_img_path = ""
+                local_actor_img_path = ""
+            else:
+                site_actor_img_path = f"{img_url}/{actor["profile_path"]}"
+                local_actor_img_path = f"images/serials/{actor["id"]}.jpg"
+            
+            names = actor["name"].split(" ")
+            if (len(names) == 2):
+                first_name, second_name = names[0], names[1]
+            else:
+                first_name = names[0]
+                second_name = ""
+
+            actors.append({
+                "id": actor["id"],
+                "first_name": first_name.strip(),
+                "second_name": second_name.strip(),
+                "site_img_path": site_actor_img_path,
+                "local_img_path": local_actor_img_path
+            })
+
         defaults = {
             "id": media_item_data["id"],
             "first_air_date": media_item_data["first_air_date"],
@@ -264,7 +288,8 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url, 
             "local_img_path": local_img_path,
             "status": media_item_data["status"],
             "rating": media_item_data["vote_average"],
-            "genres": [{"id": genre["id"], "name": genre["name"]} for genre in media_item_data["genres"]]
+            "genres": [{"id": genre["id"], "name": genre["name"]} for genre in media_item_data["genres"]],
+            "actors": actors
         }
     elif media_type == "actors":
         defaults = {

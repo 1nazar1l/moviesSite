@@ -182,7 +182,7 @@ def itemPage(request, media_type, search_id):
 
     model = models.get(media_type)
     item = model.objects.get(search_id=search_id)
-    if media_type == "films":
+    if media_type != "actors":
         check_path(item)
         for actor in item.actors:
             check_path(actor)

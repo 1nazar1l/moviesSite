@@ -16,7 +16,6 @@ class Film(models.Model):
     genres = models.JSONField(null=True, blank=True)
     actors = models.JSONField(null=True, blank=True)
 
-
     class Meta:
         verbose_name = "Фильм"
         verbose_name_plural = "Фильмы"
@@ -37,6 +36,7 @@ class Serial(models.Model):
     status = models.CharField(max_length=20, null=True, blank=True)
     rating = models.FloatField(null=True, blank=True)
     genres = models.JSONField(null=True, blank=True)
+    actors = models.JSONField(null=True, blank=True)
 
     class Meta:
         verbose_name = "Сериал"

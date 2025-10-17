@@ -180,7 +180,7 @@
         </div>
       </div>
     </div>
-    {% if media_type == "films" and item.actors|length != 0 %}
+    {% if media_type != "actors" and item.actors|length != 0 %}
       <div class="cast-section">
         <h2 class="section-title">В главных ролях</h2>
         <div class="cast-grid">
