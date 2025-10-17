@@ -186,6 +186,10 @@ def itemPage(request, media_type, search_id):
         check_path(item)
         for actor in item.actors:
             check_path(actor)
+    else:
+        check_path(item)
+        for film in item.movies:
+            check_path(film)
 
     return render(request, "main/item.html", context={
         "username": request.user,

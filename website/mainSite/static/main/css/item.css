@@ -192,6 +192,7 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     transition: transform 0.3s;
     border: 1px solid var(--border);
+    cursor: pointer;
 }
 
 .cast-card:hover {

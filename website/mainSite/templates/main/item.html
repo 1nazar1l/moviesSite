@@ -107,15 +107,15 @@
               <span>{{item.birthday}}</span>
             {% endif %}
           </div>
-          <div class="rating">
-            <i class="fas fa-star"></i>
-            <span>
-            {% if media_type != "actors" %}
-                {{item.rating|floatformat:1}}
-            {% endif %}
-            /10
-          </span>
-          </div>
+          {% if media_type != "actors" %}
+            <div class="rating">
+              <i class="fas fa-star"></i>
+              <span>
+                  {{item.rating|floatformat:1}}
+                  /10
+              </span>
+            </div>
+          {% endif %}
         </div>
 
         {% if media_type != "actors" %}
@@ -198,6 +198,29 @@
               <div class="cast-info">
                 <div class="cast-name">{{actor.first_name}}</div>
                 <div class="cast-character">{{actor.second_name}}</div>
+              </div>
+            </div>
+          {% endfor %}
+
+        </div>
+      </div>
+    {% else %}
+      <div class="cast-section">
+        <h2 class="section-title">Проекты в которых участвовали</h2>
+        <div class="cast-grid">
+          {% for item in item.movies %}
+            <div class="cast-card">
+              <div class="cast-photo">
+                {% if item.local_img_path != "" %}
+                  <img src="{% static 'images/' %}{{ media_type }}/{{ item.id }}.jpg" alt="{{ item.title }}">
+                {% elif item.site_img_path != "" %}
+                  <img src="{{item.site_img_path}}" alt="">
+                {% else %}
+                  <i class="fas fa-film"></i>
+                {% endif %}
+              </div>
+              <div class="cast-info">
+                <div class="cast-name">{{item.title}}</div>
               </div>
             </div>
           {% endfor %}

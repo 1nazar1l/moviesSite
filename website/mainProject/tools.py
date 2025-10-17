@@ -292,6 +292,24 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url, 
             "actors": actors
         }
     elif media_type == "actors":
+        films = []
+        for film in cast:
+            if film["poster_path"] is None:
+                site_film_img_path = ""
+                local_film_img_path = ""
+            else:
+                site_film_img_path = f"{img_url}/{film["poster_path"]}"
+                local_film_img_path = f"images/films/{film["id"]}.jpg"
+            
+            title = film["title"]
+
+            films.append({
+                "id": film["id"],
+                "title": title,
+                "site_img_path": site_film_img_path,
+                "local_img_path": local_film_img_path
+            })
+
         defaults = {
             "id": media_item_data["id"],
             "name": media_item_data["name"],
@@ -301,7 +319,7 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url, 
             "gender": media_item_data["gender"],
             "site_img_path": site_img_path,
             "local_img_path": local_img_path,
-            "movies": [movie["id"] for movie in media_item_data["movie_credits"]["cast"]]
+            "movies": films
         }
 
     media_item_obj, created = model.objects.get_or_create(
@@ -392,16 +410,15 @@ def parsing_media_items(request, media_type, messages, messages_block):
 
                 cast = []
 
-                if media_type != "actors":
-                    data_url = f"{BASE_URL}/{url_part}/{media_item["id"]}/credits"
+                data_url = f"{BASE_URL}/{url_part}/{media_item["id"]}/credits"
 
-                    response = requests.get(data_url, params=params)
-                    response.raise_for_status()
+                response = requests.get(data_url, params=params)
+                response.raise_for_status()
 
-                    if len(response.json()["cast"]) < 10:
-                        cast = response.json()["cast"]
-                    else:
-                        cast = response.json()["cast"][0:10]
+                if len(response.json()["cast"]) < 10:
+                    cast = response.json()["cast"]
+                else:
+                    cast = response.json()["cast"][0:10]
 
                 if media_type == "films" and media_item_data["budget"] == 0:
                     continue
