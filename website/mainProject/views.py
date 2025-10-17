@@ -6,7 +6,7 @@ from .tools import (
     download_movies_by_actors
 )
 
-from .models import Film, Serial, Actor
+from .models import Film, Serial, Actor, Message
 
 from django.shortcuts import redirect
 
@@ -14,11 +14,9 @@ from django.db.models import Q
 
 def films_admin_panel(request):
     all_films = Film.objects.all()
-
     films = all_films.order_by('-id')
 
-    messages = request.session.get('custom_messages', [])
-    messages = messages[::-1]
+    messages = Message.objects.all().order_by('-id')
 
     messages_type = {
         "success": 0,
@@ -27,9 +25,8 @@ def films_admin_panel(request):
         "clear": 0
     }
 
-    for message_block in messages:
-        for message in message_block:
-            messages_type[message["message_type"]] += 1
+    for message in messages:
+        messages_type[message.message_type] += 1
 
     id_search = request.GET.get("id_search")
 
@@ -49,8 +46,7 @@ def serials_admin_panel(request):
 
     serials = all_serials.order_by('-id')[0:100]
 
-    messages = request.session.get('custom_messages', [])
-    messages = messages[::-1]
+    messages = Message.objects.all().order_by('-id')
 
     messages_type = {
         "success": 0,
@@ -59,9 +55,8 @@ def serials_admin_panel(request):
         "clear": 0
     }
 
-    for message_block in messages:
-        for message in message_block:
-            messages_type[message["message_type"]] += 1
+    for message in messages:
+        messages_type[message.message_type] += 1
 
     return render(request, "serials.html", context={
         "serials": serials,
@@ -74,8 +69,7 @@ def actors_admin_panel(request):
 
     actors = all_actors.order_by('-id')
 
-    messages = request.session.get('custom_messages', [])
-    messages = messages[::-1]
+    messages = Message.objects.all().order_by('-id')
 
     messages_type = {
         "success": 0,
@@ -84,9 +78,8 @@ def actors_admin_panel(request):
         "clear": 0
     }
 
-    for message_block in messages:
-        for message in message_block:
-            messages_type[message["message_type"]] += 1
+    for message in messages:
+        messages_type[message.message_type] += 1
 
     return render(request, "actors.html", context={
         "actors": actors,
@@ -96,117 +89,79 @@ def actors_admin_panel(request):
 
 
 def delete_films(request):
-    messages = []
-    messages_block = []
-
     media_type = "films"
 
-    delete_selected_media_items(request, media_type, messages, messages_block)
+    delete_selected_media_items(request, media_type)
     
     return redirect('films')
 
 def delete_serials(request):
-    messages = []
-    messages_block = []
-
     media_type = "serials"
 
-    delete_selected_media_items(request, media_type, messages, messages_block)
+    delete_selected_media_items(request, media_type)
     
     return redirect('serials')
 
 def delete_actors(request):
-    messages = []
-    messages_block = []
-
     media_type = "actors"
 
-    delete_selected_media_items(request, media_type, messages, messages_block)
+    delete_selected_media_items(request, media_type)
     
     return redirect('actors')
 
 
 def delete_all_films(request):
-    messages = []
-    messages_block = []
-
     media_type = "films"
 
-    delete_all_media_items(request, media_type, messages, messages_block)
+    delete_all_media_items(request, media_type)
 
     return redirect('films')
 
 def delete_all_serials(request):
-    messages = []
-    messages_block = []
-
     media_type = "serials"
 
-    delete_all_media_items(request, media_type, messages, messages_block)
+    delete_all_media_items(request, media_type)
 
     return redirect('serials')
 
 def delete_all_actors(request):
-    messages = []
-    messages_block = []
-
     media_type = "actors"
 
-    delete_all_media_items(request, media_type, messages, messages_block)
+    delete_all_media_items(request, media_type)
 
     return redirect('actors')
 
 
 def parse_films(request):
-    messages = []
-    messages_block = []
-
     media_type = "films"
 
-    parsing_media_items(request, media_type, messages, messages_block)
+    parsing_media_items(request, media_type)
 
     return redirect('films')
 
 def parse_serials(request):
-    messages = []
-    messages_block = []
-
     media_type = "serials"
 
-    parsing_media_items(request, media_type, messages, messages_block)
+    parsing_media_items(request, media_type)
 
     return redirect('serials')
 
 def parse_actors(request):
-    messages = []
-    messages_block = []
-
     media_type = "actors"
 
-    parsing_media_items(request, media_type, messages, messages_block)
+    parsing_media_items(request, media_type)
 
     return redirect('actors')
 
 def clear_messages(request):
-    if 'custom_messages' not in request.session:
-        request.session['custom_messages'] = []
-    
-    request.session['custom_messages'] = [[{
-        "text": "Сообщения очищены",
-        "message_type": "clear"
-    }]]
-    request.session.modified = True
+    Message.objects.all().delete()
 
     next_url = request.POST.get('next', '/films/')
-
     return redirect(next_url)
 
     
 
 def parse_movies_by_actors(request):
-    messages = []
-    messages_block = []
-
     media_type = "films"
 
     films = Film.objects.all()
@@ -225,7 +180,7 @@ def parse_movies_by_actors(request):
 
     ids = list(set(ids))
 
-    download_movies_by_actors(request, media_type, messages, messages_block, ids)
+    download_movies_by_actors(request, media_type, ids)
 
     return redirect('films')
 

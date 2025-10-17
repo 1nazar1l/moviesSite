@@ -3,57 +3,48 @@ import os
 from environs import env
 from datetime import datetime, date
 
-from .models import Film, Serial, Actor
+from .models import Film, Serial, Actor, Message
 
 env.read_env()
 api_key = env("API_KEY")
 BASE_URL = "https://api.themoviedb.org/3"
 
 
-def create_error_message(messages, media_type, text):
-    messages.append({
-        "message_type": "error",
-        "media_type": media_type,
-        "text": text,
-        "when_happened": str(datetime.now().replace(microsecond=0)),
-        "time_to_complete": 0.0,
-        "admin": "People"
-    })
+def create_error_message(request, media_type, text):
+    Message.objects.create(
+        message_type="error",
+        from_page=media_type,
+        text=text,
+        date=datetime.now().replace(microsecond=0),
+        time=0.0,
+        admin=request.user,
+    )
 
-def create_warning_message(messages, media_type, text):
-    messages.append({
-        "message_type": "warning",
-        "media_type": media_type,
-        "text": text,
-        "when_happened": str(datetime.now().replace(microsecond=0)),
-        "time_to_complete": 0.0,
-        "admin": "People"
-    })
+def create_warning_message(request, media_type, text):
+    Message.objects.create(
+        message_type="warning",
+        from_page=media_type,
+        text=text,
+        date=datetime.now().replace(microsecond=0),
+        time=0.0,
+        admin=request.user,
+    )
 
-def create_success_message(messages, media_type, start_time, lead_time, text):
-    messages.append({
-        "message_type": "success",
-        "media_type": media_type,
-        "text": text,
-        "when_happened": str(start_time),
-        "time_to_complete": str(lead_time),
-        "admin": "People"
-    })
+def create_success_message(request, media_type, start_time, lead_time, text):
+    Message.objects.create(
+        message_type="success",
+        from_page=media_type,
+        text=text,
+        date=start_time,
+        time=lead_time,
+        admin=request.user,
+    )
 
-def collect_special_messages_block(messages, messages_block, request):
-    if 'custom_messages' not in request.session:
-        request.session['custom_messages'] = []
-        
-    messages_block.append(messages)
-    request.session['custom_messages'].extend(messages_block)
-    request.session.modified = True
-
-def delete_selected_media_items(request, media_type, messages, messages_block):
+def delete_selected_media_items(request, media_type):
     media_ids = request.POST.getlist('media_ids')
 
     if not media_ids:
-        create_error_message(messages, media_type, "Не выбрано ни одного объекта для удаления")
-        collect_special_messages_block(messages, messages_block, request)
+        create_error_message(request, media_type, "Не выбрано ни одного объекта для удаления")
         return
 
     try:
@@ -66,8 +57,7 @@ def delete_selected_media_items(request, media_type, messages, messages_block):
         model = models.get(media_type)
         
         if not model:
-            create_error_message(messages, media_type, "Модель не найдена(delete_selected_media_items)")
-            collect_special_messages_block(messages, messages_block, request)
+            create_error_message(request, media_type, "Модель не найдена(delete_selected_media_items)")
             return
 
         start_time = datetime.now()
@@ -84,17 +74,16 @@ def delete_selected_media_items(request, media_type, messages, messages_block):
         lead_time = end - start_time
 
         create_success_message(
-            messages, 
+            request, 
             media_type, 
             str(start_time.replace(microsecond=0)),
             str(lead_time.total_seconds()),
             f"Успешно удалено {deleted_count} объектов!"
         )
 
-
         for media_item in deleted_media_items:
             create_success_message(
-                messages, 
+                request, 
                 media_type, 
                 str(start_time.replace(microsecond=0)),
                 "0.000000",
@@ -102,11 +91,9 @@ def delete_selected_media_items(request, media_type, messages, messages_block):
             )
 
     except Exception as e:
-        create_error_message(messages, media_type, f"Ошибка при удалении: {str(e)}")
+        create_error_message(request, media_type, f"Ошибка при удалении: {str(e)}")
 
-    collect_special_messages_block(messages, messages_block, request)
-
-def delete_all_media_items(request, media_type, messages, messages_block):
+def delete_all_media_items(request, media_type):
     models = {
         "films": Film,
         "serials": Serial,
@@ -116,8 +103,7 @@ def delete_all_media_items(request, media_type, messages, messages_block):
     model = models.get(media_type)
 
     if not model:
-        create_error_message(messages, media_type, "Модель не найдена(delete_all_media_items)")
-        collect_special_messages_block(messages, messages_block, request)
+        create_error_message(request, media_type, "Модель не найдена(delete_all_media_items)")
         return
     
     start_time = datetime.now()
@@ -126,17 +112,14 @@ def delete_all_media_items(request, media_type, messages, messages_block):
     lead_time = end - start_time
 
     create_success_message(
-        messages,
+        request,
         media_type,
         str(start_time.replace(microsecond=0)),
         str(lead_time.total_seconds()),
         "Все объекты успешно удалены!"
     )
 
-    collect_special_messages_block(messages, messages_block, request)
-
-def download_movies_by_actors(request, media_type, messages, messages_block, ids):
-
+def download_movies_by_actors(request, media_type, ids):
     models = {
         "films": Film,
         "serials": Serial,
@@ -159,8 +142,7 @@ def download_movies_by_actors(request, media_type, messages, messages_block, ids
         response.raise_for_status()
 
     except requests.exceptions.ConnectionError:
-        create_error_message(messages, media_type, "VPN не включен!")
-        collect_special_messages_block(messages, messages_block, request)
+        create_error_message(request, media_type, "VPN не включен!")
         return
     
     added_films = 0
@@ -191,9 +173,7 @@ def download_movies_by_actors(request, media_type, messages, messages_block, ids
     end = datetime.now()
     lead_time = end - start
 
-    create_success_message(messages, media_type, start, lead_time, f"Успешно добавлено {added_films} объектов!")
-
-    collect_special_messages_block(messages, messages_block, request)
+    create_success_message(request, media_type, start, lead_time, f"Успешно добавлено {added_films} объектов!")
 
 def download_media_item(media_type, img_index, media_item_data, model, img_url, cast = []):
     if media_item_data[img_index] is None:
@@ -336,7 +316,7 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url, 
             with open(img_filepath, "wb") as out:
                 out.write(p.content)
 
-def parsing_media_items(request, media_type, messages, messages_block):
+def parsing_media_items(request, media_type):
     start_page = request.POST.get('start_page')
     end_page = request.POST.get('end_page')
 
@@ -429,16 +409,13 @@ def parsing_media_items(request, media_type, messages, messages_block):
             lead_time = end - start
 
             create_success_message(
-                messages, 
+                request, 
                 media_type, 
                 str(start.replace(microsecond=0)),
                 str(lead_time.total_seconds()),
                 f"Страница {page_number} успешно скачана!"
             )
 
-            collect_special_messages_block(messages, messages_block, request)
-
     except requests.exceptions.ConnectionError:
-        create_error_message(messages, media_type, "VPN не включен!")
-        collect_special_messages_block(messages, messages_block, request)
+        create_error_message(request, media_type, "VPN не включен!")
         return

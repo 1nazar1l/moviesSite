@@ -82,23 +82,22 @@
           </div>
           <div class="messages_block">
             <div class="messages_content">
-              {% for message_block in messages %}
-                  {% for message in message_block %}
+              {% for message in messages %}
                   {% if message.message_type != "clear" %}
                     <div class="message_block">
                       <div class="main_info">
                         <div class="text_info">
                           <div>
-                            {% if message.media_type == "actors" %}
+                            {% if message.from_page == "actors" %}
                               <b>Откуда:</b> Актеры
-                            {% elif message.media_type == "serials" %}
+                            {% elif message.from_page == "serials" %}
                               <b>Откуда:</b> Сериалы
-                            {% elif message.media_type == "films" %}
+                            {% elif message.from_page == "films" %}
                               <b>Откуда:</b> Фильмы
                             {% endif %}
                           </div>
                           <div>
-                            <b>Админ:</b> {{message.admin}}
+                            <b>Админ:</b> {{message.admin.username}}
                           </div>
                         </div>
                         {% if message.message_type == "success" %}
@@ -123,11 +122,11 @@
                       <div class="other_info">
                         <div>
                           <b>Когда произошло: </b>
-                          {{message.when_happened}}
+                          {{message.date}}
                         </div>
                         <div>
                           <b>Продолжительность:</b>
-                          {{message.time_to_complete}} с.
+                          {{message.time}} с.
                         </div>
                       </div>
                     </div>
@@ -136,7 +135,6 @@
                       Сообщения очищены
                     </div>
                   {% endif %}
-                  {% endfor %}
               {% endfor %}
             </div>
           </div>

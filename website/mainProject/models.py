@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 class Film(models.Model):
     search_id = models.IntegerField(null=True, blank=True)
@@ -62,3 +63,18 @@ class Actor(models.Model):
 
     def __str__(self):
         return f"{self.search_id}, {self.name}"
+    
+class Message(models.Model):
+    from_page = models.TextField()
+    admin = models.ForeignKey(to=User, on_delete=models.CASCADE, null=True, blank=True)
+    text = models.TextField()
+    date = models.DateTimeField()
+    time = models.FloatField()
+    message_type = models.TextField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Сообщение"
+        verbose_name_plural = "Сообщения"
+
+    def __str__(self):
+        return f"{self.id}, {self.admin}, {self.text}"
