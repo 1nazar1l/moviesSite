@@ -193,6 +193,8 @@
     transition: transform 0.3s;
     border: 1px solid var(--border);
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
 }
 
 .cast-card:hover {
@@ -207,6 +209,10 @@
     align-items: center;
     justify-content: center;
     color: var(--secondary);
+}
+
+.cast-photo img {
+    transform: scaleY(1.05);
 }
 
 .cast-info {
