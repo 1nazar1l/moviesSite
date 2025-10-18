@@ -103,90 +103,86 @@
       {% if films|length > 0 %}
         {% for film in films %}
         
-          <div
-            class="movie-card"
-            onclick="window.location.href='movie-details.html'"
-          >
-            <div class="movie-poster">
-              {% if film.local_img_path == "" %}
-                <i class="fas fa-film"></i>
-              {% else %}
-                <img src="{% static 'images/films/' %}{{ film.search_id }}.jpg" alt="{{ film.title }}">
-              {% endif %}
-            </div>
-            <div class="movie-info">
-              <h3 class="movie-title">{{film.title}}</h3>
-              <div class="movie-meta">
-                <span>{{film.release_date}}</span>
-                <span class="movie-rating">
-                  <i class="fas fa-star"></i>
-                  {{film.rating}}
-                </span>
+          <a href="{% url "itemPage" types.film film.search_id %}">
+            <div class="movie-card">
+              <div class="movie-poster">
+                {% if film.local_img_path == "" %}
+                  <i class="fas fa-film"></i>
+                {% else %}
+                  <img src="{% static 'images/films/' %}{{ film.search_id }}.jpg" alt="{{ film.title }}">
+                {% endif %}
               </div>
-              <div class="movie-genres">
-                {% for genre in film.genres %}
-                  <span class="genre-tag">{{genre.name}}</span>
-                {% endfor %}
+              <div class="movie-info">
+                <h3 class="movie-title">{{film.title}}</h3>
+                <div class="movie-meta">
+                  <span>{{film.release_date}}</span>
+                  <span class="movie-rating">
+                    <i class="fas fa-star"></i>
+                    {{film.rating}}
+                  </span>
+                </div>
+                <div class="movie-genres">
+                  {% for genre in film.genres %}
+                    <span class="genre-tag">{{genre.name}}</span>
+                  {% endfor %}
+                </div>
               </div>
             </div>
-          </div>
+          </a>
         {% endfor %}
       {% endif %}
 
       {% if serials|length > 0 %}
         {% for serial in serials %}
         
-          <div
-            class="movie-card"
-            onclick="window.location.href='movie-details.html'"
-          >
-            <div class="movie-poster">
-              {% if serial.local_img_path == "" %}
-                <i class="fas fa-film"></i>
-              {% else %}
-                <img src="{% static 'images/serials/' %}{{ serial.search_id }}.jpg" alt="{{ serial.title }}">
-              {% endif %}
-            </div>
-            <div class="movie-info">
-              <h3 class="movie-title">{{serial.title}}</h3>
-              <div class="movie-meta">
-                <span>{{serial.release_date}}</span>
-                <span class="movie-rating">
-                  <i class="fas fa-star"></i>
-                  {{serial.rating}}
-                </span>
+          <a href="{% url "itemPage" types.serial serial.search_id %}">
+            <div class="movie-card">
+              <div class="movie-poster">
+                {% if serial.local_img_path == "" %}
+                  <i class="fas fa-film"></i>
+                {% else %}
+                  <img src="{% static 'images/serials/' %}{{ serial.search_id }}.jpg" alt="{{ serial.title }}">
+                {% endif %}
               </div>
-              <div class="movie-genres">
-                {% for genre in serial.genres %}
-                  <span class="genre-tag">{{genre.name}}</span>
-                {% endfor %}
+              <div class="movie-info">
+                <h3 class="movie-title">{{serial.title}}</h3>
+                <div class="movie-meta">
+                  <span>{{serial.release_date}}</span>
+                  <span class="movie-rating">
+                    <i class="fas fa-star"></i>
+                    {{serial.rating}}
+                  </span>
+                </div>
+                <div class="movie-genres">
+                  {% for genre in serial.genres %}
+                    <span class="genre-tag">{{genre.name}}</span>
+                  {% endfor %}
+                </div>
               </div>
             </div>
-          </div>
+          </a>
         {% endfor %}
       {% endif %}
 
       {% if actors|length > 0 %}
         {% for actor in actors %}
-        
-          <div
-            class="movie-card"
-            onclick="window.location.href='movie-details.html'"
-          >
-            <div class="movie-poster">
-              {% if actor.local_img_path == "" %}
-                <i class="fas fa-film"></i>
-              {% else %}
-                <img src="{% static 'images/actors/' %}{{ actor.search_id }}.jpg" alt="{{ actor.name }}">
-              {% endif %}
-            </div>
-            <div class="movie-info">
-              <h3 class="movie-title">{{actor.name}}</h3>
-              <div class="movie-meta">
-                <span>{{actor.birthday}}</span>
+          <a href="{% url "itemPage" types.actor actor.search_id %}">
+            <div class="movie-card">
+              <div class="movie-poster">
+                {% if actor.local_img_path == "" %}
+                  <i class="fas fa-film"></i>
+                {% else %}
+                  <img src="{% static 'images/actors/' %}{{ actor.search_id }}.jpg" alt="{{ actor.name }}">
+                {% endif %}
+              </div>
+              <div class="movie-info">
+                <h3 class="movie-title">{{actor.name}}</h3>
+                <div class="movie-meta">
+                  <span>{{actor.birthday}}</span>
+                </div>
               </div>
             </div>
-          </div>
+          </a>
         {% endfor %}
       {% endif %}
     </div>

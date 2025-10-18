@@ -158,6 +158,11 @@ def searchPage(request):
         "actors": actors,
         "search_title": search.capitalize(),
         "results_count": len(films) + len(serials) + len(actors),
+        "types": {
+            "film": "film",
+            "serial": "serial",
+            "actor": "actor"
+        }
     })
 
 def profilePage(request):
