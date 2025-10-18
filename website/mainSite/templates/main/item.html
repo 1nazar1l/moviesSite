@@ -204,7 +204,7 @@
 
         </div>
       </div>
-    {% else %}
+    {% elif media_type == "actors" and item.movies|length != 0 %}
       <div class="cast-section">
         <h2 class="section-title">Проекты в которых участвовали</h2>
         <div class="cast-grid">
