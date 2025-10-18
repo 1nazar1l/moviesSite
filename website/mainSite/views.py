@@ -5,6 +5,31 @@ from mainProject.models import Film, Serial, Actor
 from django.db.models import Q
 import os
 
+def set_previous_page(request):
+    request.session.modified = True
+
+    if 'previous_page' not in request.session:
+        request.session['previous_page'] = ""
+
+    request.session["previous_page"] = request.build_absolute_uri()
+
+def set_previous_page_values(request, **kwargs):
+    request.session.modified = True
+
+    if 'previous_page_values' not in request.session:
+        request.session["previous_page_values"] = []
+
+    for key, value in kwargs.items():
+        request.session["previous_page_values"].append({
+            key: value,
+        })
+
+def get_previous_page_values(request):
+    return request.session.get("previous_page_values", [])
+
+def get_previous_page(request):
+    return request.session.get("previous_page", "/")
+
 def check_path(item):
     root = "C:/Users/Nazar/Desktop/moviesSite/website/mainProject/static"
     
@@ -18,6 +43,7 @@ def check_path(item):
             item["local_img_path"] = ""
 
 def mainPage(request):
+    set_previous_page(request)
     films = Film.objects.all()
     films = films.order_by('-rating')[:10]
     serials = Serial.objects.all()
@@ -45,6 +71,7 @@ def mainPage(request):
     })
 
 def authPage(request):
+    set_previous_page(request)
     error_message = ""
 
     if request.method == 'POST':
@@ -64,6 +91,7 @@ def authPage(request):
     })
 
 def regPage(request):
+    set_previous_page(request)
     User = get_user_model()
     emails = list(set(User.objects.values_list("email")))
     emails = [email[0] for email in emails]
@@ -102,6 +130,7 @@ def regPage(request):
     })
 
 def filmsPage(request):
+    set_previous_page(request)
     films = Film.objects.all()
 
     for film in films:
@@ -115,6 +144,7 @@ def filmsPage(request):
     })
 
 def serialsPage(request):
+    set_previous_page(request)
     serials = Serial.objects.all()
     for serial in serials:
         check_path(serial)
@@ -127,6 +157,7 @@ def serialsPage(request):
     })
 
 def actorsPage(request):
+    set_previous_page(request)
     actors = Actor.objects.all()
     for actor in actors:
         check_path(actor)
@@ -139,17 +170,28 @@ def actorsPage(request):
     })
 
 def searchPage(request):
+    set_previous_page(request)
     search = request.POST.get('search')
+
     if search:
-        films = Film.objects.filter(
-            title__icontains=search
-        )
-        serials = Serial.objects.filter(
-            title__icontains=search
-        )
-        actors = Actor.objects.filter(
-            name__icontains=search
-        )
+        set_previous_page_values(request, search_page_value=search)
+    else:
+        values = get_previous_page_values(request)
+        for item in values:
+            for key, value in item.items():
+                if key == "search_page_value":
+                    search = value
+
+    films = Film.objects.filter(
+        title__icontains=search  
+    )
+    serials = Serial.objects.filter(
+        title__icontains=search
+    )
+    actors = Actor.objects.filter(
+        name__icontains=search
+    )
+    
 
     return render(request, "main/search.html", context={
         "username": request.user,
@@ -166,6 +208,7 @@ def searchPage(request):
     })
 
 def profilePage(request):
+    set_previous_page(request)
     return render(request, "main/profile.html", context={
         "username": request.user,
         "icon": str(request.user)[0].upper()
@@ -176,6 +219,7 @@ def signOut(request):
     return redirect("mainPage")
 
 def itemPage(request, media_type, search_id):
+    previous_page = get_previous_page(request)
     if media_type == "film" or media_type == "serial" or media_type == "actor":
         media_type = f"{media_type}s"
     
@@ -199,7 +243,8 @@ def itemPage(request, media_type, search_id):
     return render(request, "main/item.html", context={
         "username": request.user,
         "item": item,
-        "media_type": media_type
+        "media_type": media_type,
+        "previous_page": previous_page
     })
 
 def errorPage(request, media_type=""):        
