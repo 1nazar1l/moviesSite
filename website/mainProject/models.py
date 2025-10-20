@@ -54,7 +54,7 @@ class Actor(models.Model):
     deathday = models.DateField(null=True, blank=True, default=None)
     gender = models.IntegerField(null=True, blank=True)
     site_img_path = models.URLField(null=True, blank=True)
-    local_img_path = models.ImageField(upload_to='actors', null=True, blank=True)
+    local_img_path = models.ImageField(upload_to='actors/', null=True, blank=True)
     movies = models.JSONField(null=True, blank=True)
     
     class Meta:

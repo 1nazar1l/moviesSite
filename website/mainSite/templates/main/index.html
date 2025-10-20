@@ -98,7 +98,7 @@
                   {% if film.local_img_path == "" %}
                     <i class="fas fa-film"></i>
                   {% else %}
-                    <img src="{% static 'images/films/' %}{{ film.search_id }}.jpg" alt="{{ film.title }}">
+                    <img src="{{film.local_img_path.url}}" alt="{{ film.title }}">
                   {% endif %}
                 </div>
                 <div class="card-content">
@@ -122,7 +122,7 @@
                 {% if serial.local_img_path == "" %}
                   <i class="fas fa-film"></i>
                 {% else %}
-                  <img src="{% static 'images/serials/' %}{{ serial.search_id }}.jpg" alt="{{ serial.title }}">
+                  <img src="{{serial.local_img_path.url}}" alt="{{ serial.title }}">
                 {% endif %}
               </div>
               <div class="card-content">

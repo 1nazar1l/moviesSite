@@ -245,7 +245,7 @@
                     <i class="fas fa-star"></i>
                   {% endif %}
                 {% else %}
-                    <img src="{% static 'images/' %}{{ media_type }}/{{ item.search_id }}.jpg" alt="{{ film.title }}">
+                    <img src="{{item.local_img_path.url}}" alt="{{ film.title }}">
                 {% endif %}
               </div>
               <div class="movie-info">

@@ -5,6 +5,8 @@ from mainProject.models import Film, Serial, Actor
 from django.db.models import Q
 import os
 
+from django.conf import settings
+
 def set_previous_page(request):
     request.session.modified = True
 
@@ -31,14 +33,12 @@ def get_previous_page(request):
     return request.session.get("previous_page", "/")
 
 def check_path(item):
-    root = "C:/Users/Nazar/Desktop/moviesSite/website/mainProject/static"
-    
     if hasattr(item, 'local_img_path'):
-        img_path = os.path.join(root, item.local_img_path)
+        img_path = os.path.join(settings.MEDIA_ROOT, str(item.local_img_path))
         if not os.path.exists(img_path):
             item.local_img_path = ""
     else:
-        img_path = os.path.join(root, item["local_img_path"])
+        img_path = os.path.join(settings.MEDIA_ROOT, item["local_img_path"])
         if not os.path.exists(img_path):
             item["local_img_path"] = ""
 
@@ -146,6 +146,7 @@ def filmsPage(request):
 def serialsPage(request):
     set_previous_page(request)
     serials = Serial.objects.all()
+
     for serial in serials:
         check_path(serial)
 
@@ -159,6 +160,7 @@ def serialsPage(request):
 def actorsPage(request):
     set_previous_page(request)
     actors = Actor.objects.all()
+
     for actor in actors:
         check_path(actor)
         
@@ -191,8 +193,11 @@ def searchPage(request):
     actors = Actor.objects.filter(
         name__icontains=search
     )
-    
 
+    for objects in [films, serials, actors]:
+        for object in objects:
+            check_path(object)
+    
     return render(request, "main/search.html", context={
         "username": request.user,
         "films": films,

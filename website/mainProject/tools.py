@@ -5,6 +5,8 @@ from datetime import datetime, date
 
 from .models import Film, Serial, Actor, Message
 
+from django.conf import settings
+
 env.read_env()
 api_key = env("API_KEY")
 BASE_URL = "https://api.themoviedb.org/3"
@@ -181,14 +183,14 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url, 
         local_img_path = ""
     else:
         site_img_path = f"{img_url}/{media_item_data[img_index]}"
-        local_img_path = f"images/{media_type}/{media_item_data["id"]}.jpg"
+        local_img_path = f"{media_type}/{media_item_data["id"]}.jpg"
 
 
     if media_type == "films":
         release_date = media_item_data["release_date"]
 
         if media_item_data["release_date"] is None or media_item_data["release_date"] == "":
-            release_date = date(2050, 1, 1)
+            release_date = None
 
     if media_type == "films":
         actors = []
@@ -198,7 +200,7 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url, 
                 local_actor_img_path = ""
             else:
                 site_actor_img_path = f"{img_url}/{actor["profile_path"]}"
-                local_actor_img_path = f"images/films/{actor["id"]}.jpg"
+                local_actor_img_path = f"actors/{actor["id"]}.jpg"
             
             names = actor["name"].split(" ")
             if (len(names) == 2):
@@ -239,7 +241,7 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url, 
                 local_actor_img_path = ""
             else:
                 site_actor_img_path = f"{img_url}/{actor["profile_path"]}"
-                local_actor_img_path = f"images/serials/{actor["id"]}.jpg"
+                local_actor_img_path = f"actors/{actor["id"]}.jpg"
             
             names = actor["name"].split(" ")
             if (len(names) == 2):
@@ -279,7 +281,7 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url, 
                 local_film_img_path = ""
             else:
                 site_film_img_path = f"{img_url}/{film["poster_path"]}"
-                local_film_img_path = f"images/films/{film["id"]}.jpg"
+                local_film_img_path = f"films/{film["id"]}.jpg"
             
             title = film["title"]
 
@@ -307,7 +309,7 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url, 
         defaults=defaults
     )
 
-    img_filepath = os.path.join("mainProject/static", local_img_path)
+    img_filepath = os.path.join(settings.MEDIA_ROOT, local_img_path)
 
     if not os.path.exists(img_filepath):
         if site_img_path != "":
@@ -338,7 +340,7 @@ def parsing_media_items(request, media_type):
 
     img_url = "https://media.themoviedb.org/t/p/w220_and_h330_face/"
 
-    directory = f"mainProject/static/images/{media_type}"
+    directory = f"{settings.MEDIA_ROOT}/{media_type}"
     os.makedirs(directory, exist_ok=True)
 
     try:

@@ -109,7 +109,7 @@
                 {% if film.local_img_path == "" %}
                   <i class="fas fa-film"></i>
                 {% else %}
-                  <img src="{% static 'images/films/' %}{{ film.search_id }}.jpg" alt="{{ film.title }}">
+                  <img src="{{film.local_img_path.url}}" alt="{{ film.title }}">
                 {% endif %}
               </div>
               <div class="movie-info">
@@ -141,7 +141,7 @@
                 {% if serial.local_img_path == "" %}
                   <i class="fas fa-film"></i>
                 {% else %}
-                  <img src="{% static 'images/serials/' %}{{ serial.search_id }}.jpg" alt="{{ serial.title }}">
+                  <img src="{{serial.local_img_path.url}}" alt="{{ serial.title }}">
                 {% endif %}
               </div>
               <div class="movie-info">
@@ -172,7 +172,7 @@
                 {% if actor.local_img_path == "" %}
                   <i class="fas fa-film"></i>
                 {% else %}
-                  <img src="{% static 'images/actors/' %}{{ actor.search_id }}.jpg" alt="{{ actor.name }}">
+                  <img src="{{actor.local_img_path.url}}" alt="{{ actor.name }}">
                 {% endif %}
               </div>
               <div class="movie-info">
