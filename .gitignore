@@ -180,9 +180,6 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 
-website/mainProject/templates/jsons
 .gitattributes
 
-website/mainProject/static/images/films
-website/mainProject/static/images/serials
-website/mainProject/static/images/actors
+media/

@@ -25,4 +25,8 @@ urlpatterns = [
     path('actors/delete_actors/', views.delete_actors, name='delete_actors'),
     path('actors/delete_all_actors/', views.delete_all_actors, name='delete_all_actors'),
 
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

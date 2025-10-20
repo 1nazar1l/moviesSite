@@ -18,4 +18,8 @@ urlpatterns = [
     path('adminPanel/films', films_admin_panel, name='adminPanel'),
     path('<str:media_type>/<int:search_id>', views.itemPage, name='itemPage'),
     path('<str:media_type>/', views.errorPage, name='errorPage'),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
