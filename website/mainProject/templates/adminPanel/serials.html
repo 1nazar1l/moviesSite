@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "adminPanel/base.html" %}
 {% load static %}
 
 {% block page_title %}
@@ -42,7 +42,7 @@
 {% block parse_media_block %}
   <form action="{% url "parse_serials" %}" method="post">
     {% csrf_token %}
-    {% include "admin_page_components/parse_media_content_block.html" with title_text="Парсинг сериалов" media_type="serials"%}
+    {% include "adminPanel/parse_media_content_block.html" with title_text="Парсинг сериалов" media_type="serials"%}
   </form>
 {% endblock parse_media_block %}
 

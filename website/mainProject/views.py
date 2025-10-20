@@ -35,7 +35,7 @@ def films_admin_panel(request):
             Q(search_id__icontains=id_search)
         )
 
-    return render(request, "films.html", context={
+    return render(request, "adminPanel/films.html", context={
         "films": films,
         "messages": messages,
         "messages_type": messages_type      
@@ -58,7 +58,7 @@ def serials_admin_panel(request):
     for message in messages:
         messages_type[message.message_type] += 1
 
-    return render(request, "serials.html", context={
+    return render(request, "adminPanel/serials.html", context={
         "serials": serials,
         "messages": messages,
         "messages_type": messages_type      
@@ -81,7 +81,7 @@ def actors_admin_panel(request):
     for message in messages:
         messages_type[message.message_type] += 1
 
-    return render(request, "actors.html", context={
+    return render(request, "adminPanel/actors.html", context={
         "actors": actors,
         "messages": messages,
         "messages_type": messages_type      
