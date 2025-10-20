@@ -9,7 +9,7 @@ class Film(models.Model):
     revenue = models.IntegerField(null=True, blank=True)
     overview = models.TextField(null=True, blank=True)
     site_img_path = models.URLField(null=True, blank=True)
-    local_img_path = models.URLField(null=True, blank=True)
+    local_img_path = models.ImageField(upload_to='films/', null=True, blank=True)
     release_date = models.DateField(null=True, blank=True, default=timezone.now)
     runtime = models.IntegerField(null=True, blank=True)
     status = models.CharField(max_length=20, null=True, blank=True)
@@ -33,7 +33,7 @@ class Serial(models.Model):
     seasons = models.IntegerField(null=True, blank=True)
     overview = models.TextField(null=True, blank=True)
     site_img_path = models.URLField(null=True, blank=True)
-    local_img_path = models.URLField(null=True, blank=True)
+    local_img_path = models.ImageField(upload_to='serials/', null=True, blank=True)
     status = models.CharField(max_length=20, null=True, blank=True)
     rating = models.FloatField(null=True, blank=True)
     genres = models.JSONField(null=True, blank=True)
@@ -54,7 +54,7 @@ class Actor(models.Model):
     deathday = models.DateField(null=True, blank=True, default=None)
     gender = models.IntegerField(null=True, blank=True)
     site_img_path = models.URLField(null=True, blank=True)
-    local_img_path = models.URLField(null=True, blank=True)
+    local_img_path = models.ImageField(upload_to='actors', null=True, blank=True)
     movies = models.JSONField(null=True, blank=True)
     
     class Meta:
