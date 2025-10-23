@@ -50,9 +50,9 @@ def mainPage(request):
 
     set_previous_page(request)
     films = Film.objects.all()
-    films = films.order_by('-rating')[:10]
+    films = films.order_by('-id')[:10]
     serials = Serial.objects.all()
-    serials = serials.order_by('rating')[:10]
+    serials = serials.order_by('-id')[:10]
 
     for film in films:
         check_path(film)
