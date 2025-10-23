@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django.conf import settings
 
 class Film(models.Model):
     search_id = models.IntegerField(null=True, blank=True)
@@ -66,7 +67,7 @@ class Actor(models.Model):
     
 class Message(models.Model):
     from_page = models.TextField()
-    admin = models.ForeignKey(to=User, on_delete=models.CASCADE, null=True, blank=True)
+    admin = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     text = models.TextField()
     date = models.DateTimeField()
     time = models.FloatField()
