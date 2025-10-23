@@ -78,7 +78,7 @@
     <div class="search_block">
       <form action="{% url "searchPage" %}" method="post" class="search-form">
         {% csrf_token %}
-        <input name="search" type="text" name="submit" placeholder="Поиск фильма, сериала, актера..." />
+        <input name="search" type="text" placeholder="Поиск фильма, сериала, актера..." />
         <button class="search_btn" type="submit">Поиск</button>
         <i class="fa-solid fa-magnifying-glass"></i>
       </form>

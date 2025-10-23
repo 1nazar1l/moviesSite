@@ -14,6 +14,7 @@ urlpatterns = [
     path('actors/', views.actorsPage, name='actorsPage'),
     path('search/', views.searchPage, name='searchPage'),
     path('profile/', views.profilePage, name='profilePage'),
+    path('profile/update_user_info', views.update_user_info, name='update_user_info'),
     path('profile/signOut', views.signOut, name='signOut'),
     path('adminPanel/films', films_admin_panel, name='adminPanel'),
     path('<str:media_type>/<int:search_id>', views.itemPage, name='itemPage'),
