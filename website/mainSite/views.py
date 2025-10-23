@@ -7,6 +7,8 @@ import os
 
 from django.conf import settings
 
+from datetime import date
+
 
 def set_previous_page(request):
     request.session.modified = True
@@ -225,17 +227,26 @@ def searchPage(request):
 
 def profilePage(request):
     error_messages = request.session.get('profile_error_messages', [])
+    set_previous_page(request)
+
+    today = date.today()
 
     User = get_user_model()
     user = User.objects.get(id=request.user.id)
-    set_previous_page(request)
+    registration_date = user.date_joined.date()
+
+    days_from_registration = (today - registration_date).days
+    if days_from_registration == 0:
+        days_from_registration = 1
+    
     return render(request, "main/profile.html", context={
         "username": user.username,
         "icon": str(user.username)[0].upper(),
         "username_value": user.username,
         "email_value": user.email,
         "description_value": user.description,
-        "error_messages": error_messages
+        "error_messages": error_messages,
+        "days": days_from_registration
     })
 
 def signOut(request):

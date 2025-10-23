@@ -77,11 +77,13 @@ textarea {
 .profile-stats {
     display: flex;
     justify-content: space-around;
-    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
 }
 
 .stat {
     text-align: center;
+    width: 50%;
+    margin-bottom: 16px;
 }
 
 .stat-value {
@@ -170,13 +172,14 @@ textarea {
 
 .form-input {
     width: 100%;
-    padding: 0.75rem;
+    padding: 0.7rem;
     border: 1px solid var(--border);
     border-radius: 5px;
     background-color: var(--background);
     color: var(--primary-text);
     font-size: 1rem;
     transition: border-color 0.3s;
+    line-height: 22px;
 }
 
 .form-input:focus {
