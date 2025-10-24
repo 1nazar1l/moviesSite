@@ -29,6 +29,12 @@ document.addEventListener('DOMContentLoaded', () => {
         lastScrollY = window.scrollY;
     });
 
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 992){
+            bodyTeg.classList.remove('non-scroll')
+        }
+    });
+
     burgerButton = document.querySelector('.burger-menu')
     sidebar = document.querySelector('.sidebar')
     burgerButton.addEventListener('click', () => {
