@@ -188,7 +188,7 @@
             <div class="cast-card">
               <div class="cast-photo">
                 {% if actor.local_img_path != "" %}
-                  <img src="actor.local_img_path.url" alt="{{ actor.name }}">
+                  <img src="{{actor.local_img_path.url}}" alt="{{ actor.name }}">
                 {% else %}
                   <i class="fas fa-user fa-3x"></i>
                 {% endif %}
@@ -209,7 +209,7 @@
             <div class="cast-card">
               <div class="cast-photo">
                 {% if item.local_img_path != "" %}
-                  <img src="item.local_img_path.url" alt="{{ item.title }}">
+                  <img src="{{item.local_img_path.url}}" alt="{{ item.title }}">
                 {% else %}
                   <i class="fas fa-film"></i>
                 {% endif %}

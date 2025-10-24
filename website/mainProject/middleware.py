@@ -9,9 +9,9 @@ class AdminAccessMiddleware:
     def __call__(self, request):
         if request.path.startswith('/adminPanel/'):
             if not request.user.is_authenticated:
-                return redirect(reverse('errorPage'))
+                return redirect(reverse('errorPage', kwargs={'media_type': 'panel'}))
             if not request.user.is_superuser:
-                return redirect(reverse('errorPage'))  
+                return redirect(reverse('errorPage', kwargs={'media_type': 'panel'})) 
         
         response = self.get_response(request)
         return response
