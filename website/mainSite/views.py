@@ -49,9 +49,9 @@ def mainPage(request):
     request.session['profile_error_messages'] = []
 
     set_previous_page(request)
-    films = Film.objects.all()
+    films = Film.objects.exclude(is_parsed=False)
     films = films.order_by('-id')[:10]
-    serials = Serial.objects.all()
+    serials = Serial.objects.exclude(is_parsed=False)
     serials = serials.order_by('-id')[:10]
 
     for film in films:
@@ -138,7 +138,7 @@ def filmsPage(request):
     request.session['profile_error_messages'] = []
 
     set_previous_page(request)
-    films = Film.objects.all()
+    films = Film.objects.exclude(is_parsed=False)
 
     for film in films:
         check_path(film)
@@ -154,7 +154,7 @@ def serialsPage(request):
     request.session['profile_error_messages'] = []
 
     set_previous_page(request)
-    serials = Serial.objects.all()
+    serials = Serial.objects.exclude(is_parsed=False)
 
     for serial in serials:
         check_path(serial)
@@ -170,7 +170,7 @@ def actorsPage(request):
     request.session['profile_error_messages'] = []
 
     set_previous_page(request)
-    actors = Actor.objects.all()
+    actors = Actor.objects.exclude(is_parsed=False)
 
     for actor in actors:
         check_path(actor)
@@ -197,13 +197,17 @@ def searchPage(request):
                 if key == "search_page_value":
                     search = value
 
-    films = Film.objects.filter(
+    films = Film.objects.exclude(is_parsed=False)
+    serials = Serial.objects.exclude(is_parsed=False)
+    actors = Actor.objects.exclude(is_parsed=False)
+
+    films = films.filter(
         title__icontains=search  
     )
-    serials = Serial.objects.filter(
+    serials = serials.filter(
         title__icontains=search
     )
-    actors = Actor.objects.filter(
+    actors = actors.filter(
         name__icontains=search
     )
 
@@ -268,18 +272,22 @@ def itemPage(request, media_type, search_id):
 
     model = models.get(media_type)
     item = model.objects.get(search_id=search_id)
+
+    additional_data = []
+
     if media_type != "actors":
         check_path(item)
-        for actor in item.actors:
-            check_path(actor)
+        additional_data = item.actors.all()
     else:
         check_path(item)
-        for film in item.movies:
-            check_path(film)
+        movies = list(item.movies.all())
+        serials = list(item.serials.all())
+        additional_data = movies + serials
 
     return render(request, "main/item.html", context={
         "username": request.user,
         "item": item,
+        "additional_data": additional_data,
         "media_type": media_type,
         "previous_page": previous_page
     })

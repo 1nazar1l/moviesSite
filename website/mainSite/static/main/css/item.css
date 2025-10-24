@@ -209,6 +209,7 @@
     align-items: center;
     justify-content: center;
     color: var(--secondary);
+    font-size: 30px;
 }
 
 .cast-photo img {

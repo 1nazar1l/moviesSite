@@ -193,32 +193,8 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url, 
             release_date = None
 
     if media_type == "films":
-        actors = []
-        for actor in cast:
-            if actor["profile_path"] is None:
-                site_actor_img_path = ""
-                local_actor_img_path = ""
-            else:
-                site_actor_img_path = f"{img_url}/{actor["profile_path"]}"
-                local_actor_img_path = f"actors/{actor["id"]}.jpg"
-            
-            names = actor["name"].split(" ")
-            if (len(names) == 2):
-                first_name, second_name = names[0], names[1]
-            else:
-                first_name = names[0]
-                second_name = ""
-
-            actors.append({
-                "id": actor["id"],
-                "first_name": first_name.strip(),
-                "second_name": second_name.strip(),
-                "site_img_path": site_actor_img_path,
-                "local_img_path": local_actor_img_path
-            })
-
         defaults = {
-            "id": media_item_data["id"],
+            "is_parsed": True,
             "title": media_item_data["title"],
             "budget": media_item_data["budget"],
             "revenue": media_item_data["revenue"],
@@ -230,36 +206,10 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url, 
             "status": media_item_data["status"],
             "rating": media_item_data["vote_average"],
             "genres": [{"id": genre["id"], "name": genre["name"]} for genre in media_item_data["genres"]],
-            "actors": actors
         }
-
     elif media_type == "serials":
-        actors = []
-        for actor in cast:
-            if actor["profile_path"] is None:
-                site_actor_img_path = ""
-                local_actor_img_path = ""
-            else:
-                site_actor_img_path = f"{img_url}/{actor["profile_path"]}"
-                local_actor_img_path = f"actors/{actor["id"]}.jpg"
-            
-            names = actor["name"].split(" ")
-            if (len(names) == 2):
-                first_name, second_name = names[0], names[1]
-            else:
-                first_name = names[0]
-                second_name = ""
-
-            actors.append({
-                "id": actor["id"],
-                "first_name": first_name.strip(),
-                "second_name": second_name.strip(),
-                "site_img_path": site_actor_img_path,
-                "local_img_path": local_actor_img_path
-            })
-
         defaults = {
-            "id": media_item_data["id"],
+            "is_parsed": True,
             "first_air_date": media_item_data["first_air_date"],
             "last_air_date": media_item_data["last_air_date"],
             "title": media_item_data["name"],
@@ -271,29 +221,10 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url, 
             "status": media_item_data["status"],
             "rating": media_item_data["vote_average"],
             "genres": [{"id": genre["id"], "name": genre["name"]} for genre in media_item_data["genres"]],
-            "actors": actors
         }
     elif media_type == "actors":
-        films = []
-        for film in cast:
-            if film["poster_path"] is None:
-                site_film_img_path = ""
-                local_film_img_path = ""
-            else:
-                site_film_img_path = f"{img_url}/{film["poster_path"]}"
-                local_film_img_path = f"films/{film["id"]}.jpg"
-            
-            title = film["title"]
-
-            films.append({
-                "id": film["id"],
-                "title": title,
-                "site_img_path": site_film_img_path,
-                "local_img_path": local_film_img_path
-            })
-
         defaults = {
-            "id": media_item_data["id"],
+            "is_parsed": True,
             "name": media_item_data["name"],
             "biography": media_item_data["biography"],
             "birthday": media_item_data["birthday"],
@@ -301,10 +232,9 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url, 
             "gender": media_item_data["gender"],
             "site_img_path": site_img_path,
             "local_img_path": local_img_path,
-            "movies": films
         }
 
-    media_item_obj, created = model.objects.get_or_create(
+    media_item_obj, created = model.get_or_create(
         search_id=media_item_data["id"],
         defaults=defaults
     )
@@ -322,10 +252,14 @@ def parsing_media_items(request, media_type):
     start_page = request.POST.get('start_page')
     end_page = request.POST.get('end_page')
 
+    films = Film.objects.all()
+    serials = Serial.objects.all()
+    actors = Actor.objects.all()
+
     models = {
-        "films": Film,
-        "serials": Serial,
-        "actors": Actor,
+        "films": films,
+        "serials": serials,
+        "actors": actors,
     }
 
     url_parts = {
@@ -360,9 +294,12 @@ def parsing_media_items(request, media_type):
             data = response.json()
 
             for media_item in data["results"]:
-                is_exist = model.objects.filter(search_id = media_item["id"]).exists()
+                is_exist = model.filter(search_id = media_item["id"]).exists()
                 if is_exist:
-                    continue
+                    is_parsed = model.get(search_id=media_item["id"]).is_parsed
+
+                    if is_parsed:
+                        continue
 
                 if media_type == "actors" and media_item["known_for_department"] != "Acting":
                     continue
@@ -405,7 +342,55 @@ def parsing_media_items(request, media_type):
                 if media_type == "films" and media_item_data["budget"] == 0:
                     continue
 
+                if media_type != "actors" and media_item_data["vote_average"] < 5.2:
+                    continue
+
+                if media_type == "actors" and media_item_data["birthday"] is None:
+                    continue
+
+                if media_type == "actors":
+                    average_rating = sum([item["vote_average"] for item in cast]) / len(cast)
+                    if average_rating < 5.2:
+                        continue
+
                 download_media_item(media_type, img_index, media_item_data, model, img_url, cast)
+
+                if media_type == "actors":
+                    for item in cast:
+                        defaults = {
+                            "is_parsed": False,
+                            "title": item["title"]
+                        }
+
+                        film, created = Film.objects.get_or_create(search_id=item["id"], defaults=defaults)
+
+                        actor = actors.get(search_id=media_item["id"])
+                        actor.movies.add(film)
+                        film.actors.add(actor)
+                elif media_type == "films":
+                    for item in cast:
+                        defaults = {
+                            "is_parsed": False,
+                            "name": item["name"]
+                        }
+
+                        actor, created = Actor.objects.get_or_create(search_id=item["id"], defaults=defaults)
+
+                        film = films.get(search_id=media_item["id"])
+                        film.actors.add(actor)
+                        actor.movies.add(film)
+                elif media_type == "serials":
+                    for item in cast:
+                        defaults = {
+                            "is_parsed": False,
+                            "name": item["name"]
+                        }
+
+                        actor, created = Actor.objects.get_or_create(search_id=item["id"], defaults=defaults)
+
+                        serial = serials.get(search_id=media_item["id"])
+                        serial.actors.add(actor)
+                        actor.serials.add(serial)
 
             end = datetime.now()
             lead_time = end - start

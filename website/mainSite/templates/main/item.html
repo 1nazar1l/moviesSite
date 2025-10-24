@@ -180,41 +180,36 @@
         </div>
       </div>
     </div>
-    {% if media_type != "actors" and item.actors|length != 0 %}
+    {% if media_type != "actors" and additional_data|length != 0%}
       <div class="cast-section">
         <h2 class="section-title">В главных ролях</h2>
         <div class="cast-grid">
-          {% for actor in item.actors %}
+          {% for actor in additional_data %}
             <div class="cast-card">
               <div class="cast-photo">
                 {% if actor.local_img_path != "" %}
-                  <img src="{% static 'images/' %}{{ media_type }}/{{ actor.id }}.jpg" alt="{{ actor.name }}">
-                {% elif actor.site_img_path != "" %}
-                  <img src="{{actor.site_img_path}}" alt="">
+                  <img src="actor.local_img_path.url" alt="{{ actor.name }}">
                 {% else %}
                   <i class="fas fa-user fa-3x"></i>
                 {% endif %}
               </div>
               <div class="cast-info">
-                <div class="cast-name">{{actor.first_name}}</div>
-                <div class="cast-character">{{actor.second_name}}</div>
+                <div class="cast-name">{{actor.name}}</div>
               </div>
             </div>
           {% endfor %}
 
         </div>
       </div>
-    {% elif media_type == "actors" and item.movies|length != 0 %}
+    {% elif media_type == "actors" and additional_data|length != 0%}
       <div class="cast-section">
         <h2 class="section-title">Проекты в которых участвовали</h2>
         <div class="cast-grid">
-          {% for item in item.movies %}
+          {% for item in additional_data %}
             <div class="cast-card">
               <div class="cast-photo">
                 {% if item.local_img_path != "" %}
-                  <img src="{% static 'images/' %}{{ media_type }}/{{ item.id }}.jpg" alt="{{ item.title }}">
-                {% elif item.site_img_path != "" %}
-                  <img src="{{item.site_img_path}}" alt="">
+                  <img src="item.local_img_path.url" alt="{{ item.title }}">
                 {% else %}
                   <i class="fas fa-film"></i>
                 {% endif %}

@@ -1,10 +1,31 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User
 from django.conf import settings
+
+    
+class Actor(models.Model):
+    search_id = models.IntegerField(null=True, blank=True)
+    is_parsed = models.BooleanField(null=True, blank=True)
+    name = models.CharField(max_length=50, null=True, blank=True)
+    biography = models.TextField(null=True, blank=True)
+    birthday = models.DateField(null=True, blank=True, default=None)
+    deathday = models.DateField(null=True, blank=True, default=None)
+    gender = models.IntegerField(null=True, blank=True)
+    site_img_path = models.URLField(null=True, blank=True)
+    local_img_path = models.ImageField(upload_to='actors/', null=True, blank=True)
+    movies = models.ManyToManyField('Film', blank=True)
+    serials = models.ManyToManyField('Serial', blank=True)
+    
+    class Meta:
+        verbose_name = "Актер"
+        verbose_name_plural = "Актеры"
+
+    def __str__(self):
+        return f"{self.search_id}, {self.name}"
 
 class Film(models.Model):
     search_id = models.IntegerField(null=True, blank=True)
+    is_parsed = models.BooleanField(null=True, blank=True)
     title = models.CharField(max_length=100, null=True, blank=True)
     budget = models.IntegerField(null=True, blank=True)
     revenue = models.IntegerField(null=True, blank=True)
@@ -16,17 +37,18 @@ class Film(models.Model):
     status = models.CharField(max_length=20, null=True, blank=True)
     rating = models.FloatField(null=True, blank=True)
     genres = models.JSONField(null=True, blank=True)
-    actors = models.JSONField(null=True, blank=True)
+    actors = models.ManyToManyField(Actor, blank=True)
 
     class Meta:
         verbose_name = "Фильм"
         verbose_name_plural = "Фильмы"
 
     def __str__(self):
-        return f"{self.search_id}, {self.title}"
+        return f"{self.search_id}, {self.title}, is_parsed: {self.is_parsed}"
 
 class Serial(models.Model):
     search_id = models.IntegerField(null=True, blank=True)
+    is_parsed = models.BooleanField(null=True, blank=True)
     first_air_date = models.DateField(null=True, blank=True, default=timezone.now)
     last_air_date = models.DateField(null=True, blank=True, default=timezone.now)
     title = models.CharField(max_length=100, null=True, blank=True)
@@ -38,7 +60,7 @@ class Serial(models.Model):
     status = models.CharField(max_length=20, null=True, blank=True)
     rating = models.FloatField(null=True, blank=True)
     genres = models.JSONField(null=True, blank=True)
-    actors = models.JSONField(null=True, blank=True)
+    actors = models.ManyToManyField(Actor, blank=True)
 
     class Meta:
         verbose_name = "Сериал"
@@ -46,24 +68,7 @@ class Serial(models.Model):
 
     def __str__(self):
         return f"{self.search_id}, {self.title}"
-    
-class Actor(models.Model):
-    search_id = models.IntegerField(null=True, blank=True)
-    name = models.CharField(max_length=50, null=True, blank=True)
-    biography = models.TextField(null=True, blank=True)
-    birthday = models.DateField(null=True, blank=True, default=None)
-    deathday = models.DateField(null=True, blank=True, default=None)
-    gender = models.IntegerField(null=True, blank=True)
-    site_img_path = models.URLField(null=True, blank=True)
-    local_img_path = models.ImageField(upload_to='actors/', null=True, blank=True)
-    movies = models.JSONField(null=True, blank=True)
-    
-    class Meta:
-        verbose_name = "Актер"
-        verbose_name_plural = "Актеры"
 
-    def __str__(self):
-        return f"{self.search_id}, {self.name}"
     
 class Message(models.Model):
     from_page = models.TextField()
