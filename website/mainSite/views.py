@@ -245,6 +245,9 @@ def profilePage(request):
     user = User.objects.get(id=request.user.id)
     registration_date = user.date_joined.date()
 
+    comments_count = len(user.comments.all())
+    ratings_count = len(request.user.comments.filter(rating__isnull=False))
+
     days_from_registration = (today - registration_date).days
     if days_from_registration == 0:
         days_from_registration = 1
@@ -256,7 +259,9 @@ def profilePage(request):
         "email_value": user.email,
         "description_value": user.description,
         "error_messages": error_messages,
-        "days": days_from_registration
+        "days": days_from_registration,
+        "comments_count": comments_count,
+        "ratings_count": ratings_count
     })
 
 def signOut(request):
