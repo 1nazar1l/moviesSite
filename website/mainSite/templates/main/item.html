@@ -231,136 +231,98 @@
         <span class="comments-count" id="commentsCount">3 комментария</span>
       </div>
 
-      <!-- Форма добавления комментария -->
-      <div class="add-comment-form" id="commentForm">
-        <div class="comment-form-group">
-          <textarea class="comment-textarea" placeholder="Напишите ваш комментарий..." id="commentText"></textarea>
-        </div>
-        <div class="comment-form-actions">
-          <div>
-            <label for="commentRating">Ваша оценка: </label>
-            <select class="rating-select" id="commentRating">
-              <option value="5">5 ★</option>
-              <option value="4">4 ★</option>
-              <option value="3">3 ★</option>
-              <option value="2">2 ★</option>
-              <option value="1">1 ★</option>
-            </select>
-          </div>
-          <button class="btn btn-primary" id="submitComment">
-            <i class="fas fa-paper-plane"></i>
-            Отправить
-          </button>
-        </div>
-      </div>
 
-      <!-- Список комментариев -->
+      <form action="{% url 'create_comment' %}" method="post">
+          {% csrf_token %}
+          <div class="add-comment-form" id="commentForm">
+              <div class="comment-form-group">
+                  <textarea class="comment-textarea" name="text" placeholder="Напишите ваш комментарий..." id="commentText" required></textarea>
+              </div>
+              <div class="comment-form-actions">
+                  <div>
+                      <label for="commentRating">Ваша оценка: </label>
+                      <select class="rating-select" name="rating" id="commentRating">
+                          <option value="">Без оценки</option>
+                          <option value="1">1 ★ - Ужасно</option>
+                          <option value="2">2 ★ - Плохо</option>
+                          <option value="3">3 ★ - Неудовлетворительно</option>
+                          <option value="4">4 ★ - Ниже среднего</option>
+                          <option value="5">5 ★ - Средне</option>
+                          <option value="6">6 ★ - Выше среднего</option>
+                          <option value="7">7 ★ - Хорошо</option>
+                          <option value="8">8 ★ - Очень хорошо</option>
+                          <option value="9">9 ★ - Отлично</option>
+                          <option value="10">10 ★ - Шедевр</option>
+                      </select>
+                  </div>
+                  
+                  <!-- Скрытые поля для определения объекта -->
+                  <input type="hidden" name="content_type_id" value="{{ content_type_id }}">
+                  <input type="hidden" name="object_id" value="{{ object_id }}">
+                  
+                  <button type="submit" class="btn btn-primary" id="submitComment">
+                      <i class="fas fa-paper-plane"></i>
+                      Отправить
+                  </button>
+              </div>
+          </div>
+      </form>
+
+            <!-- Список комментариев -->
       <div class="comments-list" id="commentsList">
-        <!-- Комментарий 1 -->
+        {% for comment in comments %}
         <div class="comment-card">
           <div class="comment-header">
             <div class="comment-user">
-              <div class="user-avatar">К</div>
+              <div class="user-avatar">{{ comment.user.username|first|upper }}</div>
               <div class="user-info">
-                <div class="user-name">Киноман007</div>
-                <div class="comment-date">2 дня назад</div>
+                <div class="user-name">{{ comment.user.username }}</div>
+                <div class="comment-date">
+                  {% now "Y-m-d" as today %}
+                  {% with comment_date=comment.writing_date.date %}
+                    {% if comment_date == today %}
+                      Сегодня
+                    {% elif comment_date == today|date:"Y-m-d"|add:"-1 day" %}
+                      Вчера
+                    {% else %}
+                      {{ comment.writing_date|timesince }} назад
+                    {% endif %}
+                  {% endwith %}
+                </div>
               </div>
             </div>
+            {% if comment.rating %}
             <div class="comment-rating">
               <i class="fas fa-star"></i>
-              <span>5.0</span>
+              <span>{{ comment.rating }}</span>
             </div>
+            {% endif %}
           </div>
           <div class="comment-content">
-            Один из лучших научно-фантастических фильмов всех времен! Визуальные эффекты просто потрясающие, а сюжет заставляет задуматься о нашем месте во Вселенной. Особенно впечатлили сцены с черной дырой - они были созданы на основе реальных научных расчетов!
+            {{ comment.text }}
           </div>
           <div class="comment-actions">
             <button class="comment-action">
               <i class="far fa-thumbs-up"></i>
-              <span>12</span>
+              <span>{{ comment.likes.count }}</span>
             </button>
             <button class="comment-action">
               <i class="far fa-thumbs-down"></i>
-              <span>2</span>
+              <span>{{ comment.dislikes.count }}</span>
             </button>
             <button class="comment-action">
               <i class="far fa-flag"></i>
             </button>
           </div>
         </div>
-
-        <!-- Комментарий 2 -->
-        <div class="comment-card">
-          <div class="comment-header">
-            <div class="comment-user">
-              <div class="user-avatar">А</div>
-              <div class="user-info">
-                <div class="user-name">Астрофизик</div>
-                <div class="comment-date">1 неделю назад</div>
-              </div>
-            </div>
-            <div class="comment-rating">
-              <i class="fas fa-star"></i>
-              <span>4.5</span>
-            </div>
-          </div>
-          <div class="comment-content">
-            Как человек, интересующийся космосом, могу сказать, что научная составляющая фильма на высоте. Конечно, есть некоторые художественные допущения, но в целом физика представлена очень достоверно. Музыка Ханса Циммера идеально дополняет космическую атмосферу.
-          </div>
-          <div class="comment-actions">
-            <button class="comment-action">
-              <i class="far fa-thumbs-up"></i>
-              <span>8</span>
-            </button>
-            <button class="comment-action">
-              <i class="far fa-thumbs-down"></i>
-              <span>1</span>
-            </button>
-            <button class="comment-action">
-              <i class="far fa-flag"></i>
-            </button>
-          </div>
+        {% empty %}
+        <!-- Сообщение когда нет комментариев -->
+        <div class="no-comments" id="noComments">
+          <i class="far fa-comments"></i>
+          <h3>Пока нет комментариев</h3>
+          <p>Будьте первым, кто оставит отзыв об этом фильме!</p>
         </div>
-
-        <!-- Комментарий 3 -->
-        <div class="comment-card">
-          <div class="comment-header">
-            <div class="comment-user">
-              <div class="user-avatar">М</div>
-              <div class="user-info">
-                <div class="user-name">Мария_Кино</div>
-                <div class="comment-date">2 недели назад</div>
-              </div>
-            </div>
-            <div class="comment-rating">
-              <i class="fas fa-star"></i>
-              <span>4.0</span>
-            </div>
-          </div>
-          <div class="comment-content">
-            Эмоциональная глубина фильма поражает. Отношения отца и дочери показаны невероятно трогательно. Плакала в нескольких сценах. Рекомендую смотреть в хорошем качестве с объемным звуком - это совершенно другой опыт!
-          </div>
-          <div class="comment-actions">
-            <button class="comment-action">
-              <i class="far fa-thumbs-up"></i>
-              <span>15</span>
-            </button>
-            <button class="comment-action">
-              <i class="far fa-thumbs-down"></i>
-              <span>0</span>
-            </button>
-            <button class="comment-action">
-              <i class="far fa-flag"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Сообщение когда нет комментариев -->
-      <div class="no-comments" id="noComments" style="display: none;">
-        <i class="far fa-comments"></i>
-        <h3>Пока нет комментариев</h3>
-        <p>Будьте первым, кто оставит отзыв об этом фильме!</p>
+        {% endfor %}
       </div>
     </div>
   </div>

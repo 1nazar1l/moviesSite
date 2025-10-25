@@ -1,13 +1,17 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model, authenticate, login, logout
 
-from mainProject.models import Film, Serial, Actor
+from django.contrib.contenttypes.models import ContentType
+from mainProject.models import Film, Serial, Actor, Comment
 from django.db.models import Q
 import os
 
 from django.conf import settings
 
 from datetime import date
+
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 
 def set_previous_page(request):
@@ -284,12 +288,24 @@ def itemPage(request, media_type, search_id):
         serials = list(item.serials.all())
         additional_data = movies + serials
 
+    # Получаем ContentType для текущего объекта
+    content_type = ContentType.objects.get_for_model(item)
+    
+    # Получаем комментарии для этого объекта
+    comments = Comment.objects.filter(
+        content_type=content_type,
+        object_id=item.id
+    ).select_related('user')
+
     return render(request, "main/item.html", context={
         "username": request.user,
         "item": item,
         "additional_data": additional_data,
         "media_type": media_type,
-        "previous_page": previous_page
+        "previous_page": previous_page,
+        "comments": comments,
+        "content_type_id": content_type.id,  # Для скрытого поля
+        "object_id": item.id  # Для скрытого поля
     })
 
 def errorPage(request, media_type=""):    
@@ -338,3 +354,55 @@ def update_user_info(request):
 
 
     return redirect("profilePage")
+
+@login_required
+def create_comment(request):
+    if request.method == 'POST':
+        try:
+            # Получаем данные из формы
+            content_type_id = request.POST.get('content_type_id')
+            object_id = request.POST.get('object_id')
+            text = request.POST.get('text')
+            rating = request.POST.get('rating')
+            
+            # Проверяем обязательные поля
+            if not all([content_type_id, object_id, text]):
+                messages.error(request, 'Заполните все обязательные поля.')
+                return redirect(request.META.get('HTTP_REFERER', 'profilePage'))
+            
+            # Получаем ContentType
+            content_type = get_object_or_404(ContentType, id=content_type_id)
+            
+            # Получаем модель объекта
+            model_class = content_type.model_class()
+            
+            # Проверяем существование объекта
+            content_object = get_object_or_404(model_class, id=object_id)
+            
+            # Создаем комментарий
+            comment = Comment(
+                user=request.user,
+                content_type=content_type,
+                object_id=object_id,
+                text=text,
+                rating=rating if rating else None  # rating может быть пустым
+            )
+            comment.save()
+            
+            messages.success(request, 'Ваш комментарий успешно добавлен!')
+            
+            # Перенаправляем обратно на страницу объекта
+            # Определяем тип контента для редиректа
+            if hasattr(content_object, 'search_id'):
+                if model_class == Film:
+                    return redirect('itemPage', media_type='film', search_id=content_object.search_id)
+                elif model_class == Serial:
+                    return redirect('itemPage', media_type='serial', search_id=content_object.search_id)
+                elif model_class == Actor:
+                    return redirect('itemPage', media_type='actor', search_id=content_object.search_id)
+            
+        except Exception as e:
+            messages.error(request, f'Ошибка при добавлении комментария: {str(e)}')
+    
+    # Если что-то пошло не так, возвращаем на предыдущую страницу
+    return redirect(request.META.get('HTTP_REFERER', 'profilePage'))

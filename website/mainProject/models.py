@@ -1,6 +1,9 @@
 from django.db import models
 from django.utils import timezone
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
+
 
     
 class Actor(models.Model):
@@ -84,3 +87,66 @@ class Message(models.Model):
 
     def __str__(self):
         return f"{self.id}, {self.admin}, {self.text}"
+    
+
+class Comment(models.Model):
+    # Универсальная связь с любым объектом (Film, Serial, Actor)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+    
+    # Пользователь, который оставил комментарий
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE,
+        related_name='comments'
+    )
+    
+    text = models.TextField(verbose_name="Текст комментария")
+    writing_date = models.DateTimeField(
+        default=timezone.now, 
+        verbose_name="Дата написания"
+    )
+    
+    # Для лайков и дизлайков лучше использовать ManyToMany
+    likes = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='comment_likes',
+        blank=True
+    )
+    dislikes = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='comment_dislikes',
+        blank=True
+    )
+
+    RATING_CHOICES = [
+        (1, '1 - Ужасно'),
+        (2, '2 - Плохо'),
+        (3, '3 - Неудовлетворительно'),
+        (4, '4 - Ниже среднего'),
+        (5, '5 - Средне'),
+        (6, '6 - Выше среднего'),
+        (7, '7 - Хорошо'),
+        (8, '8 - Очень хорошо'),
+        (9, '9 - Отлично'),
+        (10, '10 - Шедевр'),
+    ]
+    
+    rating = models.IntegerField(
+        choices=RATING_CHOICES,
+        null=True,
+        blank=True,
+        verbose_name="Оценка"
+    )
+    
+    class Meta:
+        verbose_name = "Комментарий"
+        verbose_name_plural = "Комментарии"
+        ordering = ['-writing_date']
+        indexes = [
+            models.Index(fields=['content_type', 'object_id']),
+        ]
+
+    def __str__(self):
+        return f"Комментарий {self.user} от {self.writing_date.strftime('%d.%m.%Y')}"

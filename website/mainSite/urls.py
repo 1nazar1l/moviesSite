@@ -18,6 +18,7 @@ urlpatterns = [
     path('profile/signOut', views.signOut, name='signOut'),
     path('adminPanel/films', films_admin_panel, name='adminPanel'),
     path('<str:media_type>/<int:search_id>', views.itemPage, name='itemPage'),
+    path('comment/create/', views.create_comment, name='create_comment'),
     path('<str:media_type>/', views.errorPage, name='errorPage'),
 ]
 
