@@ -56,10 +56,21 @@
         <div class="profile-sidebar">
             <div class="profile-card">
                 <div class="avatar-container">
-                    <div class="avatar" id="userAvatar">{{icon}}</div>
-                    <div class="avatar-edit">
-                        <i class="fas fa-camera" type="file"></i>
-                    </div>
+                    {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="Аватар" class="avatar" id="userAvatar">
+                    {% else %}
+                        <div class="avatar" id="userAvatar">{{ user.username|first|upper }}</div>
+                    {% endif %}
+                    
+                    <form action="{% url 'add_avatar' %}" method="post" enctype="multipart/form-data" id="avatarForm">
+                        {% csrf_token %}
+                        <div class="avatar-edit">
+                            <label for="avatarInput">
+                                <i class="fas fa-camera"></i>
+                            </label>
+                            <input type="file" id="avatarInput" name="avatar" accept="image/*" style="display: none;">
+                        </div>
+                    </form>
                 </div>
                 <h2 class="profile-name" id="userName">{{username}}</h2>
                 

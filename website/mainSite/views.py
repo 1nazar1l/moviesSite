@@ -13,6 +13,8 @@ from datetime import date
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
+from pathlib import Path
+
 
 def set_previous_page(request):
     request.session.modified = True
@@ -406,3 +408,47 @@ def create_comment(request):
     
     # Если что-то пошло не так, возвращаем на предыдущую страницу
     return redirect(request.META.get('HTTP_REFERER', 'profilePage'))
+
+@login_required
+def add_avatar(request):
+    if request.method == 'POST' and request.FILES.get('avatar'):
+        try:
+            avatar_file = request.FILES['avatar']
+            
+            if avatar_file.size > 5 * 1024 * 1024:
+                messages.error(request, 'Размер файла не должен превышать 5MB')
+                return redirect('profilePage')
+            
+            allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+            if avatar_file.content_type not in allowed_types:
+                messages.error(request, 'Допустимые форматы: JPEG, PNG, GIF, WebP')
+                return redirect('profilePage')
+            
+            file_extension = Path(avatar_file.name).suffix.lower()
+            new_filename = f"{request.user.username}{file_extension}"
+            file_path = os.path.join(settings.MEDIA_ROOT, "avatars", new_filename)
+            
+            # Удаляем старый аватар если есть
+            if request.user.avatar:
+                old_avatar_path = request.user.avatar.path
+                if os.path.exists(old_avatar_path):
+                    os.remove(old_avatar_path)
+            
+            # Сохраняем файл вручную
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            with open(file_path, "wb+") as f:
+                for chunk in avatar_file.chunks():
+                    f.write(chunk)
+            
+            # Обновляем поле в базе данных
+            User = get_user_model()
+            user = User.objects.get(id=request.user.id)
+            user.avatar.name = f"avatars/{new_filename}"
+            user.save()
+            
+            messages.success(request, 'Аватар успешно обновлен!')
+            
+        except Exception as e:
+            messages.error(request, f'Ошибка при загрузке аватара: {str(e)}')
+    
+    return redirect('profilePage')
