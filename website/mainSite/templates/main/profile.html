@@ -108,7 +108,7 @@
             <form action="{% url "update_user_info" %}" method="post">
                 {% csrf_token %}
                 <div class="edit-form">
-                    <h3 class="section-title">Редактирование профиля</h3>
+                    <h3 class="section-title">Профиль</h3>
 
                     <div class="form-group">
                         <label class="form-label" for="username">Никнейм</label>
@@ -162,15 +162,41 @@
                                         </div>
                                     </form>
                                     <div class="movie-poster">
-                                        <i class="fas fa-film"></i>
+                                        {% if item.content_object.local_img_path == "" %}
+                                            {% if item.content_type.model != "actor" %}
+                                                <i class="fas fa-film"></i>
+                                            {% else %}
+                                                <i class="fas fa-user fa-3x"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <img src="{{item.content_object.local_img_path.url}}" alt=""> 
+                                        {% endif %}
                                     </div>
                                     <div class="movie-info">
-                                        <h3 class="movie-title">{{item.content_object.title}}</h3>
+                                        <h3 class="movie-title">
+                                            {% if item.content_type.model != "actor" %}
+                                                {{item.content_object.title}} 
+                                            {% else %}
+                                                {{item.content_object.name}} 
+                                            {% endif %}
+                                        </h3>
                                         <div class="movie-meta">
-                                            <span>2014</span>
+                                            <span>
+                                                {% if item.content_type.model == "film" %}
+                                                    {{item.content_object.release_date|date:"Y"}}
+                                                {% elif item.content_type.model == "serial" %}
+                                                    {{item.content_object.first_air_date|date:"Y"}}
+                                                    -
+                                                    {{item.content_object.last_air_date|date:"Y"}}
+                                                {% elif item.content_type.model == "actor" %}
+                                                    {{item.content_object.birthday}}
+                                                {% endif %}
+                                            </span>
                                             <span class="movie-rating">
-                                                <i class="fas fa-star"></i>
-                                                8.6
+                                                {% if item.content_type.model != "actor" %}
+                                                    <i class="fas fa-star"></i>
+                                                    {{item.content_object.rating|floatformat:1}}
+                                                {% endif %}
                                             </span>
                                         </div>
                                     </div>

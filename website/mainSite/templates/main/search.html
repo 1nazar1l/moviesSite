@@ -118,7 +118,7 @@
                   <span>{{film.release_date}}</span>
                   <span class="movie-rating">
                     <i class="fas fa-star"></i>
-                    {{film.rating}}
+                    {{film.rating|floatformat:1}}
                   </span>
                 </div>
                 <div class="movie-genres">
@@ -150,7 +150,7 @@
                   <span>{{serial.release_date}}</span>
                   <span class="movie-rating">
                     <i class="fas fa-star"></i>
-                    {{serial.rating}}
+                    {{serial.rating|floatformat:1}}
                   </span>
                 </div>
                 <div class="movie-genres">

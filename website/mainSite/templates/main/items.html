@@ -256,16 +256,16 @@
                 {% endif %}
                 <div class="movie-meta">
                   {% if media_type == "films" %}
-                    <span>{{item.release_date}}</span>
+                    <span>{{item.release_date|date:"Y"}}</span>
                   {% elif media_type == "serials" %}
-                    <span>{{item.first_air_date}}-{{item.last_air_date}}</span>
+                    <span>{{item.first_air_date|date:"Y"}}-{{item.last_air_date|date:"Y"}}</span>
                   {% elif media_type == "actors" %}
                     <span>{{item.birthday}}</span>
                   {% endif %}
                   {% if media_type != "actors" %}
                     <span class="movie-rating">
                       <i class="fas fa-star"></i>
-                      {{item.rating}}
+                      {{item.rating|floatformat:1}}
                     </span>
                   {% endif %}
                 </div>
