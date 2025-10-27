@@ -150,3 +150,37 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Комментарий {self.user} от {self.writing_date.strftime('%d.%m.%Y')}"
+
+
+class Favorite(models.Model):
+    # Универсальная связь с любым объектом (Film, Serial, Actor)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+    
+    # Пользователь, который добавил в избранное
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE,
+        related_name='favorites'
+    )
+    
+    # Дата добавления в избранное
+    added_date = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Дата добавления"
+    )
+    
+    class Meta:
+        verbose_name = "Избранное"
+        verbose_name_plural = "Избранные"
+        ordering = ['-added_date']
+        indexes = [
+            models.Index(fields=['content_type', 'object_id']),
+            models.Index(fields=['user']),
+        ]
+        # Уникальность - пользователь не может добавить один объект дважды
+        unique_together = ['user', 'content_type', 'object_id']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.content_object}"

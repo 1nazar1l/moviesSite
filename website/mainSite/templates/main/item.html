@@ -1,5 +1,6 @@
 {% extends "main/base.html" %}
 {% load static %}
+{% load class_name %}
 
 {% block css %}
   <link rel="stylesheet" href="{% static "main/css/normalize.css" %}">
@@ -178,7 +179,37 @@
           {% if media_type == "actors" %}
           {% endif %}
         </div>
+
+        <div class="action-buttons">
+          {% if not is_favorite %}
+            <form action="{% url 'add_to_favorite' %}" method="post" id="favoriteForm">
+                {% csrf_token %}
+                <!-- Скрытые поля для определения объекта -->
+                <input type="hidden" name="content_type" value="{{ item|class_name }}">
+                <input type="hidden" name="object_id" value="{{ item.id }}">
+                
+                <button type="submit" class="btn btn-secondary" id="addToFavorites">
+                  <i class="far fa-bookmark"></i>
+                  В избранное
+                </button>
+            </form>
+          {% else %}
+            <form action="{% url 'remove_from_favorite' %}" method="post" id="favoriteForm">
+              {% csrf_token %}
+              <!-- Скрытые поля для определения объекта -->
+              <input type="hidden" name="content_type" value="{{ item|class_name }}">
+              <input type="hidden" name="object_id" value="{{ item.id }}">
+
+              <button class="btn btn-primary" style="background-color:#10b981;">
+                <i class="fas fa-bookmark"></i>
+                В избранном
+              </button>
+            </form>
+          {% endif %}
+        </div>
+
       </div>
+
     </div>
     {% if media_type != "actors" and additional_data|length != 0%}
       <div class="cast-section">

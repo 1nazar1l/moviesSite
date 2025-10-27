@@ -1,5 +1,7 @@
 {% extends "main/base.html" %}
 {% load static %}
+{% load class_name %}
+
 
 {% block css %}
   <link rel="stylesheet" href="{% static "main/css/normalize.css" %}">
@@ -76,7 +78,7 @@
                 
                 <div class="profile-stats">
                     <div class="stat">
-                        <div class="stat-value" id="favoritesCount">12</div>
+                        <div class="stat-value" id="favoritesCount">{{favorites_count}}</div>
                         <div class="stat-label">В избранном</div>
                     </div>
                     <div class="stat">
@@ -143,94 +145,50 @@
             <div class="favorites-section">
                 <h3 class="section-title">Мое избранное</h3>
                 
-                <div class="favorites-grid" id="favoritesGrid">
-                    <!-- Карточки избранных фильмов -->
-                    <div class="movie-card" onclick="window.location.href='movie-details.html'">
-                        <div class="remove-favorite" data-movie-id="1">
-                            <i class="fas fa-times"></i>
-                        </div>
-                        <div class="movie-poster">
-                            <i class="fas fa-film"></i>
-                        </div>
-                        <div class="movie-info">
-                            <h3 class="movie-title">Интерстеллар</h3>
-                            <div class="movie-meta">
-                                <span>2014</span>
-                                <span class="movie-rating">
-                                    <i class="fas fa-star"></i>
-                                    8.6
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="movie-card" onclick="window.location.href='movie-details.html'">
-                        <div class="remove-favorite" data-movie-id="2">
-                            <i class="fas fa-times"></i>
-                        </div>
-                        <div class="movie-poster">
-                            <i class="fas fa-film"></i>
-                        </div>
-                        <div class="movie-info">
-                            <h3 class="movie-title">Начало</h3>
-                            <div class="movie-meta">
-                                <span>2010</span>
-                                <span class="movie-rating">
-                                    <i class="fas fa-star"></i>
-                                    8.8
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="movie-card" onclick="window.location.href='movie-details.html'">
-                        <div class="remove-favorite" data-movie-id="3">
-                            <i class="fas fa-times"></i>
-                        </div>
-                        <div class="movie-poster">
-                            <i class="fas fa-film"></i>
-                        </div>
-                        <div class="movie-info">
-                            <h3 class="movie-title">Побег из Шоушенка</h3>
-                            <div class="movie-meta">
-                                <span>1994</span>
-                                <span class="movie-rating">
-                                    <i class="fas fa-star"></i>
-                                    9.3
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="movie-card" onclick="window.location.href='movie-details.html'">
-                        <div class="remove-favorite" data-movie-id="4">
-                            <i class="fas fa-times"></i>
-                        </div>
-                        <div class="movie-poster">
-                            <i class="fas fa-film"></i>
-                        </div>
-                        <div class="movie-info">
-                            <h3 class="movie-title">Темный рыцарь</h3>
-                            <div class="movie-meta">
-                                <span>2008</span>
-                                <span class="movie-rating">
-                                    <i class="fas fa-star"></i>
-                                    9.0
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {% if favorites_count != 0 %}
                 
-                <div class="empty-favorites" id="emptyFavorites" style="display: none;">
-                    <i class="fas fa-heart-broken"></i>
-                    <h3>В избранном пока пусто</h3>
-                    <p>Добавляйте фильмы в избранное, чтобы они появились здесь</p>
-                    <button class="btn btn-primary" onclick="window.location.href='films.html'">
-                        <i class="fas fa-search"></i>
-                        Найти фильмы
-                    </button>
-                </div>
+                    <div class="favorites-grid" id="favoritesGrid">
+                        {% for item in favorites %}
+                            <a href="{% url "itemPage" item.content_type.model item.content_object.search_id %}">
+                                <div class="movie-card">
+                                    <form action="{% url 'remove_from_favorite' %}" method="post" id="favoriteForm">
+                                    <div class="remove-favorite">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="content_type" value="{{ item.content_type.model}}">
+                                        <input type="hidden" name="object_id" value="{{ item.content_object.id }}">
+                                        
+                                        <button type="submit" class="remove-button"></button>
+                                        <i class="fas fa-times"></i>
+                                        </div>
+                                    </form>
+                                    <div class="movie-poster">
+                                        <i class="fas fa-film"></i>
+                                    </div>
+                                    <div class="movie-info">
+                                        <h3 class="movie-title">{{item.content_object.title}}</h3>
+                                        <div class="movie-meta">
+                                            <span>2014</span>
+                                            <span class="movie-rating">
+                                                <i class="fas fa-star"></i>
+                                                8.6
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        
+                        {% endfor %}
+
+                    </div>
+                {% else %}
+                    <div class="empty-favorites" id="emptyFavorites">
+                        <i class="fas fa-heart-broken"></i>
+                        <h3>В избранном пока пусто</h3>
+                        <p>Добавляйте фильмы,сериалы и актеров в избранное, чтобы они появились здесь</p>
+                    </div>
+
+                {% endif %}
+                
             </div>
         </div>
     </div>

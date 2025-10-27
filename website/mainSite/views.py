@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model, authenticate, login, logout
 
 from django.contrib.contenttypes.models import ContentType
-from mainProject.models import Film, Serial, Actor, Comment
+from mainProject.models import Film, Serial, Actor, Comment, Favorite
 from django.db.models import Q
 import os
 
@@ -251,6 +251,14 @@ def profilePage(request):
     days_from_registration = (today - registration_date).days
     if days_from_registration == 0:
         days_from_registration = 1
+
+    User = get_user_model()
+    user = User.objects.get(id=request.user.id)
+
+    favorites = user.favorites.all()
+    favorites_count = len(favorites)
+    favorites = [item for item in favorites]
+    print(favorites)
     
     return render(request, "main/profile.html", context={
         "username": user.username,
@@ -261,7 +269,9 @@ def profilePage(request):
         "error_messages": error_messages,
         "days": days_from_registration,
         "comments_count": comments_count,
-        "ratings_count": ratings_count
+        "ratings_count": ratings_count,
+        "favorites_count": favorites_count,
+        "favorites": favorites
     })
 
 def signOut(request):
@@ -304,6 +314,14 @@ def itemPage(request, media_type, search_id):
         object_id=item.id
     ).select_related('user')
 
+    User = get_user_model()
+    user = User.objects.get(id=request.user.id)
+
+    is_favorite = user.favorites.filter(
+        content_type=content_type, 
+        object_id=item.id
+    )
+
     return render(request, "main/item.html", context={
         "username": request.user,
         "item": item,
@@ -311,8 +329,9 @@ def itemPage(request, media_type, search_id):
         "media_type": media_type,
         "previous_page": previous_page,
         "comments": comments,
-        "content_type_id": content_type.id,  # Для скрытого поля
-        "object_id": item.id  # Для скрытого поля
+        "content_type_id": content_type.id,
+        "object_id": item.id,
+        "is_favorite": is_favorite
     })
 
 def errorPage(request, media_type=""):    
@@ -457,3 +476,77 @@ def add_avatar(request):
             messages.error(request, f'Ошибка при загрузке аватара: {str(e)}')
     
     return redirect('profilePage')
+
+@login_required
+def add_to_favorite(request):
+    if request.method == 'POST':
+        try:
+            content_type_name = request.POST.get('content_type')
+            object_id = request.POST.get('object_id')
+            
+            if not all([content_type_name, object_id]):
+                messages.error(request, 'Ошибка: не указан объект')
+                return redirect(request.META.get('HTTP_REFERER', 'home'))
+            
+            # Получаем ContentType (ищем по имени модели)
+            content_type = ContentType.objects.get(model=content_type_name.lower())
+            
+            # Получаем модель объекта
+            model_class = content_type.model_class()
+            
+            # Проверяем существование объекта
+            content_object = model_class.objects.get(id=object_id)
+            
+            # Проверяем, не добавлен ли уже в избранное
+            favorite, created = Favorite.objects.get_or_create(
+                user=request.user,
+                content_type=content_type,
+                object_id=object_id
+            )
+            
+            if created:
+                messages.success(request, f'{content_object} добавлен в избранное!')
+            else:
+                messages.info(request, f'{content_object} уже в избранном')
+                
+        except ContentType.DoesNotExist:
+            messages.error(request, 'Ошибка: тип объекта не найден')
+        except model_class.DoesNotExist:
+            messages.error(request, 'Ошибка: объект не найден')
+        except Exception as e:
+            messages.error(request, f'Ошибка при добавлении в избранное: {str(e)}')
+    
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+@login_required
+def remove_from_favorite(request):
+    if request.method == 'POST':
+        try:
+            content_type_name = request.POST.get('content_type')
+            print(content_type_name)
+            object_id = request.POST.get('object_id')
+            print(object_id)
+            
+            if not all([content_type_name, object_id]):
+                messages.error(request, 'Ошибка: не указан объект')
+                return redirect(request.META.get('HTTP_REFERER', 'home'))
+            
+            content_type = ContentType.objects.get(model=content_type_name.lower())
+            
+            model_class = content_type.model_class()
+            
+            item = Favorite.objects.get(
+                user=request.user,
+                content_type=content_type,
+                object_id=object_id
+            )
+            item.delete()
+                
+        except ContentType.DoesNotExist:
+            messages.error(request, 'Ошибка: тип объекта не найден')
+        except model_class.DoesNotExist:
+            messages.error(request, 'Ошибка: объект не найден')
+        except Exception as e:
+            messages.error(request, f'Ошибка при добавлении в избранное: {str(e)}')
+    
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
