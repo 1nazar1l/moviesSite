@@ -248,6 +248,112 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url, 
             with open(img_filepath, "wb") as out:
                 out.write(p.content)
 
+def parse_media_item(films, serials, actors, selected_item, selected_item_model, media_type, search_id):   
+    url_parts = {
+        "films": "movie",
+        "serials": "tv",
+        "actors": "person",
+    }
+
+    url_part = url_parts.get(media_type)
+
+    img_url = "https://media.themoviedb.org/t/p/w220_and_h330_face/"            
+    data_url = f"{BASE_URL}/{url_part}/{search_id}"
+
+    if media_type != "actors":
+        params = {
+            "api_key": api_key,
+            "language": "en",
+        }
+    else:
+        params = {
+            "api_key": api_key,
+            "language": "en",
+            "append_to_response": "movie_credits"
+        }
+
+    img_index = "profile_path" if media_type == "actors" else "poster_path"
+
+    response = requests.get(data_url, params=params)
+    response.raise_for_status()
+
+    media_item_data = response.json()
+
+    cast = []
+
+    data_url = f"{BASE_URL}/{url_part}/{search_id}/credits"
+
+    response = requests.get(data_url, params=params)
+    response.raise_for_status()
+
+    if len(response.json()["cast"]) < 10:
+        cast = response.json()["cast"]
+    else:
+        cast = response.json()["cast"][0:10]
+
+    download_media_item(media_type, img_index, media_item_data, selected_item_model, img_url, cast)
+
+    added_ids = []
+    if media_type == "actors":
+        for item in cast:
+            defaults = {
+                "is_parsed": False,
+                "title": item["title"]
+            }
+
+            film, created = Film.objects.get_or_create(search_id=item["id"], defaults=defaults)
+
+            actor = actors.get(search_id=search_id)
+            actor.movies.add(film)
+            film.actors.add(actor)
+
+            added_ids.append(item["id"])
+
+        if selected_item.search_id not in added_ids:
+            actor = actors.get(search_id=search_id)
+            selected_item.actors.add(actor)
+            actor.movies.add(selected_item)
+
+    elif media_type == "films":
+        for item in cast:
+            defaults = {
+                "is_parsed": False,
+                "name": item["name"]
+            }
+
+            actor, created = Actor.objects.get_or_create(search_id=item["id"], defaults=defaults)
+
+            film = films.get(search_id=search_id)
+            film.actors.add(actor)
+            actor.movies.add(film)
+
+            added_ids.append(item["id"])
+
+        if selected_item.search_id not in added_ids:
+            film = films.get(search_id=search_id)
+            selected_item.movies.add(film)
+            film.actors.add(selected_item)
+
+    elif media_type == "serials":
+        for item in cast:
+            defaults = {
+                "is_parsed": False,
+                "name": item["name"]
+            }
+
+            actor, created = Actor.objects.get_or_create(search_id=item["id"], defaults=defaults)
+
+            serial = serials.get(search_id=search_id)
+            serial.actors.add(actor)
+            actor.serials.add(serial)
+
+            added_ids.append(item["id"])
+
+        if selected_item.search_id not in added_ids:
+            serial = serials.get(search_id=search_id)
+            selected_item.movies.add(serial)
+            serial.actors.add(selected_item)
+
 def parsing_media_items(request, media_type):
     start_page = request.POST.get('start_page')
     end_page = request.POST.get('end_page')
@@ -311,16 +417,14 @@ def parsing_media_items(request, media_type):
                         "api_key": api_key,
                         "language": "en",
                     }
-
-                    img_index = "poster_path"
                 else:
                     params = {
                         "api_key": api_key,
                         "language": "en",
                         "append_to_response": "movie_credits"
                     }
-
-                    img_index = "profile_path"
+            
+                img_index = "profile_path" if media_type == "actors" else "poster_path"
 
                 response = requests.get(data_url, params=params)
                 response.raise_for_status()

@@ -21,6 +21,7 @@ urlpatterns = [
     path('favorite/remove/', views.remove_from_favorite, name='remove_from_favorite'),
     path('adminPanel/films', films_admin_panel, name='adminPanel'),
     path('<str:media_type>/<int:search_id>', views.itemPage, name='itemPage'),
+    path('add_new_item/', views.add_new_item, name="add_new_item"),
     path('comment/create/', views.create_comment, name='create_comment'),
     path('<str:media_type>/', views.errorPage, name='errorPage'),
 ]

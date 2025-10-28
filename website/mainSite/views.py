@@ -15,6 +15,9 @@ from django.contrib import messages
 
 from pathlib import Path
 
+from mainProject.tools import parse_media_item
+
+
 
 def set_previous_page(request):
     request.session.modified = True
@@ -292,7 +295,12 @@ def itemPage(request, media_type, search_id):
     }
 
     model = models.get(media_type)
+
     item = model.objects.get(search_id=search_id)
+
+    # Проверяем, распарсен ли объект
+    if not item.is_parsed:
+        return redirect("errorPage", media_type="actor")
 
     additional_data = []
 
@@ -320,7 +328,7 @@ def itemPage(request, media_type, search_id):
     is_favorite = user.favorites.filter(
         content_type=content_type, 
         object_id=item.id
-    )
+    ).exists()  # Добавьте .exists() для получения boolean
 
     return render(request, "main/item.html", context={
         "username": request.user,
@@ -331,7 +339,12 @@ def itemPage(request, media_type, search_id):
         "comments": comments,
         "content_type_id": content_type.id,
         "object_id": item.id,
-        "is_favorite": is_favorite
+        "is_favorite": is_favorite,
+        "types": {
+            "film": "film",
+            "serial": "serial",
+            "actor": "actor"
+        }
     })
 
 def errorPage(request, media_type=""):    
@@ -548,5 +561,34 @@ def remove_from_favorite(request):
             messages.error(request, 'Ошибка: объект не найден')
         except Exception as e:
             messages.error(request, f'Ошибка при добавлении в избранное: {str(e)}')
+    
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+
+def add_new_item(request):
+    selected_object_search_id = request.POST.get("selected_object_search_id")
+    selected_object_media_type = request.POST.get("selected_object_media_type")
+    added_object_search_id = request.POST.get("added_object_search_id")
+    added_object_media_type = request.POST.get("added_object_media_type")
+
+    films = Film.objects.all()
+    serials = Serial.objects.all()
+    actors = Actor.objects.all()
+
+    added_object_media_type = added_object_media_type + "s"
+
+    models = {
+        "films": films,
+        "serials": serials,
+        "actors": actors,
+    }
+
+    model = models.get(added_object_media_type)
+    delete_item = model.get(search_id=added_object_search_id)
+    delete_item.delete()
+
+    selected_item_model = models.get(selected_object_media_type)
+    selected_item = selected_item_model.get(search_id=selected_object_search_id)
+    parse_media_item(films, serials, actors, selected_item, model, added_object_media_type, added_object_search_id)
     
     return redirect(request.META.get('HTTP_REFERER', 'home'))
