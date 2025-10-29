@@ -307,12 +307,12 @@ def parse_media_item(films, serials, actors, selected_item, selected_item_model,
             actor.movies.add(film)
             film.actors.add(actor)
 
-            added_ids.append(item["id"])
+            if not actor.movies.filter(search_id=selected_item.search_id).exists():
+                selected_item.actors.add(actor)
+                actor.movies.add(selected_item)
+            else:
+                added_ids.append(item["id"])
 
-        if selected_item.search_id not in added_ids:
-            actor = actors.get(search_id=search_id)
-            selected_item.actors.add(actor)
-            actor.movies.add(selected_item)
 
     elif media_type == "films":
         for item in cast:
