@@ -4,219 +4,291 @@
 
 
 {% block css %}
-  <link rel="stylesheet" href="{% static "main/css/normalize.css" %}">
-  <link rel="stylesheet" href="{% static "main/css/base.css" %}">
-  <link rel="stylesheet" href="{% static "main/css/profile.css" %}">
+<link rel="stylesheet" href="{% static "main/css/normalize.css" %}">
+<link rel="stylesheet" href="{% static "main/css/base.css" %}">
+<link rel="stylesheet" href="{% static "main/css/item.css" %}">
+<link rel="stylesheet" href="{% static "main/css/profile.css" %}">
 {% endblock css %}
 
 {% block script %}
-  <script src="{% static "main/js/base.js" %}"></script>
-  <script src="{% static "main/js/profile.js" %}"></script>
+<script src="{% static "main/js/base.js" %}"></script>
+<script src="{% static "main/js/item.js" %}"></script>
+<script src="{% static "main/js/profile.js" %}"></script>
 {% endblock script %}
 
 {% block header_nav %}
-  <nav>
-    <ul>
-      <li><a href="{% url "mainPage" %}">Главная</a></li>
-      <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
-      <li><a href="{% url "serialsPage" %}">Сериалы</a></li>
-      <li><a href="{% url "actorsPage" %}">Актеры</a></li>
-      {% if request.user.is_superuser %}
-      <li><a href="{% url "adminPanel" %}">Админ панель</a></li>
-      {% endif %}
-    </ul>
-  </nav>
+<nav>
+  <ul>
+    <li><a href="{% url "mainPage" %}">Главная</a></li>
+    <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
+    <li><a href="{% url "serialsPage" %}">Сериалы</a></li>
+    <li><a href="{% url "actorsPage" %}">Актеры</a></li>
+    {% if request.user.is_superuser %}
+    <li><a href="{% url "adminPanel" %}">Админ панель</a></li>
+    {% endif %}
+  </ul>
+</nav>
 {% endblock header_nav %}
 
 {% block sidebar_nav %}
-  <nav>
-    <ul>
-      <li><a href="{% url "mainPage" %}">Главная</a></li>
-      <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
-      <li><a href="{% url "serialsPage" %}">Сериалы</a></li>
-      <li><a href="{% url "actorsPage" %}">Актеры</a></li>
-      {% if request.user.is_superuser %}
-      <li><a href="{% url "adminPanel" %}">Админ панель</a></li>
-      {% endif %}
-    </ul>
-  </nav>
+<nav>
+  <ul>
+    <li><a href="{% url "mainPage" %}">Главная</a></li>
+    <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
+    <li><a href="{% url "serialsPage" %}">Сериалы</a></li>
+    <li><a href="{% url "actorsPage" %}">Актеры</a></li>
+    {% if request.user.is_superuser %}
+    <li><a href="{% url "adminPanel" %}">Админ панель</a></li>
+    {% endif %}
+  </ul>
+</nav>
 {% endblock sidebar_nav %}
 
 {% block auth_header_profile_url %}
-  <a class="auth-btn" href="{% url "mainPage" %}">На главную</a>
+<a class="auth-btn" href="{% url "mainPage" %}">На главную</a>
 {% endblock auth_header_profile_url %}
 
 
 {% block auth_sidebar_profile_url %}
-  <a class="auth-btn" href="{% url "mainPage" %}">На главную</a>
+<a class="auth-btn" href="{% url "mainPage" %}">На главную</a>
 {% endblock auth_sidebar_profile_url %}
 
 {% block main_content %}
-  <div class="profile-page">
-    <div class="profile-container">
-        <!-- Боковая панель профиля -->
-        <div class="profile-sidebar">
-            <div class="profile-card">
-                <div class="avatar-container">
-                    {% if user.avatar %}
-                        <img src="{{ user.avatar.url }}" alt="Аватар" class="avatar" id="userAvatar">
-                    {% else %}
-                        <div class="avatar" id="userAvatar">{{ user.username|first|upper }}</div>
-                    {% endif %}
-                    
-                    <form action="{% url 'add_avatar' %}" method="post" enctype="multipart/form-data" id="avatarForm">
-                        {% csrf_token %}
-                        <div class="avatar-edit">
-                            <label for="avatarInput">
-                                <i class="fas fa-camera"></i>
-                            </label>
-                            <input type="file" id="avatarInput" name="avatar" accept="image/*" style="display: none;">
-                        </div>
-                    </form>
-                </div>
-                <h2 class="profile-name" id="userName">{{username}}</h2>
-                
-                <div class="profile-stats">
-                    <div class="stat">
-                        <div class="stat-value" id="favoritesCount">{{favorites_count}}</div>
-                        <div class="stat-label">В избранном</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value" id="reviewsCount">{{ratings_count}}</div>
-                        <div class="stat-label">Оценок</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value" id="reviewsCount">{{comments_count}}</div>
-                        <div class="stat-label">Комментариев</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value" id="activityDays">{{days}}</div>
-                        <div class="stat-label">Дней с нами</div>
-                    </div>
-                </div>
+<div class="profile-page">
+  <div class="profile-container">
+    <!-- Боковая панель профиля -->
+    <div class="profile-sidebar">
+      <div class="profile-card">
+        <div class="avatar-container">
+          {% if user.avatar %}
+          <img src="{{ user.avatar.url }}" alt="Аватар" class="avatar" id="userAvatar">
+          {% else %}
+          <div class="avatar" id="userAvatar">{{ user.username|first|upper }}</div>
+          {% endif %}
+
+          <form action="{% url 'add_avatar' %}" method="post" enctype="multipart/form-data" id="avatarForm">
+            {% csrf_token %}
+            <div class="avatar-edit">
+              <label for="avatarInput">
+                <i class="fas fa-camera"></i>
+              </label>
+              <input type="file" id="avatarInput" name="avatar" accept="image/*" style="display: none;">
             </div>
-            <a href="{% url "signOut" %}">
-                <button class="btn btn-primary" id="signOut">
-                    <i class="fa-solid fa-door-open"></i>
-                    Выйти из аккаунта
-                </button>
-            </a>
+          </form>
         </div>
-        
-        <!-- Основное содержимое профиля -->
-        <div class="profile-content">
-            <form action="{% url "update_user_info" %}" method="post">
-                {% csrf_token %}
-                <div class="edit-form">
-                    <h3 class="section-title">Профиль</h3>
+        <h2 class="profile-name" id="userName">{{username}}</h2>
 
-                    <div class="form-group">
-                        <label class="form-label" for="username">Никнейм</label>
-                        <input name="username" type="text" id="username" class="form-input" value="{{username_value}}">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="email">Электронная почта</label>
-                        <input name="email" type="email" id="email" class="form-input" value="{{email_value}}">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="bio">О себе</label>
-                        <textarea name="description" id="bio" class="form-input" rows="4" placeholder="Расскажите о себе...">{% if description_value %}{{description_value}}{% endif %}</textarea>
-                    </div>
+        <div class="profile-stats">
+          <div class="stat">
+            <div class="stat-value" id="favoritesCount">{{favorites_count}}</div>
+            <div class="stat-label">В избранном</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="reviewsCount">{{ratings_count}}</div>
+            <div class="stat-label">Оценок</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="reviewsCount">{{comments_count}}</div>
+            <div class="stat-label">Комментариев</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="activityDays">{{days}}</div>
+            <div class="stat-label">Дней с нами</div>
+          </div>
+        </div>
+      </div>
+      <a href="{% url "signOut" %}">
+        <button class="btn btn-primary" id="signOut">
+          <i class="fa-solid fa-door-open"></i>
+          Выйти из аккаунта
+        </button>
+      </a>
+    </div>
 
-                    {% if error_messages|length != 0 %}
-                        {% for message in error_messages %}       
-                            <div class="form-group">
-                                {{message}}
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                    
-                    <div class="form-actions">
-                        <button class="btn btn-primary" id="saveChangesBtn">
-                            <i class="fas fa-save"></i>
-                            Сохранить изменения
-                        </button>
-                    </div>
+    <!-- Основное содержимое профиля -->
+    <div class="profile-content">
+      <form action="{% url "update_user_info" %}" method="post">
+        {% csrf_token %}
+        <div class="edit-form">
+          <h3 class="section-title">Профиль</h3>
+
+          <div class="form-group">
+            <label class="form-label" for="username">Никнейм</label>
+            <input name="username" type="text" id="username" class="form-input" value="{{username_value}}">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="email">Электронная почта</label>
+            <input name="email" type="email" id="email" class="form-input" value="{{email_value}}">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="bio">О себе</label>
+            <textarea name="description" id="bio" class="form-input" rows="4"
+              placeholder="Расскажите о себе...">{% if description_value %}{{description_value}}{% endif %}</textarea>
+          </div>
+
+          {% if error_messages|length != 0 %}
+          {% for message in error_messages %}
+          <div class="form-group">
+            {{message}}
+          </div>
+          {% endfor %}
+          {% endif %}
+
+          <div class="form-actions">
+            <button class="btn btn-primary" id="saveChangesBtn">
+              <i class="fas fa-save"></i>
+              Сохранить изменения
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <div class="favorites-section">
+
+        {% if favorites_count != 0 %}
+        <h3 class="section-title">Мое избранное</h3>
+
+        <div class="favorites-grid" id="favoritesGrid">
+          {% for item in favorites %}
+          <a href="{% url "itemPage" item.content_type.model item.content_object.search_id %}">
+            <div class="movie-card">
+              <form action="{% url 'remove_from_favorite' %}" method="post" id="favoriteForm">
+                <div class="remove-favorite">
+                  {% csrf_token %}
+                  <input type="hidden" name="content_type" value="{{ item.content_type.model}}">
+                  <input type="hidden" name="object_id" value="{{ item.content_object.id }}">
+
+                  <button type="submit" class="remove-button"></button>
+                  <i class="fas fa-times"></i>
                 </div>
-            </form>
-            
-            <div class="favorites-section">
-                <h3 class="section-title">Мое избранное</h3>
-                
-                {% if favorites_count != 0 %}
-                
-                    <div class="favorites-grid" id="favoritesGrid">
-                        {% for item in favorites %}
-                            <a href="{% url "itemPage" item.content_type.model item.content_object.search_id %}">
-                                <div class="movie-card">
-                                    <form action="{% url 'remove_from_favorite' %}" method="post" id="favoriteForm">
-                                    <div class="remove-favorite">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="content_type" value="{{ item.content_type.model}}">
-                                        <input type="hidden" name="object_id" value="{{ item.content_object.id }}">
-                                        
-                                        <button type="submit" class="remove-button"></button>
-                                        <i class="fas fa-times"></i>
-                                        </div>
-                                    </form>
-                                    <div class="movie-poster">
-                                        {% if item.content_object.local_img_path == "" %}
-                                            {% if item.content_type.model != "actor" %}
-                                                <i class="fas fa-film"></i>
-                                            {% else %}
-                                                <i class="fas fa-user fa-3x"></i>
-                                            {% endif %}
-                                        {% else %}
-                                            <img src="{{item.content_object.local_img_path.url}}" alt=""> 
-                                        {% endif %}
-                                    </div>
-                                    <div class="movie-info">
-                                        <h3 class="movie-title">
-                                            {% if item.content_type.model != "actor" %}
-                                                {{item.content_object.title}} 
-                                            {% else %}
-                                                {{item.content_object.name}} 
-                                            {% endif %}
-                                        </h3>
-                                        <div class="movie-meta">
-                                            <span>
-                                                {% if item.content_type.model == "film" %}
-                                                    {{item.content_object.release_date|date:"Y"}}
-                                                {% elif item.content_type.model == "serial" %}
-                                                    {{item.content_object.first_air_date|date:"Y"}}
-                                                    -
-                                                    {{item.content_object.last_air_date|date:"Y"}}
-                                                {% elif item.content_type.model == "actor" %}
-                                                    {{item.content_object.birthday}}
-                                                {% endif %}
-                                            </span>
-                                            <span class="movie-rating">
-                                                {% if item.content_type.model != "actor" %}
-                                                    <i class="fas fa-star"></i>
-                                                    {{item.content_object.rating|floatformat:1}}
-                                                {% endif %}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        
-                        {% endfor %}
-
-                    </div>
+              </form>
+              <div class="movie-poster">
+                {% if item.content_object.local_img_path == "" %}
+                {% if item.content_type.model != "actor" %}
+                <i class="fas fa-film"></i>
                 {% else %}
-                    <div class="empty-favorites" id="emptyFavorites">
-                        <i class="fas fa-heart-broken"></i>
-                        <h3>В избранном пока пусто</h3>
-                        <p>Добавляйте фильмы,сериалы и актеров в избранное, чтобы они появились здесь</p>
-                    </div>
-
+                <i class="fas fa-user fa-3x"></i>
                 {% endif %}
-                
+                {% else %}
+                <img src="{{item.content_object.local_img_path.url}}" alt="">
+                {% endif %}
+              </div>
+              <div class="movie-info">
+                <h3 class="movie-title1">
+                  {% if item.content_type.model != "actor" %}
+                  {{item.content_object.title}}
+                  {% else %}
+                  {{item.content_object.name}}
+                  {% endif %}
+                </h3>
+                <div class="movie-meta">
+                  <span>
+                    {% if item.content_type.model == "film" %}
+                    {{item.content_object.release_date|date:"Y"}}
+                    {% elif item.content_type.model == "serial" %}
+                    {{item.content_object.first_air_date|date:"Y"}}
+                    -
+                    {{item.content_object.last_air_date|date:"Y"}}
+                    {% elif item.content_type.model == "actor" %}
+                    {{item.content_object.birthday}}
+                    {% endif %}
+                  </span>
+                  <span class="movie-rating">
+                    {% if item.content_type.model != "actor" %}
+                    <i class="fas fa-star"></i>
+                    {{item.content_object.rating|floatformat:1}}
+                    {% endif %}
+                  </span>
+                </div>
+              </div>
             </div>
+          </a>
+
+          {% endfor %}
+
         </div>
+        {% else %}
+        <div class="empty-favorites" id="emptyFavorites">
+          <i class="fas fa-heart-broken"></i>
+          <h3>В избранном пока пусто</h3>
+          <p>Добавляйте фильмы,сериалы и актеров в избранное, чтобы они появились здесь</p>
+        </div>
+
+        {% endif %}
+
+        {% if comments_count != 0 %}
+        <h3 class="section-title">Мои комментарии</h3>
+
+        <div class="comments-list" id="commentsList">
+          {% for comment in comments %}
+          <a href="{% url "itemPage" comment.content_type.model comment.content_object.search_id %}">
+            <div class="comment-card">
+              <div class="comment-header">
+                <div class="comment-user">
+                  <div class="user-avatar">{{ comment.user.username|first|upper }}</div>
+                  <div class="user-info">
+                    <div class="user-name">{{ comment.user.username }}</div>
+                    <div class="comment-date">
+                      {% now "Y-m-d" as today %}
+                      {% with comment_date=comment.writing_date.date %}
+                      {% if comment_date == today %}
+                      Сегодня
+                      {% elif comment_date == today|date:"Y-m-d"|add:"-1 day" %}
+                      Вчера
+                      {% else %}
+                      {{ comment.writing_date|timesince }} назад
+                      {% endif %}
+                      {% endwith %}
+                    </div>
+                  </div>
+                </div>
+                {% if comment.rating %}
+                <div class="comment-rating">
+                  <i class="fas fa-star"></i>
+                  <span>{{ comment.rating }}</span>
+                </div>
+                {% endif %}
+              </div>
+              <div class="comment-content">
+                {{ comment.text }}
+              </div>
+              <div class="comment-actions">
+                <button class="comment-action">
+                  <i class="far fa-thumbs-up"></i>
+                  <span>{{ comment.likes.count }}</span>
+                </button>
+                <button class="comment-action">
+                  <i class="far fa-thumbs-down"></i>
+                  <span>{{ comment.dislikes.count }}</span>
+                </button>
+                <button class="comment-action">
+                  <i class="far fa-flag"></i>
+                </button>
+              </div>
+            </div>
+          </a>
+          {% empty %}
+          <!-- Сообщение когда нет комментариев -->
+          <div class="no-comments" id="noComments">
+            <i class="far fa-comments"></i>
+            <h3>Пока нет комментариев</h3>
+            <p>Будьте первым, кто оставит отзыв об этом фильме!</p>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-favorites" id="emptyFavorites">
+          <i class="fas fa-heart-broken"></i>
+          <h3>В избранном пока пусто</h3>
+          <p>Добавляйте фильмы,сериалы и актеров в избранное, чтобы они появились здесь</p>
+        </div>
+
+        {% endif %}
+
+      </div>
     </div>
   </div>
+</div>
 {% endblock main_content %}

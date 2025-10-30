@@ -239,43 +239,47 @@ def searchPage(request):
     })
 
 def profilePage(request):
-    error_messages = request.session.get('profile_error_messages', [])
-    set_previous_page(request)
+    if request.user.is_authenticated:
+        error_messages = request.session.get('profile_error_messages', [])
+        set_previous_page(request)
 
-    today = date.today()
+        today = date.today()
 
-    User = get_user_model()
-    user = User.objects.get(id=request.user.id)
-    registration_date = user.date_joined.date()
+        User = get_user_model()
+        user = User.objects.get(id=request.user.id)
+        registration_date = user.date_joined.date()
 
-    comments_count = len(user.comments.all())
-    ratings_count = len(request.user.comments.filter(rating__isnull=False))
+        comments = user.comments.all()
+        comments_count = len(comments)
+        ratings_count = len(request.user.comments.filter(rating__isnull=False))
 
-    days_from_registration = (today - registration_date).days
-    if days_from_registration == 0:
-        days_from_registration = 1
+        days_from_registration = (today - registration_date).days
+        if days_from_registration == 0:
+            days_from_registration = 1
 
-    User = get_user_model()
-    user = User.objects.get(id=request.user.id)
+        User = get_user_model()
+        user = User.objects.get(id=request.user.id)
 
-    favorites = user.favorites.all()
-    favorites_count = len(favorites)
-    favorites = [item for item in favorites]
-    print(favorites)
-    
-    return render(request, "main/profile.html", context={
-        "username": user.username,
-        "icon": str(user.username)[0].upper(),
-        "username_value": user.username,
-        "email_value": user.email,
-        "description_value": user.description,
-        "error_messages": error_messages,
-        "days": days_from_registration,
-        "comments_count": comments_count,
-        "ratings_count": ratings_count,
-        "favorites_count": favorites_count,
-        "favorites": favorites
-    })
+        favorites = user.favorites.all()
+        favorites_count = len(favorites)
+        favorites = [item for item in favorites]
+        
+        return render(request, "main/profile.html", context={
+            "username": user.username,
+            "icon": str(user.username)[0].upper(),
+            "username_value": user.username,
+            "email_value": user.email,
+            "description_value": user.description,
+            "error_messages": error_messages,
+            "days": days_from_registration,
+            "comments_count": comments_count,
+            "ratings_count": ratings_count,
+            "favorites_count": favorites_count,
+            "favorites": favorites,
+            "comments": comments
+        })
+    else:
+        return redirect("errorPage", media_type="profilePage")
 
 def signOut(request):
     logout(request)
