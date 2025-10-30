@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Проверка имени пользователя
     function checkUsernameMatch() {
         const username = elements.usernameInput.value;
-        return username.length >= 5 && username.length <= 15;
+        return username.length >= 5 && username.length <= 50;
     }
 
     // Расчет рейтинга пароля

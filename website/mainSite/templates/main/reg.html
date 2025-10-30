@@ -86,7 +86,7 @@
           <form class="auth-form" id="regForm" action="{% url 'regPage' %}" method="post">
               {% csrf_token %}
               <div class="form-group">
-                  <p class="form-label">Никнейм(от 5 до 15 символов)</p>
+                  <p class="form-label">Никнейм(от 5 до 50 символов)</p>
                   <input name="username" type="text" id="usernameInput" class="form-input" placeholder="User13920" autocomplete="off" required>
               </div>
 

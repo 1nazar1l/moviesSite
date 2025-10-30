@@ -311,6 +311,7 @@
     background-color: var(--card-bg);
     border-radius: 10px;
     padding: 1.5rem;
+    padding-right: 1rem;
     border: 1px solid var(--border);
 }
 
@@ -329,7 +330,7 @@
 
 .user-avatar {
     width: 40px;
-    height: 40px;
+    aspect-ratio: 1 / 1;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--accent), #8B5CF6);
     display: flex;
