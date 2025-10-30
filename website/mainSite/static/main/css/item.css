@@ -91,6 +91,10 @@
     line-height: 1.6;
     margin-bottom: 2rem;
     font-size: 1.1rem;
+    text-align: justify;
+    width: 100%;
+    overflow-wrap: break-word;
+    box-sizing: border-box;
 }
 
 .details-grid {

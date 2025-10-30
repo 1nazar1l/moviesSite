@@ -209,12 +209,6 @@
           {% endfor %}
 
         </div>
-        {% else %}
-        <div class="empty-favorites" id="emptyFavorites">
-          <i class="fas fa-heart-broken"></i>
-          <h3>В избранном пока пусто</h3>
-          <p>Добавляйте фильмы,сериалы и актеров в избранное, чтобы они появились здесь</p>
-        </div>
 
         {% endif %}
 
@@ -227,7 +221,11 @@
             <div class="comment-card">
               <div class="comment-header">
                 <div class="comment-user">
-                  <div class="user-avatar">{{ comment.user.username|first|upper }}</div>
+                  {% if user.avatar %}
+                  <img src="{{ user.avatar.url }}" alt="Аватар" class="user-avatar" id="userAvatar">
+                  {% else %}
+                  <div class="user-avatar" id="userAvatar">{{ user.username|first|upper }}</div>
+                  {% endif %}
                   <div class="user-info">
                     <div class="user-name">{{ comment.user.username }}</div>
                     <div class="comment-date">
@@ -269,22 +267,8 @@
               </div>
             </div>
           </a>
-          {% empty %}
-          <!-- Сообщение когда нет комментариев -->
-          <div class="no-comments" id="noComments">
-            <i class="far fa-comments"></i>
-            <h3>Пока нет комментариев</h3>
-            <p>Будьте первым, кто оставит отзыв об этом фильме!</p>
-          </div>
           {% endfor %}
         </div>
-        {% else %}
-        <div class="empty-favorites" id="emptyFavorites">
-          <i class="fas fa-heart-broken"></i>
-          <h3>В избранном пока пусто</h3>
-          <p>Добавляйте фильмы,сериалы и актеров в избранное, чтобы они появились здесь</p>
-        </div>
-
         {% endif %}
 
       </div>

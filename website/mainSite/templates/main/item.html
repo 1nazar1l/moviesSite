@@ -317,7 +317,12 @@
         <div class="comment-card">
           <div class="comment-header">
             <div class="comment-user">
-              <div class="user-avatar">{{ comment.user.username|first|upper }}</div>
+              {% if comment.user.avatar %}
+              <img src="{{ comment.user.avatar.url }}" alt="Аватар" class="user-avatar" id="userAvatar">
+              {% else %}
+              <div class="user-avatar" id="userAvatar">{{ comment.user.username|first|upper }}</div>
+              {% endif %}
+              {% comment %} <div class="user-avatar">{{ comment.user.username|first|upper }}</div> {% endcomment %}
               <div class="user-info">
                 <div class="user-name">{{ comment.user.username }}</div>
                 <div class="comment-date">
