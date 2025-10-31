@@ -304,13 +304,16 @@ def itemPage(request, media_type, search_id):
         object_id=item.id
     ).select_related('user')
 
-    User = get_user_model()
-    user = User.objects.get(id=request.user.id)
+    if request.user.is_authenticated:
+        User = get_user_model()
+        user = User.objects.get(id=request.user.id)
 
-    is_favorite = user.favorites.filter(
-        content_type=content_type, 
-        object_id=item.id
-    ).exists()
+        is_favorite = user.favorites.filter(
+            content_type=content_type, 
+            object_id=item.id
+        ).exists()
+    else:
+        is_favorite = False
 
     return render(request, "main/item.html", context={
         "username": request.user,

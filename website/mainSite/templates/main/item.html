@@ -146,21 +146,28 @@
 
         <div class="action-buttons">
           {% if not is_favorite %}
-            <form action="{% url 'add_to_favorite' %}" method="post" id="favoriteForm">
-                {% csrf_token %}
-                <!-- Скрытые поля для определения объекта -->
-                <input type="hidden" name="content_type" value="{{ item|class_name }}">
-                <input type="hidden" name="object_id" value="{{ item.id }}">
-                
+            {% if request.user.is_authenticated %}
+              <form action="{% url 'add_to_favorite' %}" method="post" id="favoriteForm">
+                  {% csrf_token %}
+                  <input type="hidden" name="content_type" value="{{ item|class_name }}">
+                  <input type="hidden" name="object_id" value="{{ item.id }}">
+
+                  <button type="submit" class="btn btn-secondary" id="addToFavorites">
+                    <i class="far fa-bookmark"></i>
+                    В избранное
+                  </button>
+              </form>
+            {% else %}
+              <a href="{% url "authPage" %}">
                 <button type="submit" class="btn btn-secondary" id="addToFavorites">
                   <i class="far fa-bookmark"></i>
                   В избранное
                 </button>
-            </form>
+              </a>
+            {% endif %}
           {% else %}
             <form action="{% url 'remove_from_favorite' %}" method="post" id="favoriteForm">
               {% csrf_token %}
-              <!-- Скрытые поля для определения объекта -->
               <input type="hidden" name="content_type" value="{{ item|class_name }}">
               <input type="hidden" name="object_id" value="{{ item.id }}">
 
@@ -319,41 +326,74 @@
       </div>
 
 
-      <form action="{% url 'create_comment' %}" method="post">
-          {% csrf_token %}
-          <div class="add-comment-form" id="commentForm">
-              <div class="comment-form-group">
-                  <textarea class="comment-textarea" name="text" placeholder="Напишите ваш комментарий..." id="commentText" required></textarea>
-              </div>
-              <div class="comment-form-actions">
-                  <div>
-                      <label for="commentRating">Ваша оценка: </label>
-                      <select class="rating-select" name="rating" id="commentRating">
-                          <option value="">Без оценки</option>
-                          <option value="1">1 ★ - Ужасно</option>
-                          <option value="2">2 ★ - Плохо</option>
-                          <option value="3">3 ★ - Неудовлетворительно</option>
-                          <option value="4">4 ★ - Ниже среднего</option>
-                          <option value="5">5 ★ - Средне</option>
-                          <option value="6">6 ★ - Выше среднего</option>
-                          <option value="7">7 ★ - Хорошо</option>
-                          <option value="8">8 ★ - Очень хорошо</option>
-                          <option value="9">9 ★ - Отлично</option>
-                          <option value="10">10 ★ - Шедевр</option>
-                      </select>
-                  </div>
-                  
-                  <!-- Скрытые поля для определения объекта -->
-                  <input type="hidden" name="content_type_id" value="{{ content_type_id }}">
-                  <input type="hidden" name="object_id" value="{{ object_id }}">
-                  
+      {% if request.user.is_authenticated %}
+        <form action="{% url 'create_comment' %}" method="post">
+            {% csrf_token %}
+            <div class="add-comment-form" id="commentForm">
+                <div class="comment-form-group">
+                    <textarea class="comment-textarea" name="text" placeholder="Напишите ваш комментарий..." id="commentText" required></textarea>
+                </div>
+                <div class="comment-form-actions">
+                    <div>
+                        <label for="commentRating">Ваша оценка: </label>
+                        <select class="rating-select" name="rating" id="commentRating">
+                            <option value="">Без оценки</option>
+                            <option value="1">1 ★ - Ужасно</option>
+                            <option value="2">2 ★ - Плохо</option>
+                            <option value="3">3 ★ - Неудовлетворительно</option>
+                            <option value="4">4 ★ - Ниже среднего</option>
+                            <option value="5">5 ★ - Средне</option>
+                            <option value="6">6 ★ - Выше среднего</option>
+                            <option value="7">7 ★ - Хорошо</option>
+                            <option value="8">8 ★ - Очень хорошо</option>
+                            <option value="9">9 ★ - Отлично</option>
+                            <option value="10">10 ★ - Шедевр</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Скрытые поля для определения объекта -->
+                    <input type="hidden" name="content_type_id" value="{{ content_type_id }}">
+                    <input type="hidden" name="object_id" value="{{ object_id }}">
+                    
+                    <button type="submit" class="btn btn-primary" id="submitComment">
+                        <i class="fas fa-paper-plane"></i>
+                        Отправить
+                    </button>
+                </div>
+            </div>
+        </form>
+      {% else %}
+        <div class="add-comment-form" id="commentForm">
+            <div class="comment-form-group">
+                <textarea class="comment-textarea" name="text" placeholder="Напишите ваш комментарий..." id="commentText" required></textarea>
+            </div>
+            <div class="comment-form-actions">
+                <div>
+                    <label for="commentRating">Ваша оценка: </label>
+                    <select class="rating-select" name="rating" id="commentRating">
+                        <option value="">Без оценки</option>
+                        <option value="1">1 ★ - Ужасно</option>
+                        <option value="2">2 ★ - Плохо</option>
+                        <option value="3">3 ★ - Неудовлетворительно</option>
+                        <option value="4">4 ★ - Ниже среднего</option>
+                        <option value="5">5 ★ - Средне</option>
+                        <option value="6">6 ★ - Выше среднего</option>
+                        <option value="7">7 ★ - Хорошо</option>
+                        <option value="8">8 ★ - Очень хорошо</option>
+                        <option value="9">9 ★ - Отлично</option>
+                        <option value="10">10 ★ - Шедевр</option>
+                    </select>
+                </div>
+                
+                <a href="{% url "authPage" %}">
                   <button type="submit" class="btn btn-primary" id="submitComment">
                       <i class="fas fa-paper-plane"></i>
                       Отправить
                   </button>
-              </div>
-          </div>
-      </form>
+                </a>
+            </div>
+        </div>
+      {% endif %}
 
             <!-- Список комментариев -->
       <div class="comments-list" id="commentsList">
