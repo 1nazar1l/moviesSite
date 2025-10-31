@@ -57,26 +57,27 @@ def check_path(item):
 def mainPage(request):
     request.session['profile_error_messages'] = []
 
+    today = date.today()
     set_previous_page(request)
     films = Film.objects.exclude(is_parsed=False)
-    films = films.order_by('-id')[:10]
+    coming_soon_films = films.filter(release_date__year=today.year)[:10]
+    films = films.exclude(release_date__year=today.year).order_by('-id')[:20]
     serials = Serial.objects.exclude(is_parsed=False)
-    serials = serials.order_by('-id')[:10]
+    coming_soon_serials = serials.filter(first_air_date__year=today.year)[:10]
+    serials = serials.exclude(first_air_date__year=today.year).order_by('-id')[:20]
 
-    for film in films:
-        check_path(film)
-        
-        film.genres = film.genres[0]["name"]
+    for items in [films, coming_soon_films, serials, coming_soon_serials]:
+        for item in items:
+            check_path(item)
 
-    for serial in serials:
-        check_path(serial)
-
-        serial.genres = serial.genres[0]["name"]
+            item.genres = item.genres[0]["name"]
         
     return render(request, "main/index.html", context={
         "username": request.user,
         "films": films,
         "serials": serials,
+        "coming_soon_films": coming_soon_films,
+        "coming_soon_serials": coming_soon_serials,
         "types": {
             "film": "film",
             "serial": "serial",

@@ -105,66 +105,45 @@
       {% endif %}
     </section>
     <section class="section section3">
+      {% if coming_soon_films|length > 0 or coming_soon_serials|length > 0 %}
       <h2 class="section-title">Скоро выйдет</h2>
       <div class="cards-carousel">
-        <!-- Карточки предстоящих релизов -->
-        <a href="">
-          <div class="card">
-            <div class="card-img">
-              <i class="fas fa-star"></i>
+        {% for film in coming_soon_films %}
+          <a href="{% url 'itemPage' types.film film.search_id %}">
+            <div class="card">
+              <div class="card-img">
+                {% if film.local_img_path == "" %}
+                  <i class="fas fa-film"></i>
+                {% else %}
+                  <img src="{{film.local_img_path.url}}" alt="{{ film.title }}">
+                {% endif %}
+              </div>
+              <div class="card-content">
+                <h3 class="card-title">{{film.title}}</h3>
+                <p class="card-meta">{{ film.release_date|date:"Y" }} • {{film.genres}}</p>
+              </div>
             </div>
-            <div class="card-content">
-              <h3 class="card-title">Дюна: Часть вторая</h3>
-              <p class="card-meta">2024 • Фантастика</p>
+          </a>
+        {% endfor %}
+        {% for serial in coming_soon_serials %}
+          <a href="{% url "itemPage" types.serial serial.search_id%}">
+            <div class="card">
+              <div class="card-img">
+                {% if serial.local_img_path == "" %}
+                  <i class="fas fa-film"></i>
+                {% else %}
+                  <img src="{{serial.local_img_path.url}}" alt="{{ serial.title }}">
+                {% endif %}
+              </div>
+              <div class="card-content">
+                <h3 class="card-title">{{serial.title}}</h3>
+                <p class="card-meta">{{ serial.first_air_date|date:"Y" }}-{{ serial.last_air_date|date:"Y" }} • {{serial.genres}}</p>
+              </div>
             </div>
-          </div>
-        </a>
-        <div class="card">
-          <div class="card-img">
-            <i class="fas fa-star"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Миссия невыполнима 8</h3>
-            <p class="card-meta">2024 • Боевик</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-img">
-            <i class="fas fa-star"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Джокер: Безумие на двоих</h3>
-            <p class="card-meta">2024 • Триллер</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-img">
-            <i class="fas fa-star"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Гадкий я 4</h3>
-            <p class="card-meta">2024 • Мультфильм</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-img">
-            <i class="fas fa-star"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Форсаж 11</h3>
-            <p class="card-meta">2024 • Боевик</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-img">
-            <i class="fas fa-star"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Мстители: Новый мировой порядок</h3>
-            <p class="card-meta">2024 • Фантастика</p>
-          </div>
-        </div>
+          </a>
+        {% endfor %}
       </div>
+      {% endif %}
     </section>
   </div>
 {% endblock main_content %}
