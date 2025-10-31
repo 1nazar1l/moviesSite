@@ -175,11 +175,11 @@
       </div>
 
     </div>
-    {% if media_type != "actors" and additional_data|length != 0 %}
+    {% if media_type != "actors" and actors_count %}
       <div class="cast-section">
         <h2 class="section-title">В главных ролях</h2>
         <div class="cast-grid">
-          {% for actor in additional_data %}
+          {% for actor in actors %}
             {% if actor.is_parsed %}
             <a href="{% url "itemPage" types.actor actor.search_id %}">
               <div class="cast-card">
@@ -222,23 +222,89 @@
 
         </div>
       </div>
-    {% elif media_type == "actors" and additional_data|length != 0%}
+    {% elif media_type == "actors" and films_count or serials_count %}
       <div class="cast-section">
         <h2 class="section-title">Проекты в которых участвовали</h2>
         <div class="cast-grid">
-          {% for item in additional_data %}
-            <div class="cast-card">
-              <div class="cast-photo">
-                {% if item.local_img_path != "" %}
-                  <img src="{{item.local_img_path.url}}" alt="{{ item.title }}">
-                {% else %}
-                  <i class="fas fa-film"></i>
-                {% endif %}
+          {% for film in films %}
+            {% if film.is_parsed %}
+            <a href="{% url "itemPage" types.film film.search_id %}">
+              <div class="cast-card">
+                <div class="cast-photo">
+                  {% if film.local_img_path != "" %}
+                    <img src="{{film.local_img_path.url}}" alt="{{ film.title }}">
+                  {% else %}
+                    <i class="fas fa-user fa-3x"></i>
+                  {% endif %}
+                </div>
+                <div class="cast-info">
+                  <div class="cast-name">{{film.title}}</div>
+                </div>
               </div>
-              <div class="cast-info">
-                <div class="cast-name">{{item.title}}</div>
+            </a>
+            {% else %}
+            <form action="{% url "add_new_item" %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="hidden_button">
+                <div class="cast-card">
+                  <div class="cast-photo">
+                    {% if film.local_img_path != "" %}
+                      <img src="{{film.local_img_path.url}}" alt="{{ film.title }}">
+                    {% else %}
+                      <i class="fas fa-user fa-3x"></i>
+                    {% endif %}
+                  </div>
+                  <div class="cast-info">
+                    <div class="cast-name">{{film.title}}</div>
+                  </div>
+                </div>
+              </button>
+              <input type="hidden" name="selected_object_search_id" value="{{ item.search_id }}">
+              <input type="hidden" name="selected_object_media_type" value="{{ media_type }}">
+              <input type="hidden" name="added_object_search_id" value="{{ film.search_id }}">
+              <input type="hidden" name="added_object_media_type" value="{{ types.film }}">
+            </form>
+            {% endif %}
+          {% endfor %}
+          {% for serial in serials %}
+            {% if serial.is_parsed %}
+            <a href="{% url "itemPage" types.serial serial.search_id %}">
+              <div class="cast-card">
+                <div class="cast-photo">
+                  {% if serial.local_img_path != "" %}
+                    <img src="{{serial.local_img_path.url}}" alt="{{ serial.title }}">
+                  {% else %}
+                    <i class="fas fa-user fa-3x"></i>
+                  {% endif %}
+                </div>
+                <div class="cast-info">
+                  <div class="cast-name">{{serial.title}}</div>
+                </div>
               </div>
-            </div>
+            </a>
+            {% else %}
+            <form action="{% url "add_new_item" %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="hidden_button">
+                <div class="cast-card">
+                  <div class="cast-photo">
+                    {% if serial.local_img_path != "" %}
+                      <img src="{{serial.local_img_path.url}}" alt="{{ serial.title }}">
+                    {% else %}
+                      <i class="fas fa-user fa-3x"></i>
+                    {% endif %}
+                  </div>
+                  <div class="cast-info">
+                    <div class="cast-name">{{serial.title}}</div>
+                  </div>
+                </div>
+              </button>
+              <input type="hidden" name="selected_object_search_id" value="{{ item.search_id }}">
+              <input type="hidden" name="selected_object_media_type" value="{{ media_type }}">
+              <input type="hidden" name="added_object_search_id" value="{{ serial.search_id }}">
+              <input type="hidden" name="added_object_media_type" value="{{ types.serial }}">
+            </form>
+            {% endif %}
           {% endfor %}
 
         </div>

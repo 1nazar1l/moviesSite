@@ -282,25 +282,23 @@ def itemPage(request, media_type, search_id):
 
     item = model.objects.get(search_id=search_id)
 
-    # Проверяем, распарсен ли объект
     if not item.is_parsed:
         return redirect("errorPage", media_type="actor")
 
-    additional_data = []
+    actors = []
+    films = []
+    serials = []
 
     if media_type != "actors":
         check_path(item)
-        additional_data = item.actors.all()
+        actors = list(item.actors.all())
     else:
         check_path(item)
-        movies = list(item.movies.all())
+        films = list(item.movies.all())
         serials = list(item.serials.all())
-        additional_data = movies + serials
 
-    # Получаем ContentType для текущего объекта
     content_type = ContentType.objects.get_for_model(item)
     
-    # Получаем комментарии для этого объекта
     comments = Comment.objects.filter(
         content_type=content_type,
         object_id=item.id
@@ -312,12 +310,17 @@ def itemPage(request, media_type, search_id):
     is_favorite = user.favorites.filter(
         content_type=content_type, 
         object_id=item.id
-    ).exists()  # Добавьте .exists() для получения boolean
+    ).exists()
 
     return render(request, "main/item.html", context={
         "username": request.user,
         "item": item,
-        "additional_data": additional_data,
+        "films": films,
+        "films_count": len(films),
+        "serials": serials,
+        "serials_count": len(serials),
+        "actors": actors,
+        "actors_count": len(actors),
         "media_type": media_type,
         "comments": comments,
         "content_type_id": content_type.id,
