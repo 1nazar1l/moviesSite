@@ -4,44 +4,25 @@
 
 
 {% block css %}
-<link rel="stylesheet" href="{% static "main/css/normalize.css" %}">
-<link rel="stylesheet" href="{% static "main/css/base.css" %}">
-<link rel="stylesheet" href="{% static "main/css/item.css" %}">
-<link rel="stylesheet" href="{% static "main/css/profile.css" %}">
+  <link rel="stylesheet" href="{% static "main/css/normalize.css" %}">
+  <link rel="stylesheet" href="{% static "main/css/base.css" %}">
+  <link rel="stylesheet" href="{% static "main/css/item.css" %}">
+  <link rel="stylesheet" href="{% static "main/css/profile.css" %}">
+  <link rel="stylesheet" href="{% static "main/css/user-avatar.css" %}">
 {% endblock css %}
 
 {% block script %}
-<script src="{% static "main/js/base.js" %}"></script>
-<script src="{% static "main/js/item.js" %}"></script>
-<script src="{% static "main/js/profile.js" %}"></script>
+  <script src="{% static "main/js/base.js" %}"></script>
+  <script src="{% static "main/js/item.js" %}"></script>
+  <script src="{% static "main/js/profile.js" %}"></script>
 {% endblock script %}
 
 {% block header_nav %}
-<nav>
-  <ul>
-    <li><a href="{% url "mainPage" %}">Главная</a></li>
-    <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
-    <li><a href="{% url "serialsPage" %}">Сериалы</a></li>
-    <li><a href="{% url "actorsPage" %}">Актеры</a></li>
-    {% if request.user.is_superuser %}
-    <li><a href="{% url "adminPanel" %}">Админ панель</a></li>
-    {% endif %}
-  </ul>
-</nav>
+  {% include "main/partials/header_nav.html" %}
 {% endblock header_nav %}
 
 {% block sidebar_nav %}
-<nav>
-  <ul>
-    <li><a href="{% url "mainPage" %}">Главная</a></li>
-    <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
-    <li><a href="{% url "serialsPage" %}">Сериалы</a></li>
-    <li><a href="{% url "actorsPage" %}">Актеры</a></li>
-    {% if request.user.is_superuser %}
-    <li><a href="{% url "adminPanel" %}">Админ панель</a></li>
-    {% endif %}
-  </ul>
-</nav>
+  {% include "main/partials/header_nav.html" %}
 {% endblock sidebar_nav %}
 
 {% block auth_header_profile_url %}

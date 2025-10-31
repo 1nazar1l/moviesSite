@@ -1,0 +1,12 @@
+<a href="{% url "profilePage" %}">
+  <div class="profile-block">
+    <span>{{username}}</span>
+    <div class="profile-icon">
+      {% if request.user.avatar %}
+      <img src="{{ request.user.avatar.url }}" alt="Аватар" class="user-avatar" id="userAvatar">
+      {% else %}
+      <div class="user-avatar" id="userAvatar">{{ request.user.username|first|upper }}</div>
+      {% endif %}
+    </div>
+  </div>
+</a>

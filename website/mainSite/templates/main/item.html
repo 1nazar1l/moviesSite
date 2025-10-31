@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="{% static "main/css/normalize.css" %}">
   <link rel="stylesheet" href="{% static "main/css/base.css" %}">
   <link rel="stylesheet" href="{% static "main/css/item.css" %}">
+  <link rel="stylesheet" href="{% static "main/css/user-avatar.css" %}">
 {% endblock css %}
 
 {% block script %}
@@ -14,42 +15,15 @@
 {% endblock script %}
 
 {% block header_nav %}
-  <nav>
-    <ul>
-      <li><a href="{% url "mainPage" %}">Главная</a></li>
-      <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
-      <li><a href="{% url "serialsPage" %}">Сериалы</a></li>
-      <li><a href="{% url "actorsPage" %}">Актеры</a></li>
-      {% if request.user.is_superuser %}
-      <li><a href="{% url "adminPanel" %}">Админ панель</a></li>
-      {% endif %}
-    </ul>
-  </nav>
+  {% include "main/partials/header_nav.html" %}
 {% endblock header_nav %}
 
 {% block sidebar_nav %}
-  <nav>
-    <ul>
-      <li><a href="{% url "mainPage" %}">Главная</a></li>
-      <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
-      <li><a href="{% url "serialsPage" %}">Сериалы</a></li>
-      <li><a href="{% url "actorsPage" %}">Актеры</a></li>
-      {% if request.user.is_superuser %}
-      <li><a href="{% url "adminPanel" %}">Админ панель</a></li>
-      {% endif %}
-    </ul>
-  </nav>
+  {% include "main/partials/header_nav.html" %}
 {% endblock sidebar_nav %}
 
 {% block auth_header_profile_url %}
-  <a href="{% url "profilePage" %}">
-    <div class="profile-block">
-      <span>{{username}}</span>
-      <div class="profile-icon">
-        <i class="fa-solid fa-circle-user"></i>
-      </div>
-    </div>
-  </a>
+  {% include "main/partials/auth_profile_url_block.html" %} 
 {% endblock auth_header_profile_url %}
 
 {% block not_auth_header_profile_url %}
@@ -57,14 +31,7 @@
 {% endblock not_auth_header_profile_url %}
 
 {% block auth_sidebar_profile_url %}
-  <a href="{% url "profilePage" %}">
-    <div class="profile-block">
-      <span>{{username}}</span>
-      <div class="profile-icon">
-        <i class="fa-solid fa-circle-user"></i>
-      </div>
-    </div>
-  </a>
+  {% include "main/partials/auth_profile_url_block.html" %} 
 {% endblock auth_sidebar_profile_url %}
 
 {% block not_auth_sidebar_profile_url %}
@@ -322,7 +289,6 @@
               {% else %}
               <div class="user-avatar" id="userAvatar">{{ comment.user.username|first|upper }}</div>
               {% endif %}
-              {% comment %} <div class="user-avatar">{{ comment.user.username|first|upper }}</div> {% endcomment %}
               <div class="user-info">
                 <div class="user-name">{{ comment.user.username }}</div>
                 <div class="comment-date">

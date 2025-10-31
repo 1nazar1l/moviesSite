@@ -145,6 +145,17 @@ nav a:hover::after {
     display: flex;
     gap: 10px;
     cursor: pointer;
+    max-width: 200px;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-block span {
+    width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin-bottom: 2px;
 }
 
 .profile-block .profile-icon {
@@ -446,7 +457,6 @@ footer {
 
     .profile-block {
         background-color: var(--border);
-        width: 100%;
         justify-content: space-between;
         align-items: center;
     }

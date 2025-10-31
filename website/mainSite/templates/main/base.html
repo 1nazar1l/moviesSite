@@ -10,7 +10,25 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <link rel="stylesheet" href="{% static "main/css/base.css" %}">
     {% block css %}{% endblock css %}
+    <script>
+      const themeToggles = document.querySelectorAll('#themeToggle');
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      const bodyTeg = document.body;
+      
+      document.documentElement.setAttribute('data-theme', currentTheme);
+
+      themeToggles.forEach(themeToggle => {  
+          themeToggle.addEventListener('click', () => {
+              const currentTheme = document.documentElement.getAttribute('data-theme');
+              const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+              
+              document.documentElement.setAttribute('data-theme', newTheme);
+              localStorage.setItem('theme', newTheme);
+          });   
+      });
+    </script>
   </head>
   <body>
     <header id="header">

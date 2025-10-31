@@ -15,11 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Функции для проверки пароля
     const passwordChecks = {
         hasDigit: (password) => /\d/.test(password),
-        isVeryLong: (password) => password.length >= 8,
-        hasLetters: (password) => /[a-zA-Z]/.test(password),
-        hasUpperLetters: (password) => /[A-Z]/.test(password),
-        hasLowerLetters: (password) => /[a-z]/.test(password),
-        hasSymbols: (password) => /[^a-zA-Z0-9]/.test(password)
     };
 
     // Универсальная функция переключения видимости пароля
@@ -57,27 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return username.length >= 5 && username.length <= 50;
     }
 
-    // Расчет рейтинга пароля
-    function calculatePasswordScore(password) {
-        let score = 0;
-        const { hasDigit, isVeryLong, hasLetters, hasUpperLetters, hasLowerLetters } = passwordChecks;
-        
-        const checks = [hasDigit, isVeryLong, hasLetters, hasUpperLetters, hasLowerLetters];
-        
-        checks.forEach(check => {
-            if (check(password)) score += 2;
-        });
-        
-        return score;
-    }
-
-    // Обновление отображения рейтинга пароля
-    function updatePasswordRating() {
-        const password = elements.passwordInput.value;
-        const score = calculatePasswordScore(password);
-        elements.passwordRating.textContent = `Пароль(Рейтинг пароля: ${score})`;
-    }
-
     // Валидация формы
     function validateForm(event) {
         let isValid = true;
@@ -107,22 +81,12 @@ document.addEventListener('DOMContentLoaded', () => {
             isValid = false;
         }
         
-        // Проверка надежности пароля
-        if (calculatePasswordScore(password) < 10) {
-            elements.passwordError.textContent = "Пароль не достаточно надежный";
-            elements.passwordError.classList.add('active');
-            isValid = false;
-        }
-        
         if (!isValid && event) {
             event.preventDefault();
         }
         
         return isValid;
     }
-
-    // Обработчики событий
-    elements.passwordInput.addEventListener('input', updatePasswordRating);
     
     elements.regForm.addEventListener('submit', validateForm);
     
