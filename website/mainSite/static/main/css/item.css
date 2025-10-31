@@ -1,3 +1,13 @@
+.cast-grid .hidden_button {
+    width: 100%;
+}
+
+.hidden_button {
+    background-color: transparent;
+    border: 0;
+    outline: 0;
+}
+
 /* Основной контент - страница деталей фильма */
 .movie-details {
     padding: 2rem 5%;
@@ -200,6 +210,8 @@
     cursor: pointer;
     display: flex;
     flex-direction: column;
+    width: 100%;
+    height: 270px;
 }
 
 .cast-card:hover {
@@ -228,6 +240,9 @@
     background-color: var(--background);
     opacity: 0.8;
     flex: 1;
+    text-align: start;
+    color: var(--secondary);
+
 }
 
 .cast-name {
@@ -387,7 +402,6 @@
     margin-bottom: 1rem;
     color: var(--border);
 }
-
 
 /* Адаптивность */
 @media (max-width: 768px) {

@@ -291,6 +291,9 @@ def parse_media_item(films, serials, actors, selected_item, selected_item_model,
     else:
         cast = response.json()["cast"][0:10]
 
+    delete_item = selected_item_model.get(search_id=search_id)
+    delete_item.delete()
+
     download_media_item(media_type, img_index, media_item_data, selected_item_model, img_url, cast)
 
     added_ids = []
@@ -309,7 +312,6 @@ def parse_media_item(films, serials, actors, selected_item, selected_item_model,
 
             if not actor.movies.filter(search_id=selected_item.search_id).exists():
                 selected_item.actors.add(actor)
-                actor.movies.add(selected_item)
             else:
                 added_ids.append(item["id"])
 

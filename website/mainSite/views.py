@@ -18,15 +18,6 @@ from pathlib import Path
 from mainProject.tools import parse_media_item
 
 
-
-def set_previous_page(request):
-    request.session.modified = True
-
-    if 'previous_page' not in request.session:
-        request.session['previous_page'] = ""
-
-    request.session["previous_page"] = request.build_absolute_uri()
-
 def set_previous_page_values(request, **kwargs):
     request.session.modified = True
 
@@ -40,9 +31,6 @@ def set_previous_page_values(request, **kwargs):
 
 def get_previous_page_values(request):
     return request.session.get("previous_page_values", [])
-
-def get_previous_page(request):
-    return request.session.get("previous_page", "/")
 
 def check_path(item):
     if hasattr(item, 'local_img_path'):
@@ -58,7 +46,6 @@ def mainPage(request):
     request.session['profile_error_messages'] = []
 
     today = date.today()
-    set_previous_page(request)
     films = Film.objects.exclude(is_parsed=False)
     coming_soon_films = films.filter(release_date__year=today.year)[:10]
     films = films.exclude(release_date__year=today.year).order_by('-id')[:20]
@@ -86,7 +73,6 @@ def mainPage(request):
     })
 
 def authPage(request):
-    set_previous_page(request)
     error_message = ""
 
     if request.method == 'POST':
@@ -106,7 +92,6 @@ def authPage(request):
     })
 
 def regPage(request):
-    set_previous_page(request)
     User = get_user_model()
     emails = list(set(User.objects.values_list("email")))
     emails = [email[0] for email in emails]
@@ -147,7 +132,6 @@ def regPage(request):
 def filmsPage(request):
     request.session['profile_error_messages'] = []
 
-    set_previous_page(request)
     films = Film.objects.exclude(is_parsed=False)
 
     for film in films:
@@ -163,7 +147,6 @@ def filmsPage(request):
 def serialsPage(request):
     request.session['profile_error_messages'] = []
 
-    set_previous_page(request)
     serials = Serial.objects.exclude(is_parsed=False)
 
     for serial in serials:
@@ -179,7 +162,6 @@ def serialsPage(request):
 def actorsPage(request):
     request.session['profile_error_messages'] = []
 
-    set_previous_page(request)
     actors = Actor.objects.exclude(is_parsed=False)
 
     for actor in actors:
@@ -195,7 +177,6 @@ def actorsPage(request):
 def searchPage(request):
     request.session['profile_error_messages'] = []
 
-    set_previous_page(request)
     search = request.POST.get('search')
 
     if search:
@@ -242,7 +223,6 @@ def searchPage(request):
 def profilePage(request):
     if request.user.is_authenticated:
         error_messages = request.session.get('profile_error_messages', [])
-        set_previous_page(request)
 
         today = date.today()
 
@@ -289,7 +269,6 @@ def signOut(request):
 def itemPage(request, media_type, search_id):
     request.session['profile_error_messages'] = []
 
-    previous_page = get_previous_page(request)
     if media_type == "film" or media_type == "serial" or media_type == "actor":
         media_type = f"{media_type}s"
     
@@ -340,7 +319,6 @@ def itemPage(request, media_type, search_id):
         "item": item,
         "additional_data": additional_data,
         "media_type": media_type,
-        "previous_page": previous_page,
         "comments": comments,
         "content_type_id": content_type.id,
         "object_id": item.id,
@@ -589,11 +567,9 @@ def add_new_item(request):
     }
 
     model = models.get(added_object_media_type)
-    delete_item = model.get(search_id=added_object_search_id)
-    delete_item.delete()
 
     selected_item_model = models.get(selected_object_media_type)
     selected_item = selected_item_model.get(search_id=selected_object_search_id)
     parse_media_item(films, serials, actors, selected_item, model, added_object_media_type, added_object_search_id)
     
-    return redirect(request.META.get('HTTP_REFERER', 'home'))
+    return redirect('itemPage', media_type=added_object_media_type[:-1], search_id=added_object_search_id)
