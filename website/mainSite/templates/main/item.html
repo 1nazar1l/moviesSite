@@ -51,7 +51,7 @@
           {% if media_type != "actors" %}
             <i class="fas fa-film"></i>
           {% else %}
-            <i class="fas fa-star"></i>
+            <i class="fas fa-user fa-3x"></i>
           {% endif %}
         {% else %}
             <img src="{{item.local_img_path.url}}" alt="{{ film.title }}">
@@ -68,11 +68,29 @@
           <div class="movie-meta-item">
             <i class="far fa-calendar"></i>
             {% if media_type == "films" %}
-              <span>{{item.release_date}}</span>
-            {% elif media_type == "serials" %}
-              <span>{{item.first_air_date}}-{{item.last_air_date}}</span>
+              <span>
+                {% if item.release_date %}
+                  {{item.release_date}}
+                {% else %}
+                  -
+                {% endif %}
+              </span>
+                {% elif media_type == "serials" %}
+              <span>
+                {% if item.first_air_date %}
+                  {{item.first_air_date}}-{{item.last_air_date}}
+                {% else %}
+                  -
+                {% endif %}
+              </span>
             {% elif media_type == "actors" %}
-              <span>{{item.birthday}}</span>
+              <span>
+                {% if item.birthday %}
+                  {{item.birthday}}
+                {% else %}
+                  -
+                {% endif %}
+              </span>
             {% endif %}
           </div>
           {% if media_type != "actors" %}
@@ -95,51 +113,119 @@
         {% endif %}
 
         {% if media_type != "actors" %}
-          <p class="movie-description">{{item.overview}}</p>
+          <p class="movie-description">
+            {% if item.overview %}
+              {{item.overview}}
+            {% else %}
+              -
+            {% endif %}
+          </p>
         {% else %}
-          <p class="movie-description">{{item.biography}}</p>
+          <p class="movie-description">
+            {% if item.biography %}
+              {{item.biography}}
+            {% else %}
+              -
+            {% endif %}
+          </p>
         {% endif %}
 
         <div class="details-grid">
           {% if media_type == "films" %}
           <div class="detail-card">
             <div class="detail-title">Дата выхода</div>
-            <div class="detail-value">{{item.release_date}}</div>
+            <div class="detail-value">
+              {% if item.release_date %}
+                {{item.release_date}}
+              {% else %}
+                -
+              {% endif %}
+            </div>
           </div>
           {% elif media_type == "serials" %}
           <div class="detail-card">
             <div class="detail-title">Дата выхода</div>
-            <div class="detail-value">{{item.first_air_date}}</div>
+            <div class="detail-value">
+              {% if item.first_air_date %}
+                {{item.first_air_date}}
+              {% else %}
+                -
+              {% endif %}
+            </div>
           </div>
           {% elif media_type == "actors" %}
           <div class="detail-card">
             <div class="detail-title">Дата рождения</div>
-            <div class="detail-value">{{item.birthday}}</div>
+            <div class="detail-value">
+              {% if item.birthday %}
+                {{item.birthday}}
+              {% else %}
+                -
+              {% endif %}
+            </div>
           </div>
           {% endif %}
           {% if media_type == "films" %}
             <div class="detail-card">
               <div class="detail-title">Бюджет</div>
-              <div class="detail-value">{{ item.budget|add:"0"|floatformat:"0"|slice:":-6" }}м</div>
+              <div class="detail-value">
+                {% if item.budget %}
+                  {% if item.budget < 1000000 and item.budget > 100000 %}
+                    {{ item.budget|add:"0"|floatformat:"0"|slice:":-3" }}k
+                  {% else %}
+                    {{ item.budget|add:"0"|floatformat:"0"|slice:":-6" }}м
+                  {% endif %}
+                {% else %}
+                  -
+                {% endif %}
+              </div>
             </div>
             <div class="detail-card">
               <div class="detail-title">Выручка</div>
-              <div class="detail-value">{{ item.revenue|add:"0"|floatformat:"0"|slice:":-6" }}м</div>
+              <div class="detail-value">
+                {% if item.revenue %}
+                  {% if item.revenue < 1000000 and item.revenue > 100000 %}
+                    {{ item.revenue|add:"0"|floatformat:"0"|slice:":-3" }}k
+                  {% else %}
+                    {{ item.revenue|add:"0"|floatformat:"0"|slice:":-6" }}м
+                  {% endif %}
+                {% else %}
+                  -
+                {% endif %} 
+              </div>
             </div>
             <div class="detail-card">
               <div class="detail-title">Продолжительность</div>
-              <div class="detail-value">{{item.runtime}} мин</div>
+              <div class="detail-value">
+                {% if item.runtime %}
+                  {{item.runtime}} мин
+                {% else %}
+                  -
+                {% endif %} 
+              </div>
             </div>
           {% endif %}
 
           {% if media_type == "serials" %}
             <div class="detail-card">
               <div class="detail-title">Сезонов</div>
-              <div class="detail-value">{{item.seasons}}</div>
+              <div class="detail-value">
+                {% if item.seasons %}
+                  {{item.seasons}}
+                {% else %}
+                  -
+                {% endif %} 
+              </div>
             </div>
             <div class="detail-card">
               <div class="detail-title">Эпизодов</div>
-              <div class="detail-value">{{item.episodes}}</div>
+              <div class="detail-value">
+                {% if item.episodes %}
+                  {{item.episodes}}
+                {% else %}
+                  -
+                {% endif %} 
+              </div>
             </div>
           {% endif %}
         </div>
@@ -241,7 +327,7 @@
                   {% if film.local_img_path != "" %}
                     <img src="{{film.local_img_path.url}}" alt="{{ film.title }}">
                   {% else %}
-                    <i class="fas fa-user fa-3x"></i>
+                    <i class="fas fa-film"></i>
                   {% endif %}
                 </div>
                 <div class="cast-info">
@@ -258,7 +344,7 @@
                     {% if film.local_img_path != "" %}
                       <img src="{{film.local_img_path.url}}" alt="{{ film.title }}">
                     {% else %}
-                      <i class="fas fa-user fa-3x"></i>
+                      <i class="fas fa-film"></i>
                     {% endif %}
                   </div>
                   <div class="cast-info">
