@@ -17,6 +17,7 @@ from pathlib import Path
 
 from mainProject.tools import parse_media_item
 
+import requests
 
 def set_previous_page_values(request, **kwargs):
     request.session.modified = True
@@ -555,27 +556,32 @@ def remove_from_favorite(request):
 
 
 def add_new_item(request):
-    selected_object_search_id = request.POST.get("selected_object_search_id")
-    selected_object_media_type = request.POST.get("selected_object_media_type")
-    added_object_search_id = request.POST.get("added_object_search_id")
-    added_object_media_type = request.POST.get("added_object_media_type")
+    if request.POST:
+        selected_object_search_id = request.POST.get("selected_object_search_id")
+        selected_object_media_type = request.POST.get("selected_object_media_type")
+        added_object_search_id = request.POST.get("added_object_search_id")
+        added_object_media_type = request.POST.get("added_object_media_type")
 
-    films = Film.objects.all()
-    serials = Serial.objects.all()
-    actors = Actor.objects.all()
+        films = Film.objects.all()
+        serials = Serial.objects.all()
+        actors = Actor.objects.all()
 
-    added_object_media_type = added_object_media_type + "s"
+        added_object_media_type = added_object_media_type + "s"
 
-    models = {
-        "films": films,
-        "serials": serials,
-        "actors": actors,
-    }
+        models = {
+            "films": films,
+            "serials": serials,
+            "actors": actors,
+        }
 
-    model = models.get(added_object_media_type)
+        model = models.get(added_object_media_type)
 
-    selected_item_model = models.get(selected_object_media_type)
-    selected_item = selected_item_model.get(search_id=selected_object_search_id)
-    parse_media_item(films, serials, actors, selected_item, model, added_object_media_type, added_object_search_id)
-    
-    return redirect('itemPage', media_type=added_object_media_type[:-1], search_id=added_object_search_id)
+        selected_item_model = models.get(selected_object_media_type)
+        selected_item = selected_item_model.get(search_id=selected_object_search_id)
+        try:
+            parse_media_item(films, serials, actors, selected_item, model, added_object_media_type, added_object_search_id)
+            return redirect('itemPage', media_type=added_object_media_type[:-1], search_id=added_object_search_id)
+        except requests.exceptions.ConnectionError:
+            return redirect('errorPage', media_type='error')
+    else:
+        return redirect('errorPage', media_type='error')

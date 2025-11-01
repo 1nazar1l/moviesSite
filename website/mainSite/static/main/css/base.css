@@ -360,6 +360,19 @@ footer {
     opacity: 0.9;
 }
 
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.back-link:hover {
+    opacity: 0.8;
+}
+
 
 @media (max-width: 992px) {
     header .pc-content {

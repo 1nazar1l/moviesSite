@@ -14,19 +14,6 @@
     flex: 1;
 }
 
-.back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--accent);
-    margin-bottom: 1.5rem;
-    font-weight: 600;
-}
-
-.back-link:hover {
-    opacity: 0.8;
-}
-
 .movie-container {
     display: flex;
     gap: 2rem;

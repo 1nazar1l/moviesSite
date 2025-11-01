@@ -77,6 +77,13 @@ main {
     background-color: var(--border);
 }
 
+.back-link-block {
+    width: 100%;
+    display: flex;
+    align-items: start;
+    justify-content: start;
+}
+
 
 
 @media (max-width: 768px) {

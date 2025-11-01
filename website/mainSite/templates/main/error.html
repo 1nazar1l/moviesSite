@@ -38,7 +38,13 @@
 {% endblock not_auth_sidebar_profile_url %}
 
 {% block main_content %}
-  <div class="error-container">
+<div class="error-container">
+    <div class="back-link-block">
+      <a href="{{ request.META.HTTP_REFERER }}" class="back-link">
+        <i class="fas fa-arrow-left"></i>
+        Назад к каталогу
+      </a>
+    </div>
     <div class="error-icon">⚠️</div>
     <h1 class="error-code" id="error-code">404</h1>
     <h2 class="error-title" id="error-title">Страница не найдена</h2>
