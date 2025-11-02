@@ -47,19 +47,6 @@
   </form>
 {% endblock parse_media_block %}
 
-{% block parsing_movies_by_actors_block %}
-  <form action="{% url "parse_movies_by_actors" %}" method="post">
-    {% csrf_token %}
-    <div class="content">
-      <div class="title_block">
-        Спарсить фильмы по актерам
-      </div>
-      <button type="submit" class="custom_button continue_button" onclick="return confirm('Начать?');">Начать</button>
-    
-    </div>
-  </form>
-{% endblock parsing_movies_by_actors_block %}
-
 {% block page %}
   <div class="invisible_block">
     <input type="hidden" name="next" value="{{ request.path }}" form="clear_messages">

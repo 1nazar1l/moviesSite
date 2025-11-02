@@ -121,62 +121,6 @@ def delete_all_media_items(request, media_type):
         "Все объекты успешно удалены!"
     )
 
-def download_movies_by_actors(request, media_type, ids):
-    models = {
-        "films": Film,
-        "serials": Serial,
-        "actors": Actor,
-    }
-
-    model = models.get(media_type)
-
-    img_url = "https://media.themoviedb.org/t/p/w220_and_h330_face/"
-
-    try:
-        url = f"{BASE_URL}/movie/{ids[0]}"
-
-        params = {
-            "api_key": api_key,
-            "language": "ru",
-        }
-
-        response = requests.get(url, params=params)
-        response.raise_for_status()
-
-    except requests.exceptions.ConnectionError:
-        create_error_message(request, media_type, "VPN не включен!")
-        return
-    
-    added_films = 0
-
-    start = datetime.now()
-
-    for id in ids:
-        is_exist = model.objects.filter(search_id = id).exists()
-        if is_exist:
-            continue
-
-        url = f"{BASE_URL}/movie/{id}"
-
-        params = {
-            "api_key": api_key,
-            "language": "ru",
-        }
-
-        img_index = "poster_path"
-
-        response = requests.get(url, params=params)
-        response.raise_for_status()
-
-        media_item = response.json()
-
-        download_media_item(media_type, img_index, media_item, model, img_url)
-        added_films += 1
-    end = datetime.now()
-    lead_time = end - start
-
-    create_success_message(request, media_type, start, lead_time, f"Успешно добавлено {added_films} объектов!")
-
 def download_media_item(media_type, img_index, media_item_data, model, img_url, cast = []):
     if media_item_data[img_index] is None:
         site_img_path = ""

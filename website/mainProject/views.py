@@ -3,7 +3,6 @@ from .tools import (
     delete_selected_media_items,
     delete_all_media_items,
     parsing_media_items,
-    download_movies_by_actors
 )
 
 from .models import Film, Serial, Actor, Message
@@ -158,29 +157,3 @@ def clear_messages(request):
 
     next_url = request.POST.get('next', '/films/')
     return redirect(next_url)
-
-    
-
-def parse_movies_by_actors(request):
-    media_type = "films"
-
-    films = Film.objects.all()
-    actors = Actor.objects.all()
-
-    ids = []
-    for actor in actors:
-        for id in actor.movies:
-            ids.append(id)
-
-    ids = list(set(ids))
-
-    for film in films:
-        if film.search_id in ids:
-            ids.remove(film.search_id)
-
-    ids = list(set(ids))
-
-    download_movies_by_actors(request, media_type, ids)
-
-    return redirect('films')
-
