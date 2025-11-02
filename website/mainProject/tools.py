@@ -137,7 +137,7 @@ def download_movies_by_actors(request, media_type, ids):
 
         params = {
             "api_key": api_key,
-            "language": "en",
+            "language": "ru",
         }
 
         response = requests.get(url, params=params)
@@ -160,7 +160,7 @@ def download_movies_by_actors(request, media_type, ids):
 
         params = {
             "api_key": api_key,
-            "language": "en",
+            "language": "ru",
         }
 
         img_index = "poster_path"
@@ -263,12 +263,12 @@ def parse_media_item(films, serials, actors, selected_item, selected_item_model,
     if media_type != "actors":
         params = {
             "api_key": api_key,
-            "language": "en",
+            "language": "ru",
         }
     else:
         params = {
             "api_key": api_key,
-            "language": "en",
+            "language": "ru",
             "append_to_response": "movie_credits"
         }
 
@@ -391,7 +391,7 @@ def parsing_media_items(request, media_type):
 
             params = {
                 "api_key": api_key,
-                "language": "en",
+                "language": "ru",
                 "page": page_number,         
             }
 
@@ -417,12 +417,12 @@ def parsing_media_items(request, media_type):
                 if media_type != "actors":
                     params = {
                         "api_key": api_key,
-                        "language": "en",
+                        "language": "ru",
                     }
                 else:
                     params = {
                         "api_key": api_key,
-                        "language": "en",
+                        "language": "ru",
                         "append_to_response": "movie_credits"
                     }
             

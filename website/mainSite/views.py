@@ -49,10 +49,10 @@ def mainPage(request):
     today = date.today()
     films = Film.objects.exclude(is_parsed=False)
     coming_soon_films = films.filter(release_date__year=today.year)[:10]
-    films = films.exclude(release_date__year=today.year).order_by('-id')[:20]
+    films = films.exclude(release_date__year=today.year).order_by('-rating')[:20]
     serials = Serial.objects.exclude(is_parsed=False)
     coming_soon_serials = serials.filter(first_air_date__year=today.year)[:10]
-    serials = serials.exclude(first_air_date__year=today.year).order_by('-id')[:20]
+    serials = serials.exclude(first_air_date__year=today.year).order_by('-first_air_date')[:20]
 
     for items in [films, coming_soon_films, serials, coming_soon_serials]:
         for item in items:
