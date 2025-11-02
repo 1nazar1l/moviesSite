@@ -193,15 +193,29 @@ def searchPage(request):
     serials = Serial.objects.exclude(is_parsed=False)
     actors = Actor.objects.exclude(is_parsed=False)
 
-    films = films.filter(
-        title__icontains=search  
-    )
-    serials = serials.filter(
+    films_with_default_search = films.filter(
         title__icontains=search
     )
-    actors = actors.filter(
+    films_with_capitalize_search = films.filter(
+        title__icontains=search.capitalize()
+    )
+    films = films_with_default_search.union(films_with_capitalize_search, all=True)
+
+    serials_with_default_search = serials.filter(
+        title__icontains=search
+    )
+    serials_with_capitalize_search = serials.filter(
+        title__icontains=search.capitalize()
+    )
+    serials = serials_with_default_search.union(serials_with_capitalize_search, all=True)
+    
+    actors_with_default_search = actors.filter(
         name__icontains=search
     )
+    actors_with_capitalize_search = actors.filter(
+        name__icontains=search.capitalize()
+    )
+    actors = actors_with_default_search.union(actors_with_capitalize_search, all=True)
 
     for objects in [films, serials, actors]:
         for object in objects:
@@ -212,7 +226,7 @@ def searchPage(request):
         "films": films,
         "serials": serials,
         "actors": actors,
-        "search_title": search.capitalize(),
+        "search_title": search,
         "results_count": len(films) + len(serials) + len(actors),
         "types": {
             "film": "film",
