@@ -186,6 +186,8 @@
                 {% if item.revenue %}
                   {% if item.revenue < 1000000 and item.revenue > 100000 %}
                     {{ item.revenue|add:"0"|floatformat:"0"|slice:":-3" }}k
+                  {% elif item.revenue < 100000 and item.revenue > 0 %}
+                    {{item.revenue}}
                   {% else %}
                     {{ item.revenue|add:"0"|floatformat:"0"|slice:":-6" }}м
                   {% endif %}

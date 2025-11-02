@@ -248,7 +248,7 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url, 
             with open(img_filepath, "wb") as out:
                 out.write(p.content)
 
-def parse_media_item(films, serials, actors, selected_item, selected_item_model, media_type, search_id):   
+def parse_media_item(films, serials, actors, selected_item, selected_item_media_type, added_object_model, media_type, search_id):   
     url_parts = {
         "films": "movie",
         "serials": "tv",
@@ -291,70 +291,62 @@ def parse_media_item(films, serials, actors, selected_item, selected_item_model,
     else:
         cast = response.json()["cast"][0:10]
 
-    delete_item = selected_item_model.get(search_id=search_id)
+    delete_item = added_object_model.get(search_id=search_id)
     delete_item.delete()
 
-    download_media_item(media_type, img_index, media_item_data, selected_item_model, img_url, cast)
+    download_media_item(media_type, img_index, media_item_data, added_object_model, img_url, cast)
 
-    added_ids = []
     if media_type == "actors":
+        actor = actors.get(search_id=search_id)
+        selected_item.actors.add(actor)
+        if selected_item_media_type == "film" or selected_item_media_type == "films":
+            actor.movies.add(selected_item)
+        elif selected_item_media_type == "serial" or selected_item_media_type == "serials":
+            actor.serials.add(selected_item)
+
         for item in cast:
             defaults = {
                 "is_parsed": False,
                 "title": item["title"]
             }
 
-            film, created = Film.objects.get_or_create(search_id=item["id"], defaults=defaults)
+            if item["id"] != selected_item.search_id:
+                film, created = films.get_or_create(search_id=item["id"], defaults=defaults)
 
-            actor = actors.get(search_id=search_id)
-            actor.movies.add(film)
-            film.actors.add(actor)
-
-            if not actor.movies.filter(search_id=selected_item.search_id).exists():
-                selected_item.actors.add(actor)
-            else:
-                added_ids.append(item["id"])
-
+                actor.movies.add(film)
+                film.actors.add(actor)
 
     elif media_type == "films":
+        film = films.get(search_id=search_id)
+        selected_item.movies.add(film)
+        film.actors.add(selected_item)
         for item in cast:
             defaults = {
                 "is_parsed": False,
                 "name": item["name"]
             }
 
-            actor, created = Actor.objects.get_or_create(search_id=item["id"], defaults=defaults)
+            if item["id"] != selected_item.search_id:
+                actor, created = actors.get_or_create(search_id=item["id"], defaults=defaults)
 
-            film = films.get(search_id=search_id)
-            film.actors.add(actor)
-            actor.movies.add(film)
-
-            added_ids.append(item["id"])
-
-        if selected_item.search_id not in added_ids:
-            film = films.get(search_id=search_id)
-            selected_item.movies.add(film)
-            film.actors.add(selected_item)
+                film.actors.add(actor)
+                actor.movies.add(film)
 
     elif media_type == "serials":
+        serial = serials.get(search_id=search_id)
+        selected_item.serials.add(serial)
+        serial.actors.add(selected_item)
         for item in cast:
             defaults = {
                 "is_parsed": False,
                 "name": item["name"]
             }
 
-            actor, created = Actor.objects.get_or_create(search_id=item["id"], defaults=defaults)
+            if item["id"] != selected_item.search_id:
+                actor, created = actors.get_or_create(search_id=item["id"], defaults=defaults)
 
-            serial = serials.get(search_id=search_id)
-            serial.actors.add(actor)
-            actor.serials.add(serial)
-
-            added_ids.append(item["id"])
-
-        if selected_item.search_id not in added_ids:
-            serial = serials.get(search_id=search_id)
-            selected_item.movies.add(serial)
-            serial.actors.add(selected_item)
+                serial.actors.add(actor)
+                actor.serials.add(serial)
 
 def parsing_media_items(request, media_type):
     start_page = request.POST.get('start_page')

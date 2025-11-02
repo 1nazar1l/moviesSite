@@ -315,6 +315,10 @@ def itemPage(request, media_type, search_id):
         ).exists()
     else:
         is_favorite = False
+    
+    if media_type == "films":
+        print(item.revenue)
+        print(item.budget)
 
     return render(request, "main/item.html", context={
         "username": request.user,
@@ -574,12 +578,12 @@ def add_new_item(request):
             "actors": actors,
         }
 
-        model = models.get(added_object_media_type)
+        added_object_model = models.get(added_object_media_type)
 
         selected_item_model = models.get(selected_object_media_type)
         selected_item = selected_item_model.get(search_id=selected_object_search_id)
         try:
-            parse_media_item(films, serials, actors, selected_item, model, added_object_media_type, added_object_search_id)
+            parse_media_item(films, serials, actors, selected_item, selected_object_media_type, added_object_model, added_object_media_type, added_object_search_id)
             return redirect('itemPage', media_type=added_object_media_type[:-1], search_id=added_object_search_id)
         except requests.exceptions.ConnectionError:
             return redirect('errorPage', media_type='error')
