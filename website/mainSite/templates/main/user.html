@@ -26,13 +26,20 @@
 {% endblock sidebar_nav %}
 
 {% block auth_header_profile_url %}
-<a class="auth-btn" href="{% url "mainPage" %}">На главную</a>
+  {% include "main/partials/auth_profile_url_block.html" %} 
 {% endblock auth_header_profile_url %}
 
+{% block not_auth_header_profile_url %}
+  <a class="auth-btn" href="{% url "authPage" %}">Войти</a>
+{% endblock not_auth_header_profile_url %}
 
 {% block auth_sidebar_profile_url %}
-<a class="auth-btn" href="{% url "mainPage" %}">На главную</a>
+  {% include "main/partials/auth_profile_url_block.html" %} 
 {% endblock auth_sidebar_profile_url %}
+
+{% block not_auth_sidebar_profile_url %}
+  <a class="auth-btn" href="{% url "authPage" %}">Войти</a>
+{% endblock not_auth_sidebar_profile_url %}
 
 {% block main_content %}
 <div class="profile-page">
@@ -41,21 +48,11 @@
     <div class="profile-sidebar">
       <div class="profile-card">
         <div class="avatar-container">
-          {% if user.avatar %}
-          <img src="{{ user.avatar.url }}" alt="Аватар" class="avatar" id="userAvatar">
+          {% if avatar_url %}
+          <img src="{{ avatar_url }}" alt="Аватар" class="avatar" id="userAvatar">
           {% else %}
-          <div class="avatar" id="userAvatar">{{ user.username|first|upper }}</div>
+          <div class="avatar" id="userAvatar">{{ username|first|upper }}</div>
           {% endif %}
-
-          <form action="{% url 'add_avatar' %}" method="post" enctype="multipart/form-data" id="avatarForm">
-            {% csrf_token %}
-            <div class="avatar-edit">
-              <label for="avatarInput">
-                <i class="fas fa-camera"></i>
-              </label>
-              <input type="file" id="avatarInput" name="avatar" accept="image/*" style="display: none;">
-            </div>
-          </form>
         </div>
         <h2 class="profile-name" id="userName">{{username}}</h2>
 
@@ -78,53 +75,21 @@
           </div>
         </div>
       </div>
-      <a href="{% url "signOut" %}">
-        <button class="btn btn-primary" id="signOut">
-          <i class="fa-solid fa-door-open"></i>
-          Выйти из аккаунта
-        </button>
-      </a>
     </div>
 
     <!-- Основное содержимое профиля -->
     <div class="profile-content">
-      <form action="{% url "update_user_info" %}" method="post">
-        {% csrf_token %}
-        <div class="edit-form">
-          <h3 class="section-title">Профиль</h3>
+      <div class="edit-form">
+        <h3 class="section-title">Профиль</h3>
 
-          <div class="form-group">
-            <label class="form-label" for="username">Никнейм</label>
-            <input name="username" type="text" id="username" class="form-input" value="{{username_value}}">
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="email">Электронная почта</label>
-            <input name="email" type="email" id="email" class="form-input" value="{{email_value}}">
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="bio">О себе</label>
-            <textarea name="description" id="bio" class="form-input" rows="4"
-              placeholder="Расскажите о себе...">{% if description_value %}{{description_value}}{% endif %}</textarea>
-          </div>
-
-          {% if error_messages|length != 0 %}
-          {% for message in error_messages %}
-          <div class="form-group">
-            {{message}}
-          </div>
-          {% endfor %}
-          {% endif %}
-
-          <div class="form-actions">
-            <button class="btn btn-primary" id="saveChangesBtn">
-              <i class="fas fa-save"></i>
-              Сохранить изменения
-            </button>
-          </div>
+        <div class="form-group">
+          <label class="form-label" for="bio">О себе</label>
+          <p class="user-info-block">
+            {% if description_value %}{{description_value}}{% endif %}
+          </p>
         </div>
-      </form>
+      </div>
+
 
       <div class="favorites-section">
 
@@ -135,23 +100,13 @@
           {% for item in favorites %}
           <a href="{% url "itemPage" item.content_type.model item.content_object.search_id %}">
             <div class="movie-card">
-              <form action="{% url 'remove_from_favorite' %}" method="post" id="favoriteForm">
-                <div class="remove-favorite">
-                  {% csrf_token %}
-                  <input type="hidden" name="content_type" value="{{ item.content_type.model}}">
-                  <input type="hidden" name="object_id" value="{{ item.content_object.id }}">
-
-                  <button type="submit" class="remove-button"></button>
-                  <i class="fas fa-times"></i>
-                </div>
-              </form>
               <div class="movie-poster">
                 {% if item.content_object.local_img_path == "" %}
-                {% if item.content_type.model != "actor" %}
-                <i class="fas fa-film"></i>
-                {% else %}
-                <i class="fas fa-user fa-3x"></i>
-                {% endif %}
+                  {% if item.content_type.model != "actor" %}
+                  <i class="fas fa-film"></i>
+                  {% else %}
+                  <i class="fas fa-user fa-3x"></i>
+                  {% endif %}
                 {% else %}
                 <img src="{{item.content_object.local_img_path.url}}" alt="">
                 {% endif %}
@@ -202,13 +157,29 @@
             <div class="comment-card">
               <div class="comment-header">
                 <div class="comment-user">
-                  {% if user.avatar %}
-                  <img src="{{ user.avatar.url }}" alt="Аватар" class="user-avatar" id="userAvatar">
+                  {% if avatar_url %}
+                  <img src="{{ avatar_url }}" alt="Аватар" class="user-avatar" id="userAvatar">
                   {% else %}
                   <div class="user-avatar" id="userAvatar">{{ user.username|first|upper }}</div>
                   {% endif %}
                   <div class="user-info">
-                    <div class="user-name">{{ comment.user.username }}</div>
+                    <div class="user-name">
+                      {{ comment.user.username }}
+                        / 
+                      {% if comment.content_type.model == "actor" %}
+                        актер
+                      {% elif comment.content_type.model == "serial" %}
+                        сериал
+                      {% elif comment.content_type.model == "film" %}
+                        фильм
+                      {% endif %}
+                        
+                      {% if comment.content_type.model != "actor" %}
+                        {{comment.content_object.title}}
+                      {% else %}
+                        {{comment.content_object.name}}
+                      {% endif %}
+                    </div>
                     <div class="comment-date">
                       {% now "Y-m-d" as today %}
                       {% with comment_date=comment.writing_date.date %}

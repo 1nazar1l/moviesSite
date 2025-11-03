@@ -203,7 +203,23 @@
                   <div class="user-avatar" id="userAvatar">{{ user.username|first|upper }}</div>
                   {% endif %}
                   <div class="user-info">
-                    <div class="user-name">{{ comment.user.username }}</div>
+                    <div class="user-name">
+                      {{ comment.user.username }}
+                        / 
+                      {% if comment.content_type.model == "actor" %}
+                        актер
+                      {% elif comment.content_type.model == "serial" %}
+                        сериал
+                      {% elif comment.content_type.model == "film" %}
+                        фильм
+                      {% endif %}
+                        
+                      {% if comment.content_type.model != "actor" %}
+                        {{comment.content_object.title}}
+                      {% else %}
+                        {{comment.content_object.name}}
+                      {% endif %}
+                    </div>
                     <div class="comment-date">
                       {% now "Y-m-d" as today %}
                       {% with comment_date=comment.writing_date.date %}

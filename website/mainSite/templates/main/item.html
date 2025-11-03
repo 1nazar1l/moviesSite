@@ -486,54 +486,56 @@
             <!-- Список комментариев -->
       <div class="comments-list" id="commentsList">
         {% for comment in comments %}
-        <div class="comment-card">
-          <div class="comment-header">
-            <div class="comment-user">
-              {% if comment.user.avatar %}
-              <img src="{{ comment.user.avatar.url }}" alt="Аватар" class="user-avatar" id="userAvatar">
-              {% else %}
-              <div class="user-avatar" id="userAvatar">{{ comment.user.username|first|upper }}</div>
-              {% endif %}
-              <div class="user-info">
-                <div class="user-name">{{ comment.user.username }}</div>
-                <div class="comment-date">
-                  {% now "Y-m-d" as today %}
-                  {% with comment_date=comment.writing_date.date %}
-                    {% if comment_date == today %}
-                      Сегодня
-                    {% elif comment_date == today|date:"Y-m-d"|add:"-1 day" %}
-                      Вчера
-                    {% else %}
-                      {{ comment.writing_date|timesince }} назад
-                    {% endif %}
-                  {% endwith %}
+          <a href="{% if comment.user.username != request.user.username %}{% url "userPage" comment.user.id %}{% else %}{% url "profilePage" %}{% endif %}">
+            <div class="comment-card">
+              <div class="comment-header">
+                <div class="comment-user">
+                  {% if comment.user.avatar %}
+                  <img src="{{ comment.user.avatar.url }}" alt="Аватар" class="user-avatar" id="userAvatar">
+                  {% else %}
+                  <div class="user-avatar" id="userAvatar">{{ comment.user.username|first|upper }}</div>
+                  {% endif %}
+                  <div class="user-info">
+                    <div class="user-name">{{ comment.user.username }}</div>
+                    <div class="comment-date">
+                      {% now "Y-m-d" as today %}
+                      {% with comment_date=comment.writing_date.date %}
+                        {% if comment_date == today %}
+                          Сегодня
+                        {% elif comment_date == today|date:"Y-m-d"|add:"-1 day" %}
+                          Вчера
+                        {% else %}
+                          {{ comment.writing_date|timesince }} назад
+                        {% endif %}
+                      {% endwith %}
+                    </div>
+                  </div>
                 </div>
+                {% if comment.rating %}
+                <div class="comment-rating">
+                  <i class="fas fa-star"></i>
+                  <span>{{ comment.rating }}</span>
+                </div>
+                {% endif %}
+              </div>
+              <div class="comment-content">
+                {{ comment.text }}
+              </div>
+              <div class="comment-actions">
+                <button class="comment-action">
+                  <i class="far fa-thumbs-up"></i>
+                  <span>{{ comment.likes.count }}</span>
+                </button>
+                <button class="comment-action">
+                  <i class="far fa-thumbs-down"></i>
+                  <span>{{ comment.dislikes.count }}</span>
+                </button>
+                <button class="comment-action">
+                  <i class="far fa-flag"></i>
+                </button>
               </div>
             </div>
-            {% if comment.rating %}
-            <div class="comment-rating">
-              <i class="fas fa-star"></i>
-              <span>{{ comment.rating }}</span>
-            </div>
-            {% endif %}
-          </div>
-          <div class="comment-content">
-            {{ comment.text }}
-          </div>
-          <div class="comment-actions">
-            <button class="comment-action">
-              <i class="far fa-thumbs-up"></i>
-              <span>{{ comment.likes.count }}</span>
-            </button>
-            <button class="comment-action">
-              <i class="far fa-thumbs-down"></i>
-              <span>{{ comment.dislikes.count }}</span>
-            </button>
-            <button class="comment-action">
-              <i class="far fa-flag"></i>
-            </button>
-          </div>
-        </div>
+          </a>
         {% empty %}
         <!-- Сообщение когда нет комментариев -->
         <div class="no-comments" id="noComments">

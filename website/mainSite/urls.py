@@ -17,6 +17,7 @@ urlpatterns = [
     path('profile/avatar/', views.add_avatar, name='add_avatar'),
     path('profile/update_user_info', views.update_user_info, name='update_user_info'),
     path('profile/signOut', views.signOut, name='signOut'),
+    path('users/<int:user_id>', views.userPage, name="userPage"),
     path('favorite/add/', views.add_to_favorite, name='add_to_favorite'),
     path('favorite/remove/', views.remove_from_favorite, name='remove_from_favorite'),
     path('adminPanel/films', films_admin_panel, name='adminPanel'),

@@ -247,14 +247,11 @@ def profilePage(request):
 
         comments = user.comments.all()
         comments_count = len(comments)
-        ratings_count = len(request.user.comments.filter(rating__isnull=False))
+        ratings_count = len(user.comments.filter(rating__isnull=False))
 
         days_from_registration = (today - registration_date).days
         if days_from_registration == 0:
             days_from_registration = 1
-
-        User = get_user_model()
-        user = User.objects.get(id=request.user.id)
 
         favorites = user.favorites.all()
         favorites_count = len(favorites)
@@ -264,7 +261,6 @@ def profilePage(request):
             "username": user.username,
             "icon": str(user.username)[0].upper(),
             "username_value": user.username,
-            "email_value": user.email,
             "description_value": user.description,
             "error_messages": error_messages,
             "days": days_from_registration,
@@ -595,3 +591,38 @@ def add_new_item(request):
             return redirect('errorPage', media_type='error')
     else:
         return redirect('errorPage', media_type='error')
+    
+def userPage(request, user_id):
+    User = get_user_model()
+    user = User.objects.get(id=user_id)
+
+    today = date.today()
+
+    registration_date = user.date_joined.date()
+
+    comments = user.comments.all()
+    comments_count = len(comments)
+    ratings_count = len(user.comments.filter(rating__isnull=False))
+
+    days_from_registration = (today - registration_date).days
+    if days_from_registration == 0:
+        days_from_registration = 1
+
+    favorites = user.favorites.all()
+    favorites_count = len(favorites)
+    favorites = [item for item in favorites]
+
+    return render(request, 'main/user.html', context={
+        "username": user.username,
+        "avatar_url": user.avatar.url,
+        "icon": str(user.username)[0].upper(),
+        "username_value": user.username,
+        "email_value": user.email,
+        "description_value": user.description,
+        "days": days_from_registration,
+        "comments_count": comments_count,
+        "ratings_count": ratings_count,
+        "favorites_count": favorites_count,
+        "favorites": favorites,
+        "comments": comments
+    })
