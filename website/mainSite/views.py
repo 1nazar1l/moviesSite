@@ -369,7 +369,6 @@ def update_user_info(request):
 
     if request.POST:
         username = request.POST.get("username")
-        email = request.POST.get("email")
         description = request.POST.get("description")
 
         User = get_user_model()
@@ -380,19 +379,12 @@ def update_user_info(request):
         users = users.exclude(id=request.user.id)
 
         username_is_exist = users.filter(username=username).exists()
-        email_is_exist = users.filter(email=email).exists()
 
 
         if(username_is_exist):
             request.session['profile_error_messages'].append(f"Пользователь с никнеймом {username} уже существует")
         else:
             user.username = username
-            user.save()
-
-        if(email_is_exist):
-            request.session['profile_error_messages'].append(f"Пользователь с почтой {email} уже существует")
-        else:
-            user.email = email
             user.save()
         
         if(description != user.description):
