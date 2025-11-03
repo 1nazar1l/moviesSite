@@ -5,7 +5,7 @@ from .tools import (
     parsing_media_items,
 )
 
-from .models import Film, Serial, Actor, Message
+from .models import Film, Serial, Actor, Message, Genre
 
 from django.shortcuts import redirect
 
@@ -82,6 +82,35 @@ def actors_admin_panel(request):
 
     return render(request, "adminPanel/actors.html", context={
         "actors": actors,
+        "messages": messages,
+        "messages_type": messages_type      
+    })
+
+def genres_admin_panel(request):
+    all_genres = Genre.objects.all()
+    genres = all_genres.order_by('-id')
+
+    messages = Message.objects.all().order_by('-id')
+
+    messages_type = {
+        "success": 0,
+        "warning": 0,
+        "error": 0,
+        "clear": 0
+    }
+
+    for message in messages:
+        messages_type[message.message_type] += 1
+
+    id_search = request.GET.get("id_search")
+
+    if id_search:
+        genres = genres.filter(
+            Q(search_id__icontains=id_search)
+        )
+
+    return render(request, "adminPanel/genres.html", context={
+        "genres": genres,
         "messages": messages,
         "messages_type": messages_type      
     })

@@ -24,6 +24,7 @@ urlpatterns = [
     path('actors/delete_actors/', views.delete_actors, name='delete_actors'),
     path('actors/delete_all_actors/', views.delete_all_actors, name='delete_all_actors'),
 
+    path('genres/', views.genres_admin_panel, name='genres'),
 ]
 
 if settings.DEBUG:

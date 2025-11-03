@@ -39,7 +39,7 @@ class Film(models.Model):
     runtime = models.IntegerField(null=True, blank=True)
     status = models.CharField(max_length=20, null=True, blank=True)
     rating = models.FloatField(null=True, blank=True)
-    genres = models.JSONField(null=True, blank=True)
+    genres = models.ManyToManyField('Genre', blank=True, related_name='films')
     actors = models.ManyToManyField(Actor, blank=True)
 
     class Meta:
@@ -62,7 +62,7 @@ class Serial(models.Model):
     local_img_path = models.ImageField(upload_to='serials/', null=True, blank=True)
     status = models.CharField(max_length=20, null=True, blank=True)
     rating = models.FloatField(null=True, blank=True)
-    genres = models.JSONField(null=True, blank=True)
+    genres = models.ManyToManyField('Genre', blank=True, related_name='serials')
     actors = models.ManyToManyField(Actor, blank=True)
 
     class Meta:
@@ -184,3 +184,15 @@ class Favorite(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.content_object}"
+
+
+class Genre(models.Model):
+    search_id = models.IntegerField(null=True, blank=True)
+    name = models.TextField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Жанр"
+        verbose_name_plural = "Жанры"
+    
+    def __str__(self):
+        return f"{self.search_id} - {self.name}"

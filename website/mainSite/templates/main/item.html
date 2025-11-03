@@ -106,7 +106,7 @@
 
         {% if media_type != "actors" %}
           <div class="genres">
-            {% for genre in item.genres %}
+            {% for genre in item.genres.all %}
               <span class="genre">{{genre.name}}</span>
             {% endfor %}
           </div>

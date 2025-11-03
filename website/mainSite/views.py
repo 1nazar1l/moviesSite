@@ -58,7 +58,7 @@ def mainPage(request):
         for item in items:
             check_path(item)
 
-            item.genres = item.genres[0]["name"]
+            item.first_genre = item.genres.first()
         
     return render(request, "main/index.html", context={
         "username": request.user,

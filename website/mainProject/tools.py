@@ -3,7 +3,7 @@ import os
 from environs import env
 from datetime import datetime, date
 
-from .models import Film, Serial, Actor, Message
+from .models import Film, Serial, Actor, Message, Genre
 
 from django.conf import settings
 
@@ -149,7 +149,6 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url, 
             "runtime": media_item_data["runtime"],
             "status": media_item_data["status"],
             "rating": media_item_data["vote_average"],
-            "genres": [{"id": genre["id"], "name": genre["name"]} for genre in media_item_data["genres"]],
         }
     elif media_type == "serials":
         defaults = {
@@ -164,7 +163,6 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url, 
             "local_img_path": local_img_path,
             "status": media_item_data["status"],
             "rating": media_item_data["vote_average"],
-            "genres": [{"id": genre["id"], "name": genre["name"]} for genre in media_item_data["genres"]],
         }
     elif media_type == "actors":
         defaults = {
@@ -182,6 +180,14 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url, 
         search_id=media_item_data["id"],
         defaults=defaults
     )
+
+    if media_type != "actors":
+        for genre_item in media_item_data["genres"]:
+            genre, created = Genre.objects.get_or_create(search_id=genre_item["id"], defaults={
+                "name": genre_item["name"]
+            })
+            print(genre, created)
+            media_item_obj.genres.add(genre)
 
     img_filepath = os.path.join(settings.MEDIA_ROOT, local_img_path)
 
@@ -391,7 +397,14 @@ def parsing_media_items(request, media_type):
                     continue
 
                 if media_type == "actors":
-                    average_rating = sum([item["vote_average"] for item in cast]) / len(cast)
+                    ratings_sum = sum([item["vote_average"] for item in cast])
+                    if ratings_sum < 0:
+                        continue
+
+                    if len(cast) == 0:
+                        continue
+
+                    average_rating = ratings_sum / len(cast)
                     if average_rating < 5.2:
                         continue
 

@@ -1,0 +1,95 @@
+{% extends "adminPanel/base.html" %}
+{% load static %}
+
+{% block page_title %}
+  Список жанров
+{% endblock page_title %}
+
+{% block title %}
+  Список жанров
+{% endblock title %}
+
+{% block delete_buttons_block %}
+  <form action="{% url 'delete_films' %}" method="post" id="delete-selected-form">
+    {% csrf_token %}
+    <button type="submit" class="custom_button delete_button" onclick="return confirm('Удалить выбранные жанры?')">
+      Удалить выбранные
+    </button>
+  </form>
+  <form action="{% url 'delete_all_films' %}" method="post">
+    {% csrf_token %}
+    <button type="submit" class="custom_button delete_button" onclick="return confirm('Удалить все жанры?')">
+      Удалить все жанры
+    </button>
+  </form>
+{% endblock delete_buttons_block %}
+
+{% block media_block %}
+  {% for genre in genres %}
+    <div class="media_block">
+      <div class="media_info">
+        <span><strong>ID:</strong> {{ genre.search_id }}</span>
+        <span><strong>Название:</strong> {{ genre.name }}</span>
+      </div>
+      <div class="media_actions">
+        <input type="checkbox" name="media_ids" value="{{ genre.id }}" form="delete-selected-form">
+      </div>
+    </div>
+  {% endfor %}
+{% endblock media_block %}
+
+{% block parse_media_block %}
+{% endblock parse_media_block %}
+
+{% block page %}
+  <div class="invisible_block">
+    <input type="hidden" name="next" value="{{ request.path }}" form="clear_messages">
+  </div>
+{% endblock page %}
+
+{% block filter_block %}
+<form action="{% url "films" %}">
+
+  <div class="filter_content">
+    <div>
+      <input type="text" placeholder="Поиск по id" name="id_search">
+    </div>
+    <div>
+      <input type="text" placeholder="Поиск по названию">
+    </div>
+    <div>
+      <span>Бюджет</span>
+      <input type="text" placeholder="От">
+      <input type="text" placeholder="До">
+    </div>
+    <div>
+      <span>Выручка</span>
+      <input type="text" placeholder="От">
+      <input type="text" placeholder="До">
+    </div>
+    <div>
+      <span>Год выхода</span>
+      <input type="date">
+      <input type="date">
+    </div>
+    <div>
+      <span>Продолжительность</span>
+      <input type="text" placeholder="От">
+      <input type="text" placeholder="До">
+    </div>
+    <div>
+      <span>Вышел ли фильм</span>
+      <input type="checkbox">
+    </div>
+    <div>
+      <span>Рейтинг</span>
+      <input type="text" placeholder="От">
+      <input type="text" placeholder="До">
+    </div>
+    <div>
+      <span>Жанры(тут будет выпадающий список)</span>
+    </div>
+  </div>
+  <button type="submit">Отправить</button>
+</form>
+{% endblock filter_block %}
