@@ -521,19 +521,6 @@
               <div class="comment-content">
                 {{ comment.text }}
               </div>
-              <div class="comment-actions">
-                <button class="comment-action">
-                  <i class="far fa-thumbs-up"></i>
-                  <span>{{ comment.likes.count }}</span>
-                </button>
-                <button class="comment-action">
-                  <i class="far fa-thumbs-down"></i>
-                  <span>{{ comment.dislikes.count }}</span>
-                </button>
-                <button class="comment-action">
-                  <i class="far fa-flag"></i>
-                </button>
-              </div>
             </div>
           </a>
         {% empty %}

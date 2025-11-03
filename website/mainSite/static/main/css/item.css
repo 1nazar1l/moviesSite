@@ -365,7 +365,7 @@
 
 .comment-content {
     line-height: 1.6;
-    margin-bottom: 1rem;
+    /* margin-bottom: 1rem; */
 }
 
 .comment-actions {
