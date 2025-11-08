@@ -576,7 +576,6 @@ def errorPage(request, media_type=""):
 
 def update_user_info(request):
     request.session.modified = True
-
     request.session['profile_error_messages'] = []
 
     if request.POST:
@@ -585,24 +584,33 @@ def update_user_info(request):
 
         User = get_user_model()
         users = User.objects.all()
-
         user = users.get(id=request.user.id)
-
         users = users.exclude(id=request.user.id)
 
         username_is_exist = users.filter(username=username).exists()
 
-
-        if(username_is_exist):
+        if username_is_exist:
             request.session['profile_error_messages'].append(f"Пользователь с никнеймом {username} уже существует")
         else:
+            old_avatar_path = os.path.join(settings.MEDIA_ROOT, "avatars/", f"{user.username}.jpg")
+            new_avatar_path = os.path.join(settings.MEDIA_ROOT, "avatars/", f"{username}.jpg")
+            
+            # Проверяем существование старого файла
+            if os.path.exists(old_avatar_path):
+                try:
+                    # Переименовываем файл (более эффективно чем копирование)
+                    os.rename(old_avatar_path, new_avatar_path)
+                except Exception as e:
+                    request.session['profile_error_messages'].append(f"Ошибка при обновлении аватара: {e}")
+            
+            # Обновляем username и avatar
             user.username = username
+            user.avatar.name = f"avatars/{username}.jpg"
             user.save()
         
-        if(description != user.description):
+        if description != user.description:
             user.description = description
             user.save()
-
 
     return redirect("profilePage")
 
