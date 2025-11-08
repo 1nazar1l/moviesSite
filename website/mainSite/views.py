@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model, authenticate, login, logout
 
 from django.contrib.contenttypes.models import ContentType
-from mainProject.models import Film, Serial, Actor, Comment, Favorite
+from mainProject.models import Film, Serial, Actor, Comment, Favorite, Genre
 from django.db.models import Q
 import os
 
@@ -132,48 +132,264 @@ def regPage(request):
 
 def filmsPage(request):
     request.session['profile_error_messages'] = []
-
+    
+    title_search = request.GET.get('title_search', '').strip()
+    budget_min = request.GET.get('budget_min', '').strip()
+    budget_max = request.GET.get('budget_max', '').strip()
+    revenue_min = request.GET.get('revenue_min', '').strip()
+    revenue_max = request.GET.get('revenue_max', '').strip()
+    release_date_min = request.GET.get('release_date_min', '').strip()
+    release_date_max = request.GET.get('release_date_max', '').strip()
+    duration_min = request.GET.get('duration_min', '').strip()
+    duration_max = request.GET.get('duration_max', '').strip()
+    rating_min = request.GET.get('rating_min', '').strip()
+    rating_max = request.GET.get('rating_max', '').strip()
+    selected_genres = request.GET.getlist('genres')
+    
     films = Film.objects.exclude(is_parsed=False)
-
+    
+    if title_search:
+        films_with_default_search = films.filter(
+            title__icontains=title_search
+        )
+        films_with_capitalize_search = films.filter(
+            title__icontains=title_search.capitalize()
+        )
+        films = films_with_default_search.union(films_with_capitalize_search, all=True)    
+    if budget_min:
+        films = films.filter(budget__gte=budget_min)
+    if budget_max:
+        films = films.filter(budget__lte=budget_max)
+    
+    if revenue_min:
+        films = films.filter(revenue__gte=revenue_min)
+    if revenue_max:
+        films = films.filter(revenue__lte=revenue_max)
+    
+    if release_date_min:
+        films = films.filter(release_date__gte=release_date_min)
+    if release_date_max:
+        films = films.filter(release_date__lte=release_date_max)
+    
+    if duration_min:
+        films = films.filter(duration__gte=duration_min)
+    if duration_max:
+        films = films.filter(duration__lte=duration_max)
+    
+    if rating_min:
+        films = films.filter(rating__gte=rating_min)
+    if rating_max:
+        films = films.filter(rating__lte=rating_max)
+    
+    if selected_genres:
+        films = films.filter(genres__search_id__in=selected_genres).distinct()
+    
     for film in films:
         check_path(film)
-
+    
+    genres = Genre.objects.all()
     media_type = "films"
-    return render(request, "main/items.html", context={
+    
+    context = {
         "username": request.user,
         "items": films,
-        "media_type": media_type
-    })
+        "media_type": media_type,
+        "genres": genres,
+        "filter_values": {
+            "title_search": title_search,
+            "budget_min": budget_min,
+            "budget_max": budget_max,
+            "revenue_min": revenue_min,
+            "revenue_max": revenue_max,
+            "release_date_min": release_date_min,
+            "release_date_max": release_date_max,
+            "duration_min": duration_min,
+            "duration_max": duration_max,
+            "rating_min": rating_min,
+            "rating_max": rating_max,
+            "selected_genres": selected_genres,
+        }
+    }
+    
+    return render(request, "main/items.html", context=context)
 
 def serialsPage(request):
     request.session['profile_error_messages'] = []
-
+    
+    title_search = request.GET.get('title_search', '').strip()
+    episodes_min = request.GET.get('episodes_min', '').strip()
+    episodes_max = request.GET.get('episodes_max', '').strip()
+    seasons_min = request.GET.get('seasons_min', '').strip()
+    seasons_max = request.GET.get('seasons_max', '').strip()
+    first_air_date_min = request.GET.get('first_air_date_min', '').strip()
+    first_air_date_max = request.GET.get('first_air_date_max', '').strip()
+    last_air_date_min = request.GET.get('last_air_date_min', '').strip()
+    last_air_date_max = request.GET.get('last_air_date_max', '').strip()
+    rating_min = request.GET.get('rating_min', '').strip()
+    rating_max = request.GET.get('rating_max', '').strip()
+    status_filter = request.GET.get('status', '').strip()
+    selected_genres = request.GET.getlist('genres')
+    
     serials = Serial.objects.exclude(is_parsed=False)
-
+    
+    if title_search:
+        serials_with_default_search = serials.filter(
+            title__icontains=title_search
+        )
+        serials_with_capitalize_search = serials.filter(
+            title__icontains=title_search.capitalize()
+        )
+        serials = serials_with_default_search.union(serials_with_capitalize_search, all=True) 
+    if episodes_min:
+        serials = serials.filter(episodes__gte=episodes_min)
+    if episodes_max:
+        serials = serials.filter(episodes__lte=episodes_max)
+    
+    if seasons_min:
+        serials = serials.filter(seasons__gte=seasons_min)
+    if seasons_max:
+        serials = serials.filter(seasons__lte=seasons_max)
+    
+    if first_air_date_min:
+        serials = serials.filter(first_air_date__gte=first_air_date_min)
+    if first_air_date_max:
+        serials = serials.filter(first_air_date__lte=first_air_date_max)
+    
+    if last_air_date_min:
+        serials = serials.filter(last_air_date__gte=last_air_date_min)
+    if last_air_date_max:
+        serials = serials.filter(last_air_date__lte=last_air_date_max)
+    
+    if rating_min:
+        serials = serials.filter(rating__gte=rating_min)
+    if rating_max:
+        serials = serials.filter(rating__lte=rating_max)
+    
+    if status_filter:
+        serials = serials.filter(status=status_filter)
+    
+    if selected_genres:
+        serials = serials.filter(genres__search_id__in=selected_genres).distinct()
+    
     for serial in serials:
         check_path(serial)
-
+    
+    genres = Genre.objects.all()
+    
     media_type = "serials"
-    return render(request, "main/items.html", context={
+    
+    context = {
         "username": request.user,
         "items": serials,
-        "media_type": media_type
-    })
+        "media_type": media_type,
+        "genres": genres,
+        "filter_values": {
+            "title_search": title_search,
+            "episodes_min": episodes_min,
+            "episodes_max": episodes_max,
+            "seasons_min": seasons_min,
+            "seasons_max": seasons_max,
+            "first_air_date_min": first_air_date_min,
+            "first_air_date_max": first_air_date_max,
+            "last_air_date_min": last_air_date_min,
+            "last_air_date_max": last_air_date_max,
+            "rating_min": rating_min,
+            "rating_max": rating_max,
+            "status": status_filter,
+            "selected_genres": selected_genres,
+        }
+    }
+    
+    return render(request, "main/items.html", context=context)
+
+from django.db import models
 
 def actorsPage(request):
     request.session['profile_error_messages'] = []
-
+    
+    # Получаем параметры фильтра из GET-запроса
+    name_search = request.GET.get('name_search', '').strip()
+    birthday_min = request.GET.get('birthday_min', '').strip()
+    birthday_max = request.GET.get('birthday_max', '').strip()
+    deathday_min = request.GET.get('deathday_min', '').strip()
+    deathday_max = request.GET.get('deathday_max', '').strip()
+    gender_filter = request.GET.get('gender', '').strip()
+    project_search = request.GET.get('project_search', '').strip()
+    
+    # Начинаем с базового QuerySet
     actors = Actor.objects.exclude(is_parsed=False)
+    
+    # Применяем фильтры
+    if name_search:
+        actors_with_default_search = actors.filter(
+            name__icontains=name_search
+        )
+        actors_with_capitalize_search = actors.filter(
+            name__icontains=name_search.capitalize()
+        )
+        actors = actors_with_default_search.union(actors_with_capitalize_search, all=True)
+    
+    if birthday_min:
+        actors = actors.filter(birthday__gte=birthday_min)
+    if birthday_max:
+        actors = actors.filter(birthday__lte=birthday_max)
+    
+    if deathday_min:
+        actors = actors.filter(deathday__gte=deathday_min)
+    if deathday_max:
+        actors = actors.filter(deathday__lte=deathday_max)
+    
+    if gender_filter:
+        actors = actors.filter(gender=gender_filter)
+    
+    # Фильтр по названию проекта (ищет и в фильмах и в сериалах)
+    if project_search:
+        # Поиск в фильмах
+        actors_from_movies_default = actors.filter(
+            movies__title__icontains=project_search
+        )
+        actors_from_movies_capitalize = actors.filter(
+            movies__title__icontains=project_search.capitalize()
+        )
+        actors_in_film = actors_from_movies_default.union(actors_from_movies_capitalize, all=True)
+        
+        # Поиск в сериалах
+        actors_from_serials_default = actors.filter(
+            serials__title__icontains=project_search
+        )
+        actors_from_serials_capitalize = actors.filter(
+            serials__title__icontains=project_search.capitalize()
+        )
 
+        actors_in_serial = actors_from_serials_default.union(actors_from_serials_capitalize, all=True)
+        
+        # Объединяем все результаты
+        actors = actors_in_film.union(actors_in_serial, all=True)
+        actors = list(set(actors))
+    
+    # Проверяем пути для всех отфильтрованных актеров
     for actor in actors:
         check_path(actor)
-        
+    
     media_type = "actors"
-    return render(request, "main/items.html", context={
+    
+    # Создаем контекст с сохранением значений фильтров
+    context = {
         "username": request.user,
         "items": actors,
-        "media_type": media_type
-    })
+        "media_type": media_type,
+        "filter_values": {
+            "name_search": name_search,
+            "birthday_min": birthday_min,
+            "birthday_max": birthday_max,
+            "deathday_min": deathday_min,
+            "deathday_max": deathday_max,
+            "gender": gender_filter,
+            "project_search": project_search,
+        }
+    }
+    
+    return render(request, "main/items.html", context=context)
 
 def searchPage(request):
     request.session['profile_error_messages'] = []

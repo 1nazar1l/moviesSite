@@ -4,7 +4,6 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 
-
     
 class Actor(models.Model):
     search_id = models.IntegerField(null=True, blank=True)

@@ -1,0 +1,131 @@
+<aside class="filter-sidebar">
+  <h2 class="filter-title">Фильтр</h2>
+  <form class="filter-form" id="filterForm" action="{% url 'filmsPage' %}" method="get">
+    <div class="filter-group">
+      <input
+        type="text"
+        class="filter-input"
+        placeholder="Поиск по названию"
+        name="title_search"
+        value="{{ filter_values.title_search }}"
+      />
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label">Бюджет</label>
+      <div class="range-inputs">
+        <input
+          type="text"
+          class="filter-input"
+          placeholder="От"
+          name="budget_min"
+          value="{{ filter_values.budget_min }}"
+        />
+        <input
+          type="text"
+          class="filter-input"
+          placeholder="До"
+          name="budget_max"
+          value="{{ filter_values.budget_max }}"
+        />
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label">Выручка</label>
+      <div class="range-inputs">
+        <input
+          type="text"
+          class="filter-input"
+          placeholder="От"
+          name="revenue_min"
+          value="{{ filter_values.revenue_min }}"
+        />
+        <input
+          type="text"
+          class="filter-input"
+          placeholder="До"
+          name="revenue_max"
+          value="{{ filter_values.revenue_max }}"
+        />
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label">Год выхода</label>
+      <div class="range-inputs">
+        <input
+          type="date"
+          class="filter-input"
+          name="release_date_min"
+          value="{{ filter_values.release_date_min }}"
+        />
+        <input
+          type="date"
+          class="filter-input"
+          name="release_date_max"
+          value="{{ filter_values.release_date_max }}"
+        />
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label">Продолжительность (мин)</label>
+      <div class="range-inputs">
+        <input
+          type="text"
+          class="filter-input"
+          placeholder="От"
+          name="duration_min"
+          value="{{ filter_values.duration_min }}"
+        />
+        <input
+          type="text"
+          class="filter-input"
+          placeholder="До"
+          name="duration_max"
+          value="{{ filter_values.duration_max }}"
+        />
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label">Рейтинг</label>
+      <div class="range-inputs">
+        <input
+          type="text"
+          class="filter-input"
+          placeholder="От"
+          name="rating_min"
+          value="{{ filter_values.rating_min }}"
+        />
+        <input
+          type="text"
+          class="filter-input"
+          placeholder="До"
+          name="rating_max"
+          value="{{ filter_values.rating_max }}"
+        />
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label">Жанры</label>
+      <div class="select-wrapper">
+        <select class="filter-select" name="genres" multiple>
+          {% for genre in genres %}
+            <option value="{{ genre.search_id }}" 
+                    {% if genre.search_id in filter_values.selected_genres %}selected{% endif %}>
+              {{ genre.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn">Применить фильтры</button>
+    <button type="button" class="reset-btn" id="resetFilters">
+      Сбросить
+    </button>
+  </form>
+</aside>
