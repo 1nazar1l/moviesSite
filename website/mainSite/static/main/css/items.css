@@ -298,7 +298,6 @@
     border-color: var(--accent);
 }
 
-
 /* Адаптивность */
 @media (max-width: 1024px) {
     .movies-grid {

@@ -62,15 +62,14 @@
           <span class="sort-label">Сортировка:</span>
           {% if media_type != "actors" %}
             <select class="sort-select" id="sortSelect">
-              <option value="popular">По популярности</option>
+              <option value="-">Выбрать</option>
               <option value="rating">По рейтингу</option>
               <option value="release_date">По дате выхода</option>
               <option value="title">По названию</option>
             </select>
           {% else %}
             <select class="sort-select" id="sortSelect">
-              <option value="popular">По популярности</option>
-              <option value="rating">По рейтингу</option>
+              <option value="-">Выбрать</option>
               <option value="release_date">По дате рождения</option>
               <option value="title">По имени</option>
             </select>
@@ -80,7 +79,13 @@
 
       <div class="movies-grid" id="moviesGrid">
         {% for item in items %}       
-          <a href="{% url 'itemPage' media_type item.search_id %}">
+          <a href="{% url 'itemPage' media_type item.search_id %}" 
+            data-rating="{{ item.rating|default:0 }}" 
+            data-title="{% if media_type != 'actors' %}{{ item.title|lower }}{% else %}{{ item.name|lower }}{% endif %}"
+            data-date="
+              {% if media_type == 'films' %}{{ item.release_date|date:'Y-m-d' }}
+              {% elif media_type == 'serials' %}{{ item.first_air_date|date:'Y-m-d' }}
+              {% elif media_type == 'actors' %}{{ item.birthday|date:'Y-m-d' }}{% endif %}">
             <div class="movie-card">
               <div class="movie-poster">
                 {% if item.local_img_path == "" %}
@@ -90,7 +95,7 @@
                     <i class="fas fa-star"></i>
                   {% endif %}
                 {% else %}
-                    <img src="{{item.local_img_path.url}}" alt="{{ film.title }}">
+                  <img src="{{item.local_img_path.url}}" alt="{% if media_type != 'actors' %}{{ item.title }}{% else %}{{ item.name }}{% endif %}">
                 {% endif %}
               </div>
               <div class="movie-info">
@@ -115,24 +120,23 @@
                   {% endif %}
                 </div>
                 {% if media_type != "actors" %}
-                 <div class="movie-genres">
-                  {% for genre in item.genres.all %}
-                    <span class="genre-tag">{{genre.name}}</span>
-                  {% endfor %}
+                  <div class="movie-genres">
+                    {% for genre in item.genres.all %}
+                      <span class="genre-tag">{{genre.name}}</span>
+                    {% endfor %}
                   </div>
                 {% endif %}
               </div>
             </div>
           </a>
         {% endfor %}
-
       </div>
 
-              <div class="pagination">
-          <button class="page-btn active">1</button>
-          <button class="page-btn">2</button>
-          <button class="page-btn">3</button>
-        </div>
+      <div class="pagination">
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+      </div>
     </div>
   </div>
 {% endblock main_content %}
