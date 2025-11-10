@@ -15,18 +15,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const section1 = document.querySelector("main .section1")
     const section2 = document.querySelector("main .section2")
     const section3 = document.querySelector("main .section3")
+    let rest = heroBlock.getBoundingClientRect()
     
-    document.addEventListener('scroll', function(event) {
-        let rest = heroBlock.getBoundingClientRect()
-        
-        if (rest.y <= -200) {
-            section1.classList.add("active")
-        }
-        if (rest.y <= -600) {
+    section1.classList.add("active")
+
+    if (rest.y <= -400) {
             section2.classList.add("active")
         }
     
-        if (rest.y <= -1100) {
+    if (rest.y <= -700) {
+        section3.classList.add("active")
+    }
+
+    document.addEventListener('scroll', function(event) {
+        let rest = heroBlock.getBoundingClientRect()
+        
+        if (rest.y <= -400) {
+            section2.classList.add("active")
+        }
+    
+        if (rest.y <= -700) {
             section3.classList.add("active")
         }
     })
