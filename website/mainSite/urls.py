@@ -16,6 +16,7 @@ urlpatterns = [
     path('profile/', views.profilePage, name='profilePage'),
     path('profile/avatar/', views.add_avatar, name='add_avatar'),
     path('profile/update_user_info', views.update_user_info, name='update_user_info'),
+    path('profile/add_list', views.add_list, name='add_list'),
     path('profile/signOut', views.signOut, name='signOut'),
     path('users/<int:user_id>', views.userPage, name="userPage"),
     path('favorite/add/', views.add_to_favorite, name='add_to_favorite'),

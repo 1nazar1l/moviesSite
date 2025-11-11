@@ -1,8 +1,146 @@
+.section-title-block {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.section-title-block .section-title {
+    margin-bottom: 0;
+}
+.circle-button {
+    outline: none;
+    border: 0;
+    background-color: var(--accent);
+    padding: 10px;
+    border-radius: 50%;
+    width: 30px;
+    aspect-ratio: 1 / 1;
+    position: relative;
+    cursor: pointer;
+}
+
+.circle-button::before {
+    position: absolute;
+    content: "+";
+    line-height: 2rem;
+    font-size: 2rem;
+    top: 38%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--primary-text);
+}
+
 .user-info-block {
     background-color: var(--background);
     border: 1px solid var(--border);
     border-radius: 5px;
     padding: 10px;
+}
+
+.add-list-form {
+    display: none;
+    gap: 10px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 30px;
+}
+
+.add-list-form .btn {
+    margin-bottom: 0;
+}
+
+.add-list-form.active {
+    display: flex;
+    flex-direction: column;
+}
+
+.circle-button.active {
+    display: none;
+}
+
+.sort-options {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sort-label {
+    font-size: 0.9rem;
+    color: var(--secondary);
+}
+
+.sort-select {
+    padding: 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    background-color: var(--background);
+    color: var(--secondary);
+}
+
+.checkbox-block {
+    display: flex;
+    gap: 10px;
+}
+
+.checkbox-block input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: var(--background);
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    position: relative;
+}
+
+.checkbox-block input[type="checkbox"]::before {
+    position: absolute;
+    content: "";
+    width: 6px;
+    border-radius: 2px;
+    height: 2px;
+    background-color: var(--primary-text);
+    transform: rotate(40deg);
+    bottom: 32%;
+    left: 20%;
+    opacity: 0;
+    transition: all 0.2s ease;
+}
+
+.checkbox-block input[type="checkbox"]::after {
+    position: absolute;
+    content: "";
+    width: 10px;
+    border-radius: 2px;
+    height: 2px;
+    background-color: var(--primary-text);
+    transform: rotate(-52deg);
+    bottom: 40%;
+    left: 32%;
+    opacity: 0;
+    transition: all 0.2s ease;
+}
+
+.checkbox-block input[type="checkbox"]:checked {
+    background-color: var(--accent);
+}
+.checkbox-block input[type="checkbox"]:disabled {
+    background-color: var(--background);
+}
+
+.checkbox-block input[type="checkbox"]:checked::before {
+    opacity: 1;
+}
+
+.checkbox-block input[type="checkbox"]:checked::after {
+    opacity: 1;
+}
+
+.checkbox-block label {
+    color: var(--primary-text);
 }
 
 /* Основной контент - страница профиля */

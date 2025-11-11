@@ -10,4 +10,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    const addListButton = document.querySelector("#add-list-button")
+    const addListForm = document.querySelector(".add-list-form")
+    addListButton.addEventListener("click", () => {
+        addListButton.classList.add("active")
+        addListForm.classList.add("active")
+    })
 });

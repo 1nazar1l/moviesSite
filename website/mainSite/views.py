@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model, authenticate, login, logout
 
 from django.contrib.contenttypes.models import ContentType
 from mainProject.models import Film, Serial, Actor, Comment, Favorite, Genre
+from .models import UserList
 from django.db.models import Q
 import os
 
@@ -472,6 +473,8 @@ def profilePage(request):
         favorites = user.favorites.all()
         favorites_count = len(favorites)
         favorites = [item for item in favorites]
+
+        user_lists = user.user_lists.all()
         
         return render(request, "main/profile.html", context={
             "username": user.username,
@@ -484,7 +487,8 @@ def profilePage(request):
             "ratings_count": ratings_count,
             "favorites_count": favorites_count,
             "favorites": favorites,
-            "comments": comments
+            "comments": comments,
+            "user_lists": user_lists
         })
     else:
         return redirect("errorPage", media_type="profilePage")
@@ -850,3 +854,20 @@ def userPage(request, user_id):
         "favorites": favorites,
         "comments": comments
     })
+
+def add_list(request):
+    if request.POST:
+        list_name = request.POST.get('list_name')
+        list_description = request.POST.get('list_description')
+        list_type = request.POST.get('list_type')
+        list_is_private = request.POST.get('list_is_private')
+
+        user_list = UserList.objects.create(
+            user=request.user,
+            title=list_name,
+            description=list_description,
+            list_type=list_type,
+            is_private=True if list_is_private == "on" else False 
+        )   
+
+    return redirect('profilePage') 
