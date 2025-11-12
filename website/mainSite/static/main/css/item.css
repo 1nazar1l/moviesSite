@@ -1,3 +1,46 @@
+.add-item-to-list {
+    position: relative;
+}
+
+.add-item-to-list .dropdown-menu {
+    position: absolute;
+    content: "";
+    flex-direction: column;
+    left: 50%;
+    bottom: -110%;
+    transform: translate(-50%, 50%);
+    display: none;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.add-item-to-list:hover .dropdown-menu {
+    display: flex;
+}
+
+.add-item-to-list .dropdown-menu li {
+    width: 180px;
+    height: 50px;
+    background-color: var(--card-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-bottom: 1px solid var(--border);
+    color: var(--primary-text);
+}
+
+.dropdown-menu li button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
 .cast-grid .hidden_button {
     width: 100%;
 }

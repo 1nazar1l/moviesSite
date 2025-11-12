@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model, authenticate, login, logout
 
 from django.contrib.contenttypes.models import ContentType
 from mainProject.models import Film, Serial, Actor, Comment, Favorite, Genre
-from .models import UserList
+from .models import UserList, ListItem
 from django.db.models import Q
 import os
 
@@ -535,6 +535,8 @@ def itemPage(request, media_type, search_id):
         object_id=item.id
     ).select_related('user')
 
+    user_lists = []
+
     if request.user.is_authenticated:
         User = get_user_model()
         user = User.objects.get(id=request.user.id)
@@ -543,12 +545,10 @@ def itemPage(request, media_type, search_id):
             content_type=content_type, 
             object_id=item.id
         ).exists()
+
+        user_lists = user.user_lists.all()
     else:
         is_favorite = False
-    
-    if media_type == "films":
-        print(item.revenue)
-        print(item.budget)
 
     return render(request, "main/item.html", context={
         "username": request.user,
@@ -564,6 +564,7 @@ def itemPage(request, media_type, search_id):
         "content_type_id": content_type.id,
         "object_id": item.id,
         "is_favorite": is_favorite,
+        "user_lists": user_lists,
         "types": {
             "film": "film",
             "serial": "serial",
@@ -877,3 +878,36 @@ def delete_list(request):
     user_list = UserList.objects.get(id=list_id)
     user_list.delete()
     return redirect("profilePage")
+
+def add_item_to_list(request):
+    if request.method == 'POST':
+        # Получаем данные из формы
+        item_id = request.POST.get('item_id')
+        item_media_type = request.POST.get('item_media_type')
+        list_id = request.POST.get('list_id')
+        
+        # Получаем список пользователя
+        user_list = get_object_or_404(UserList, id=list_id, user=request.user)
+        
+        # Определяем модель контента
+        if item_media_type == 'films':
+            model_class = Film
+        elif item_media_type == 'serials':
+            model_class = Serial
+        elif item_media_type == 'actors':
+            model_class = Actor
+        
+        # Получаем объект контента
+        content_object = get_object_or_404(model_class, id=item_id)
+        content_type = ContentType.objects.get_for_model(model_class)
+
+        if not ListItem.objects.filter(user_list=user_list, content_type=content_type, object_id=item_id).exists():
+            # Создаем новый элемент списка
+            list_item = ListItem.objects.create(
+                user_list=user_list,
+                content_type=content_type,
+                object_id=item_id,
+                content_object=content_object
+            )
+    
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
