@@ -871,3 +871,9 @@ def add_list(request):
         )   
 
     return redirect('profilePage') 
+
+def delete_list(request):
+    list_id = request.POST.get("list_id")
+    user_list = UserList.objects.get(id=list_id)
+    user_list.delete()
+    return redirect("profilePage")
