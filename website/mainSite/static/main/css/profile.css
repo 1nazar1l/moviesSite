@@ -1,3 +1,161 @@
+.user-lists-section {
+    margin-bottom: 2rem;
+}
+
+.lists-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.create-list-btn {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: opacity 0.3s;
+}
+
+.create-list-btn:hover {
+    opacity: 0.9;
+}
+
+.lists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.list-card {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    max-height: 350px;
+}
+
+.list-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.list-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    flex: 1;
+}
+
+.list-privacy {
+    color: var(--secondary);
+    font-size: 1.2rem;
+}
+
+.list-description {
+    color: var(--secondary);
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+.list-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    margin-top: auto;
+}
+
+.list-type {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    background-color: var(--border);
+    border-radius: 12px;
+    font-size: 0.8rem;
+}
+
+.list-type.favorite {
+    background-color: #FEE2E2;
+    color: #DC2626;
+}
+
+.list-type.watch_later {
+    background-color: #FEF3C7;
+    color: #D97706;
+}
+
+.list-type.watched {
+    background-color: #D1FAE5;
+    color: #059669;
+}
+
+.list-type.custom {
+    background-color: #DBEAFE;
+    color: #2563EB;
+}
+
+.list-date {
+    color: var(--secondary);
+}
+
+.list-preview {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.preview-item {
+    width: 50px;
+    height: 70px;
+    background-color: var(--border);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--secondary);
+    font-size: 1.5rem;
+}
+
+.list-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.empty-lists {
+    text-align: center;
+    padding: 3rem;
+    color: var(--secondary);
+    grid-column: 1 / -1;
+}
+
+.empty-lists i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    color: var(--border);
+}
+
+
 .section-title-block {
     display: flex;
     align-items: center;
@@ -552,5 +710,31 @@ textarea {
 
     .edit-form .section-title {
         font-size: 1.2rem;
+    }
+
+    .list-card {
+        padding: 1rem;
+        max-height: 400px;
+    }
+
+    .list-actions {
+        flex-direction: column;
+    }
+
+    .lists-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+    }
+
+    .list-meta {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .list-meta .list-type {
+        margin-right: auto;
+    }
+
+    .list-meta .list-date {
+        margin-left: auto;
     }
 }
