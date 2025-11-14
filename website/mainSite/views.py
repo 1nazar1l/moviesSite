@@ -783,17 +783,13 @@ def remove_from_favorite(request):
     if request.method == 'POST':
         try:
             content_type_name = request.POST.get('content_type')
-            print(content_type_name)
             object_id = request.POST.get('object_id')
-            print(object_id)
             
             if not all([content_type_name, object_id]):
                 messages.error(request, 'Ошибка: не указан объект')
                 return redirect(request.META.get('HTTP_REFERER', 'home'))
             
             content_type = ContentType.objects.get(model=content_type_name.lower())
-            
-            model_class = content_type.model_class()
             
             item = Favorite.objects.get(
                 user=request.user,
@@ -804,8 +800,6 @@ def remove_from_favorite(request):
                 
         except ContentType.DoesNotExist:
             messages.error(request, 'Ошибка: тип объекта не найден')
-        except model_class.DoesNotExist:
-            messages.error(request, 'Ошибка: объект не найден')
         except Exception as e:
             messages.error(request, f'Ошибка при добавлении в избранное: {str(e)}')
     
@@ -954,3 +948,19 @@ def listPage(request, list_id):
         "items": items,
         "items_count": len(items)
     })
+
+def delete_item_from_list(request):
+    if request.method == 'POST':
+        media_type = request.POST.get('content_type')
+        object_id = request.POST.get('object_id')
+        list_id = request.POST.get('list_id')
+
+        content_type = ContentType.objects.get(model=media_type.lower())
+
+        user_list = UserList.objects.get(id=list_id)
+        list_item = user_list.items.get(
+            content_type=content_type,
+            object_id=object_id
+        )
+        list_item.delete()
+    return redirect(request.META.get('HTTP_REFERER', 'home'))

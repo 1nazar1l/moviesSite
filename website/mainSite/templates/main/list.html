@@ -139,9 +139,18 @@
                 {% for item in items %}
                   <a href="{% url 'itemPage' item.media_type item.content_object.search_id %}">
                     <div class="item-card">
-                        <div class="remove-item" data-item-id="1">
-                            <i class="fas fa-times"></i>
-                        </div>
+                        {% if user_is_author %}                        
+                          <form action="{% url "delete_item_from_list" %}" method="post">
+                            {% csrf_token %}
+                            <div class="remove-item">
+                              <input type="hidden" name="content_type" value="{{ item.media_type}}">
+                              <input type="hidden" name="object_id" value="{{ item.content_object.id }}">
+                              <input type="hidden" name="list_id" value="{{ user_list.id }}">
+                              <button type="submit" class="remove-button"></button> 
+                              <i class="fas fa-times"></i>
+                            </div>
+                          </form>
+                        {% endif %}
                         <div class="item-poster">
                           {% if item.content_object.local_img_path == "" %}
                             {% if item.content_type.model != "actor" %}

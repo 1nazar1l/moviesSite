@@ -287,6 +287,14 @@
     transition: opacity 0.3s;
 }
 
+.remove-button {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
 .item-card:hover .remove-item {
     opacity: 1;
 }
