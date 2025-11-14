@@ -48,243 +48,151 @@
       <div class="list-header">
           <div class="list-title-section">
               <div>
-                  <h1 class="list-title">Любимые фантастические фильмы</h1>
+                  <h1 class="list-title">{{user_list.title}}</h1>
+                  {% if user_list.is_private %}
+                    <div class="list-privacy">
+                        <i class="fas fa-lock"></i>
+                        <span>Приватный список</span>
+                    </div>
+                  {% else %}                  
                   <div class="list-privacy">
                       <i class="fas fa-lock-open"></i>
                       <span>Публичный список</span>
                   </div>
+                  {% endif %}
               </div>
-              <span class="list-type custom">
-                  <i class="fas fa-list"></i>
-                  Пользовательский список
-              </span>
+              {% if user_list.list_type == "favorite" %}
+                <span class="list-type favorite">
+                    <i class="fas fa-heart"></i>
+                    Избранное
+                </span>
+              {% elif user_list.list_type == "watch_later" %}
+                <span class="list-type watch_later">
+                  <i class="fas fa-clock"></i>
+                  Смотреть позже
+                </span>
+              {% elif user_list.list_type == "watched" %}
+                <span class="list-type watched">
+                    <i class="fas fa-check-circle"></i>
+                    Просмотрено
+                </span>
+              {% else %}
+                <span class="list-type custom">
+                    <i class="fas fa-list"></i>
+                    Пользовательский
+                </span>
+              {% endif %}
           </div>
           
-          <p class="list-description">
-              Мои самые любимые научно-фантастические фильмы всех времен. Здесь собраны картины, 
-              которые заставляют задуматься о будущем, технологиях и нашем месте во Вселенной.
-          </p>
+          <p class="list-description">{{user_list.description}}</p>
           
           <div class="list-meta">
               <div class="meta-item">
                   <span class="meta-label">Автор списка</span>
                   <span class="meta-value">
-                      <div class="author-avatar">К</div>
-                      Киноман007
+                      <div class="author-avatar">
+                        {% if author.avatar %}
+                        <img src="{{ author.avatar.url }}" alt="Аватар" class="user-avatar" id="userAvatar">
+                        {% else %}
+                        <div class="avatar" id="userAvatar">{{ author.username|first|upper }}</div>
+                        {% endif %}
+                      </div>
+                      {{author.username}}
                   </span>
               </div>
               <div class="meta-item">
                   <span class="meta-label">Дата создания</span>
-                  <span class="meta-value">15 сентября 2023</span>
+                  <span class="meta-value">{{user_list.created_at|date}}</span>
               </div>
               <div class="meta-item">
                   <span class="meta-label">Последнее обновление</span>
-                  <span class="meta-value">2 октября 2023</span>
+                  <span class="meta-value">{{user_list.updated_at|date}}</span>
               </div>
               <div class="meta-item">
                   <span class="meta-label">Элементов в списке</span>
-                  <span class="meta-value">8</span>
+                  <span class="meta-value">{{items_count}}</span>
               </div>
           </div>
-          
-          <div class="list-actions">
-              <button class="btn btn-primary">
-                  <i class="fas fa-edit"></i>
-                  Редактировать список
-              </button>
-              <button class="btn btn-secondary">
-                  <i class="fas fa-share"></i>
-                  Поделиться
-              </button>
-          </div>
+          {% if user_is_author %}
+            <div class="list-actions">
+                <button class="btn btn-primary">
+                    <i class="fas fa-edit"></i>
+                    Редактировать список
+                </button>
+                <button class="btn btn-secondary">
+                    <i class="fas fa-share"></i>
+                    Поделиться
+                </button>
+            </div>
+          {% endif %}
       </div>
 
       <!-- Содержимое списка -->
       <div class="list-content">
           <div class="content-header">
               <h2 class="section-title">Элементы списка</h2>
-              <span class="items-count">8 элементов</span>
+              <span class="items-count">{{items_count}} элементов</span>
           </div>
+          {% if items_count != 0 %}
+            <div class="items-grid" id="itemsGrid">
+                <!-- Фильм 1 -->
+                {% for item in items %}
+                  <a href="{% url 'itemPage' item.media_type item.content_object.search_id %}">
+                    <div class="item-card">
+                        <div class="remove-item" data-item-id="1">
+                            <i class="fas fa-times"></i>
+                        </div>
+                        <div class="item-poster">
+                          {% if item.content_object.local_img_path == "" %}
+                            {% if item.content_type.model != "actor" %}
+                              <i class="fas fa-film"></i>
+                            {% else %}
+                              <i class="fas fa-user fa-3x"></i>
+                            {% endif %}
+                          {% else %}
+                            <img src="{{item.content_object.local_img_path.url}}" alt="">
+                          {% endif %}
+                        </div>
+                        <div class="item-info">
+                            <h3 class="item-title">
+                              {% if item.content_type.model != "actor" %}
+                              {{item.content_object.title}}
+                              {% else %}
+                              {{item.content_object.name}}
+                              {% endif %}
+                            </h3>
+                            <div class="item-meta">
+                                <span>
+                                  {% if item.content_type.model == "film" %}
+                                  {{item.content_object.release_date|date:"Y"}}
+                                  {% elif item.content_type.model == "serial" %}
+                                  {{item.content_object.first_air_date|date:"Y"}}
+                                  -
+                                  {{item.content_object.last_air_date|date:"Y"}}
+                                  {% elif item.content_type.model == "actor" %}
+                                  {{item.content_object.birthday}}
+                                  {% endif %}
+                                </span>
+                                <span class="item-rating">
+                                  {% if item.content_type.model != "actor" %}
+                                  <i class="fas fa-star"></i>
+                                  {{item.content_object.rating|floatformat:1}}
+                                  {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                  </a>
+                {% endfor %}
+            </div>
+          {% else %}
+            <div class="empty-list" id="emptyList">
+                <i class="fas fa-inbox"></i>
+                <h3>Список пуст</h3>
+                <p>Добавьте фильмы, сериалы или актеров в этот список</p>
+            </div>
+          {% endif %}
           
-          <div class="items-grid" id="itemsGrid">
-              <!-- Фильм 1 -->
-              <div class="item-card" onclick="window.location.href='movie-details.html'">
-                  <div class="remove-item" data-item-id="1">
-                      <i class="fas fa-times"></i>
-                  </div>
-                  <div class="item-type">Фильм</div>
-                  <div class="item-poster">
-                      <i class="fas fa-film"></i>
-                  </div>
-                  <div class="item-info">
-                      <h3 class="item-title">Интерстеллар</h3>
-                      <div class="item-meta">
-                          <span>2014</span>
-                          <span class="item-rating">
-                              <i class="fas fa-star"></i>
-                              8.6
-                          </span>
-                      </div>
-                  </div>
-              </div>
-              
-              <!-- Фильм 2 -->
-              <div class="item-card" onclick="window.location.href='movie-details.html'">
-                  <div class="remove-item" data-item-id="2">
-                      <i class="fas fa-times"></i>
-                  </div>
-                  <div class="item-type">Фильм</div>
-                  <div class="item-poster">
-                      <i class="fas fa-film"></i>
-                  </div>
-                  <div class="item-info">
-                      <h3 class="item-title">Начало</h3>
-                      <div class="item-meta">
-                          <span>2010</span>
-                          <span class="item-rating">
-                              <i class="fas fa-star"></i>
-                              8.8
-                          </span>
-                      </div>
-                  </div>
-              </div>
-              
-              <!-- Фильм 3 -->
-              <div class="item-card" onclick="window.location.href='movie-details.html'">
-                  <div class="remove-item" data-item-id="3">
-                      <i class="fas fa-times"></i>
-                  </div>
-                  <div class="item-type">Фильм</div>
-                  <div class="item-poster">
-                      <i class="fas fa-film"></i>
-                  </div>
-                  <div class="item-info">
-                      <h3 class="item-title">Матрица</h3>
-                      <div class="item-meta">
-                          <span>1999</span>
-                          <span class="item-rating">
-                              <i class="fas fa-star"></i>
-                              8.7
-                          </span>
-                      </div>
-                  </div>
-              </div>
-              
-              <!-- Сериал 1 -->
-              <div class="item-card" onclick="window.location.href='series-details.html'">
-                  <div class="remove-item" data-item-id="4">
-                      <i class="fas fa-times"></i>
-                  </div>
-                  <div class="item-type">Сериал</div>
-                  <div class="item-poster">
-                      <i class="fas fa-tv"></i>
-                  </div>
-                  <div class="item-info">
-                      <h3 class="item-title">Черное зеркало</h3>
-                      <div class="item-meta">
-                          <span>2011-2023</span>
-                          <span class="item-rating">
-                              <i class="fas fa-star"></i>
-                              8.8
-                          </span>
-                      </div>
-                  </div>
-              </div>
-              
-              <!-- Фильм 4 -->
-              <div class="item-card" onclick="window.location.href='movie-details.html'">
-                  <div class="remove-item" data-item-id="5">
-                      <i class="fas fa-times"></i>
-                  </div>
-                  <div class="item-type">Фильм</div>
-                  <div class="item-poster">
-                      <i class="fas fa-film"></i>
-                  </div>
-                  <div class="item-info">
-                      <h3 class="item-title">Прибытие</h3>
-                      <div class="item-meta">
-                          <span>2016</span>
-                          <span class="item-rating">
-                              <i class="fas fa-star"></i>
-                              7.9
-                          </span>
-                      </div>
-                  </div>
-              </div>
-              
-              <!-- Фильм 5 -->
-              <div class="item-card" onclick="window.location.href='movie-details.html'">
-                  <div class="remove-item" data-item-id="6">
-                      <i class="fas fa-times"></i>
-                  </div>
-                  <div class="item-type">Фильм</div>
-                  <div class="item-poster">
-                      <i class="fas fa-film"></i>
-                  </div>
-                  <div class="item-info">
-                      <h3 class="item-title">Бегущий по лезвию 2049</h3>
-                      <div class="item-meta">
-                          <span>2017</span>
-                          <span class="item-rating">
-                              <i class="fas fa-star"></i>
-                              8.0
-                          </span>
-                      </div>
-                  </div>
-              </div>
-              
-              <!-- Актер 1 -->
-              <div class="item-card" onclick="window.location.href='actor-details.html'">
-                  <div class="remove-item" data-item-id="7">
-                      <i class="fas fa-times"></i>
-                  </div>
-                  <div class="item-type">Актер</div>
-                  <div class="item-poster">
-                      <i class="fas fa-user"></i>
-                  </div>
-                  <div class="item-info">
-                      <h3 class="item-title">Мэттью Макконахи</h3>
-                      <div class="item-meta">
-                          <span>Актер</span>
-                          <span class="item-rating">
-                              <i class="fas fa-star"></i>
-                              -
-                          </span>
-                      </div>
-                  </div>
-              </div>
-              
-              <!-- Фильм 6 -->
-              <div class="item-card" onclick="window.location.href='movie-details.html'">
-                  <div class="remove-item" data-item-id="8">
-                      <i class="fas fa-times"></i>
-                  </div>
-                  <div class="item-type">Фильм</div>
-                  <div class="item-poster">
-                      <i class="fas fa-film"></i>
-                  </div>
-                  <div class="item-info">
-                      <h3 class="item-title">Гравитация</h3>
-                      <div class="item-meta">
-                          <span>2013</span>
-                          <span class="item-rating">
-                              <i class="fas fa-star"></i>
-                              7.7
-                          </span>
-                      </div>
-                  </div>
-              </div>
-          </div>
-          
-          <div class="empty-list" id="emptyList" style="display: none;">
-              <i class="fas fa-inbox"></i>
-              <h3>Список пуст</h3>
-              <p>Добавьте фильмы, сериалы или актеров в этот список</p>
-              <button class="btn btn-primary">
-                  <i class="fas fa-plus"></i>
-                  Добавить элементы
-              </button>
-          </div>
       </div>
   </div>
 {% endblock main_content %}

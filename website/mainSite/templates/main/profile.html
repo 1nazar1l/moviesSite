@@ -146,7 +146,7 @@
         <div class="user-lists-section">            
             <div class="lists-grid" id="listsGrid">
                 {% for user_list in user_lists %}
-                  <a href="{% url "listPage" %}">
+                  <a href="{% url "listPage" user_list.id %}">
                     <div class="list-card">
                         <div class="list-header">
                             <div>
@@ -229,13 +229,13 @@
               </form>
               <div class="movie-poster">
                 {% if item.content_object.local_img_path == "" %}
-                {% if item.content_type.model != "actor" %}
-                <i class="fas fa-film"></i>
+                  {% if item.content_type.model != "actor" %}
+                  <i class="fas fa-film"></i>
+                  {% else %}
+                  <i class="fas fa-user fa-3x"></i>
+                  {% endif %}
                 {% else %}
-                <i class="fas fa-user fa-3x"></i>
-                {% endif %}
-                {% else %}
-                <img src="{{item.content_object.local_img_path.url}}" alt="">
+                  <img src="{{item.content_object.local_img_path.url}}" alt="">
                 {% endif %}
               </div>
               <div class="movie-info">

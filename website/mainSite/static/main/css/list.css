@@ -134,8 +134,9 @@
     cursor: pointer;
     transition: all 0.3s;
     border: none;
-    display: inline-flex;
+    display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
 }
 
@@ -194,7 +195,7 @@
 
 .items-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1.5rem;
 }
 
@@ -222,6 +223,11 @@
     justify-content: center;
     color: var(--secondary);
     font-size: 3rem;
+    overflow: hidden;
+}
+
+.item-poster img {
+    width: 100%;
 }
 
 .item-info {
@@ -339,5 +345,11 @@
     
     .items-grid {
         grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+}
+
+@media (max-width: 375px) {
+    .list-header {
+        padding: 1rem;
     }
 }

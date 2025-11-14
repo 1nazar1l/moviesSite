@@ -939,5 +939,18 @@ def add_item_to_list(request):
     return redirect(request.META.get('HTTP_REFERER', 'home'))
 
 
-def listPage(request):
-    return render(request, "main/list.html")
+def listPage(request, list_id):
+    user_list = UserList.objects.get(id=list_id)
+    user = user_list.user
+    user_is_author = user.username == request.user.username
+    items = user_list.items.all()
+    for item in items:
+        item.media_type = item.content_type.model
+    return render(request, "main/list.html", context={
+        "username": user.username,
+        "user_list": user_list,
+        "user_is_author": user_is_author,
+        "author": user,
+        "items": items,
+        "items_count": len(items)
+    })
