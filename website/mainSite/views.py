@@ -937,3 +937,7 @@ def add_item_to_list(request):
             )
     
     return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+
+def listPage(request):
+    return render(request, "main/list.html")

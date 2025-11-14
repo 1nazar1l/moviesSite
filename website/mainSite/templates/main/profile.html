@@ -105,11 +105,11 @@
           </div>
 
           {% if error_messages|length != 0 %}
-          {% for message in error_messages %}
-          <div class="form-group">
-            {{message}}
-          </div>
-          {% endfor %}
+            {% for message in error_messages %}
+            <div class="form-group">
+              {{message}}
+            </div>
+            {% endfor %}
           {% endif %}
 
           <div class="form-actions">
@@ -146,58 +146,60 @@
         <div class="user-lists-section">            
             <div class="lists-grid" id="listsGrid">
                 {% for user_list in user_lists %}
-                  <div class="list-card">
-                      <div class="list-header">
-                          <div>
-                              <h4 class="list-title">{{user_list.title}}</h4>
-                              <div class="list-privacy">
-                                {% if user_list.is_private %}
-                                  <i class="fas fa-lock"></i>
-                                {% else %}
-                                  <i class="fas fa-lock-open"></i>
-                                {% endif %}
-                              </div>
-                          </div>
-                      </div>
-                      <p class="list-description">{{user_list.description}}</p>
-                      <div class="list-meta">
-                        {% if user_list.list_type == "favorite" %}
-                          <span class="list-type favorite">
-                              <i class="fas fa-heart"></i>
-                              Избранное
-                          </span>
-                        {% elif user_list.list_type == "watch_later" %}
-                          <span class="list-type watch_later">
-                            <i class="fas fa-clock"></i>
-                            Смотреть позже
-                          </span>
-                        {% elif user_list.list_type == "watched" %}
-                          <span class="list-type watched">
-                              <i class="fas fa-check-circle"></i>
-                              Просмотрено
-                          </span>
-                        {% else %}
-                          <span class="list-type custom">
-                              <i class="fas fa-list"></i>
-                              Пользовательский
-                          </span>
-                        {% endif %}
-                          <span class="list-date">{{user_list.created_at|date}}</span>
-                      </div>
-                      <div class="list-actions">
-                          <button class="btn btn-secondary btn-small">
-                              <i class="fas fa-edit"></i>
-                              Редактировать
-                          </button>
-                          <form action="{% url "delete_list" %}" method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="list_id" value="{{user_list.id}}">
+                  <a href="{% url "listPage" %}">
+                    <div class="list-card">
+                        <div class="list-header">
+                            <div>
+                                <h4 class="list-title">{{user_list.title}}</h4>
+                                <div class="list-privacy">
+                                  {% if user_list.is_private %}
+                                    <i class="fas fa-lock"></i>
+                                  {% else %}
+                                    <i class="fas fa-lock-open"></i>
+                                  {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <p class="list-description">{{user_list.description}}</p>
+                        <div class="list-meta">
+                          {% if user_list.list_type == "favorite" %}
+                            <span class="list-type favorite">
+                                <i class="fas fa-heart"></i>
+                                Избранное
+                            </span>
+                          {% elif user_list.list_type == "watch_later" %}
+                            <span class="list-type watch_later">
+                              <i class="fas fa-clock"></i>
+                              Смотреть позже
+                            </span>
+                          {% elif user_list.list_type == "watched" %}
+                            <span class="list-type watched">
+                                <i class="fas fa-check-circle"></i>
+                                Просмотрено
+                            </span>
+                          {% else %}
+                            <span class="list-type custom">
+                                <i class="fas fa-list"></i>
+                                Пользовательский
+                            </span>
+                          {% endif %}
+                            <span class="list-date">{{user_list.created_at|date}}</span>
+                        </div>
+                        <div class="list-actions">
                             <button class="btn btn-secondary btn-small">
-                                <i class="fas fa-trash"></i>
+                                <i class="fas fa-edit"></i>
+                                Редактировать
                             </button>
-                          </form>
-                      </div>
-                  </div>
+                            <form action="{% url "delete_list" %}" method="post">
+                              {% csrf_token %}
+                              <input type="hidden" name="list_id" value="{{user_list.id}}">
+                              <button class="btn btn-secondary btn-small">
+                                  <i class="fas fa-trash"></i>
+                              </button>
+                            </form>
+                        </div>
+                    </div>
+                  </a>
                 {% empty %}                  
                   <div class="empty-lists" id="emptyLists">
                       <i class="fas fa-list"></i>
