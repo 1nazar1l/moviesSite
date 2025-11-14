@@ -39,10 +39,12 @@
 
 {% block main_content %}
   <div class="list-page">
-      <a href="profile.html" class="back-link">
+      {% if user_is_author %}      
+        <a href="{{ request.META.HTTP_REFERER }}" class="back-link">
           <i class="fas fa-arrow-left"></i>
           Назад к профилю
-      </a>
+        </a>
+      {% endif %}
 
       <!-- Заголовок списка -->
       <div class="list-header">
