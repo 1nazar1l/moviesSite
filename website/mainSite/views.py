@@ -537,7 +537,7 @@ def itemPage(request, media_type, search_id):
         object_id=item.id
     ).select_related('user')
 
-    user_lists = []
+    user_lists_with_status = []
 
     if request.user.is_authenticated:
         User = get_user_model()
@@ -551,24 +551,24 @@ def itemPage(request, media_type, search_id):
         user_lists = user.user_lists.all()
 
         user_lists_with_status = []
-        if request.user.is_authenticated:            
-            item_exists_subquery = ListItem.objects.filter(
-                user_list=OuterRef('pk'),
-                content_type=content_type,
-                object_id=item.id
-            )
-            
-            user_lists = user.user_lists.annotate(
-                has_item=Exists(item_exists_subquery)
-            )
-            
-            user_lists_with_status = [
-                {
-                    'list': user_list,
-                    'has_item': user_list.has_item
-                }
-                for user_list in user_lists
-            ]
+        
+        item_exists_subquery = ListItem.objects.filter(
+            user_list=OuterRef('pk'),
+            content_type=content_type,
+            object_id=item.id
+        )
+        
+        user_lists = user.user_lists.annotate(
+            has_item=Exists(item_exists_subquery)
+        )
+        
+        user_lists_with_status = [
+            {
+                'list': user_list,
+                'has_item': user_list.has_item
+            }
+            for user_list in user_lists
+        ]
     else:
         is_favorite = False
 
@@ -863,6 +863,8 @@ def userPage(request, user_id):
     favorites_count = len(favorites)
     favorites = [item for item in favorites]
 
+    user_lists = list(user.user_lists.filter(is_private=False))
+
     return render(request, 'main/user.html', context={
         "username": user.username,
         "avatar_url": user.avatar.url,
@@ -875,7 +877,9 @@ def userPage(request, user_id):
         "ratings_count": ratings_count,
         "favorites_count": favorites_count,
         "favorites": favorites,
-        "comments": comments
+        "comments": comments,
+        "user_lists": user_lists,
+        "user_lists_count": len(user_lists)
     })
 
 def add_list(request):

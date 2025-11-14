@@ -92,6 +92,50 @@
 
 
       <div class="favorites-section">
+        {% if user_lists_count != 0 %}
+          <div class="section-title-block">
+            <h3 class="section-title">Мои листы</h3>
+            <button class="circle-button" id="add-list-button"></button>
+          </div>
+          <div class="user-lists-section">            
+            <div class="lists-grid" id="listsGrid">
+                {% for user_list in user_lists %}
+                  <div class="list-card">
+                      <div class="list-header">
+                          <div>
+                              <h4 class="list-title">{{user_list.title}}</h4>
+                          </div>
+                      </div>
+                      <p class="list-description">{{user_list.description}}</p>
+                      <div class="list-meta">
+                        {% if user_list.list_type == "favorite" %}
+                          <span class="list-type favorite">
+                              <i class="fas fa-heart"></i>
+                              Избранное
+                          </span>
+                        {% elif user_list.list_type == "watch_later" %}
+                          <span class="list-type watch_later">
+                            <i class="fas fa-clock"></i>
+                            Смотреть позже
+                          </span>
+                        {% elif user_list.list_type == "watched" %}
+                          <span class="list-type watched">
+                              <i class="fas fa-check-circle"></i>
+                              Просмотрено
+                          </span>
+                        {% else %}
+                          <span class="list-type custom">
+                              <i class="fas fa-list"></i>
+                              Пользовательский
+                          </span>
+                        {% endif %}
+                          <span class="list-date">{{user_list.created_at|date}}</span>
+                      </div>
+                  </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
 
         {% if favorites_count != 0 %}
         <h3 class="section-title">Мое избранное</h3>
