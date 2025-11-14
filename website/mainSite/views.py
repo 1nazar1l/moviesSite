@@ -20,6 +20,8 @@ from mainProject.tools import parse_media_item
 
 import requests
 
+from django.db.models import Exists, OuterRef
+
 def set_previous_page_values(request, **kwargs):
     request.session.modified = True
 
@@ -547,6 +549,26 @@ def itemPage(request, media_type, search_id):
         ).exists()
 
         user_lists = user.user_lists.all()
+
+        user_lists_with_status = []
+        if request.user.is_authenticated:            
+            item_exists_subquery = ListItem.objects.filter(
+                user_list=OuterRef('pk'),
+                content_type=content_type,
+                object_id=item.id
+            )
+            
+            user_lists = user.user_lists.annotate(
+                has_item=Exists(item_exists_subquery)
+            )
+            
+            user_lists_with_status = [
+                {
+                    'list': user_list,
+                    'has_item': user_list.has_item
+                }
+                for user_list in user_lists
+            ]
     else:
         is_favorite = False
 
@@ -564,7 +586,7 @@ def itemPage(request, media_type, search_id):
         "content_type_id": content_type.id,
         "object_id": item.id,
         "is_favorite": is_favorite,
-        "user_lists": user_lists,
+        'user_lists_with_status': user_lists_with_status,
         "types": {
             "film": "film",
             "serial": "serial",
