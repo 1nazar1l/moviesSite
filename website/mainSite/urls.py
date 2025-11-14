@@ -18,6 +18,7 @@ urlpatterns = [
     path('search/', views.searchPage, name='searchPage'),
     path('profile/', views.profilePage, name='profilePage'),
     path('profile/listPage/<int:list_id>', views.listPage, name='listPage'),
+    path('edit_list/', views.edit_list, name='edit_list'),
     path('delete_item_form_list/', views.delete_item_from_list, name='delete_item_from_list'),
     path('profile/avatar/', views.add_avatar, name='add_avatar'),
     path('profile/update_user_info', views.update_user_info, name='update_user_info'),

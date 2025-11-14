@@ -964,3 +964,24 @@ def delete_item_from_list(request):
         )
         list_item.delete()
     return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+def edit_list(request):
+    if request.POST:
+        list_id = request.POST.get('list_id')
+        list_name = request.POST.get('list_name')
+        list_description = request.POST.get('list_description')
+        list_type = request.POST.get('list_type')
+        list_is_private = request.POST.get('list_is_private')
+
+        user_lists = UserList.objects.all()  
+        user_list = user_lists.get(id=list_id)  
+        if user_lists.filter(title=list_name):
+            error_messages = []
+        else:
+            user_list.title = list_name
+            
+        user_list.description = list_description
+        user_list.list_type = list_type
+        user_list.is_private = True if list_is_private == "on" else False 
+        user_list.save()
+    return redirect(request.META.get('HTTP_REFERER', 'home'))

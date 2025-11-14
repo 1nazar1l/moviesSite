@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="{% static "main/css/item.css" %}">
   <link rel="stylesheet" href="{% static "main/css/profile.css" %}">
   <link rel="stylesheet" href="{% static "main/css/user-avatar.css" %}">
+  <link rel="stylesheet" href="{% static "main/css/editor-form.css" %}">
 {% endblock css %}
 
 {% block script %}
@@ -130,13 +131,13 @@
           {% csrf_token %}
           <input type="text" class="form-input" placeholder="Название листа" name="list_name" required>
           <input type="text" class="form-input" placeholder="Описание листа" name="list_description">
-            <select name="list_type" id="" class="sort-select">
-              <option value="-">Выберите тип листа</option>
-              <option value="custom">Обычный список</option>
-              <option value="watched">Просмотренные</option>
-              <option value="watch_later">Смотреть позже</option>
-              <option value="favorite">Избранные</option>
-            </select>
+          <select name="list_type" id="" class="sort-select">
+            <option value="-">Выберите тип листа</option>
+            <option value="custom">Обычный список</option>
+            <option value="watched">Просмотренные</option>
+            <option value="watch_later">Смотреть позже</option>
+            <option value="favorite">Избранные</option>
+          </select>
           <div class="checkbox-block">
             <input type="checkbox" name="list_is_private">
             <label for="list_is_private">Сделать список приватным</label>
@@ -186,10 +187,10 @@
                             <span class="list-date">{{user_list.created_at|date}}</span>
                         </div>
                         <div class="list-actions">
-                            <button class="btn btn-secondary btn-small">
+                            {% comment %} <button class="btn btn-secondary btn-small">
                                 <i class="fas fa-edit"></i>
                                 Редактировать
-                            </button>
+                            </button> {% endcomment %}
                             <form action="{% url "delete_list" %}" method="post">
                               {% csrf_token %}
                               <input type="hidden" name="list_id" value="{{user_list.id}}">

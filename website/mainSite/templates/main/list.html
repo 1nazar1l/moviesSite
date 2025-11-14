@@ -6,6 +6,8 @@
   <link rel="stylesheet" href="{% static "main/css/base.css" %}">
   <link rel="stylesheet" href="{% static "main/css/list.css" %}">
   <link rel="stylesheet" href="{% static "main/css/user-avatar.css" %}">
+  <link rel="stylesheet" href="{% static "main/css/editor-form.css" %}">
+
 {% endblock css %}
 
 {% block script %}
@@ -115,19 +117,34 @@
                   <span class="meta-value">{{items_count}}</span>
               </div>
           </div>
-          {% if user_is_author %}
-            <div class="list-actions">
-                <button class="btn btn-primary">
-                    <i class="fas fa-edit"></i>
-                    Редактировать список
-                </button>
-                <button class="btn btn-secondary">
-                    <i class="fas fa-share"></i>
-                    Поделиться
-                </button>
-            </div>
-          {% endif %}
+          <div class="list-actions">
+              <button class="btn btn-secondary">
+                  <i class="fas fa-share"></i>
+                  Поделиться
+              </button>
+          </div>
       </div>
+
+      {% if user_is_author %}
+        <form action="{% url "edit_list" %}" method="post" class="add-list-form active">
+          {% csrf_token %}
+          <input type="hidden" class="form-input" name="list_id" value="{{user_list.id}}">
+          <input type="text" class="form-input" placeholder="Название листа" name="list_name" value="{{user_list.title}}" required>
+          <input type="text" class="form-input" placeholder="Описание листа" name="list_description" value="{{user_list.description}}">
+          <select name="list_type" id="" class="sort-select">
+            <option value="-" {% if user_list.list_type == "-" %}selected{% endif %}>Выберите тип листа</option>
+            <option value="custom" {% if user_list.list_type == "custom" %}selected{% endif %}>Обычный список</option>
+            <option value="watched" {% if user_list.list_type == "watched" %}selected{% endif %}>Просмотренные</option>
+            <option value="watch_later" {% if user_list.list_type == "watch_later" %}selected{% endif %}>Смотреть позже</option>
+            <option value="favorite" {% if user_list.list_type == "favorite" %}selected{% endif %}>Избранные</option>
+          </select>
+          <div class="checkbox-block">
+            <input type="checkbox" name="list_is_private" {% if user_list.is_private %}checked{% endif %}>
+            <label for="list_is_private">Сделать список приватным</label>
+          </div>
+          <button class="btn btn-primary">Редактировать</button>
+        </form>
+      {% endif %}
 
       <!-- Содержимое списка -->
       <div class="list-content">
