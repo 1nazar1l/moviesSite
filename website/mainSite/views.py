@@ -967,20 +967,23 @@ def listPage(request, list_id):
 
 def userListPage(request, user_id, list_id):
     user_list = UserList.objects.get(id=list_id)
-    user = user_list.user
-    user_is_author = user.username == request.user.username
-    items = user_list.items.all()
-    for item in items:
-        item.media_type = item.content_type.model
-    return render(request, "main/list.html", context={
-        "username": user.username,
-        "user_list": user_list,
-        "user_is_author": user_is_author,
-        "author": user,
-        "items": items,
-        "items_count": len(items),
-        "user_id": user_id
-    })
+    if user_list.is_private:
+        return redirect("userPage", user_id=user_id)
+    else:
+        user = user_list.user
+        user_is_author = user.username == request.user.username
+        items = user_list.items.all()
+        for item in items:
+            item.media_type = item.content_type.model
+        return render(request, "main/list.html", context={
+            "username": user.username,
+            "user_list": user_list,
+            "user_is_author": user_is_author,
+            "author": user,
+            "items": items,
+            "items_count": len(items),
+            "user_id": user_id
+        })
 
 def delete_item_from_list(request):
     if request.method == 'POST':
