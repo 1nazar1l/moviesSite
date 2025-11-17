@@ -1014,10 +1014,11 @@ def edit_list(request):
         user = request.user
         user_lists = user.user_lists.all()  
         user_list = user_lists.get(id=list_id)  
-        if user_lists.filter(title=list_name):
-            request.session["list_error_messages"].append(f"Лист с названием {list_name} уже существует в вашем списке")
-        else:
-            user_list.title = list_name
+        if user_list.title != list_name:
+            if user_lists.filter(title=list_name):
+                request.session["list_error_messages"].append(f"Лист с названием {list_name} уже существует в вашем списке")
+            else:
+                user_list.title = list_name
             
         user_list.description = list_description
         user_list.list_type = list_type
