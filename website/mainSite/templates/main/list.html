@@ -128,6 +128,12 @@
       {% if user_is_author %}
         <form action="{% url "edit_list" %}" method="post" class="add-list-form active">
           {% csrf_token %}
+          {% if errors|length != 0 %}
+            {% for error in errors %}
+            <p>{{error}}</p>
+            {% endfor %}
+          <hr>
+          {% endif %}
           <input type="hidden" class="form-input" name="list_id" value="{{user_list.id}}">
           <input type="text" class="form-input" placeholder="Название листа" name="list_name" value="{{user_list.title}}" required>
           <input type="text" class="form-input" placeholder="Описание листа" name="list_description" value="{{user_list.description}}">

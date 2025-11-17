@@ -456,6 +456,7 @@ def searchPage(request):
 
 def profilePage(request):
     if request.user.is_authenticated:
+        create_list_errors = request.session.get("list_error_messages", [])
         error_messages = request.session.get('profile_error_messages', [])
 
         today = date.today()
@@ -490,7 +491,8 @@ def profilePage(request):
             "favorites_count": favorites_count,
             "favorites": favorites,
             "comments": comments,
-            "user_lists": user_lists
+            "user_lists": user_lists,
+            "create_list_errors": create_list_errors
         })
     else:
         return redirect("errorPage", media_type="profilePage")
@@ -859,9 +861,14 @@ def userPage(request, user_id):
 
     user_lists = list(user.user_lists.filter(is_private=False))
 
+    if not user.avatar:
+        avatar_url = ""
+    else:
+        avatar_url = user.avatar.url
+
     return render(request, 'main/user.html', context={
         "username": user.username,
-        "avatar_url": user.avatar.url,
+        "avatar_url": avatar_url,
         "icon": str(user.username)[0].upper(),
         "username_value": user.username,
         "email_value": user.email,
@@ -877,19 +884,26 @@ def userPage(request, user_id):
     })
 
 def add_list(request):
+    request.session.modified = True
+    request.session['list_error_messages'] = []
     if request.POST:
         list_name = request.POST.get('list_name')
         list_description = request.POST.get('list_description')
         list_type = request.POST.get('list_type')
         list_is_private = request.POST.get('list_is_private')
 
-        user_list = UserList.objects.create(
-            user=request.user,
-            title=list_name,
-            description=list_description,
-            list_type=list_type,
-            is_private=True if list_is_private == "on" else False 
-        )   
+        user = request.user
+        user_lists = user.user_lists.all()
+        if user_lists.filter(title=list_name):
+            request.session["list_error_messages"].append(f"Лист с названием {list_name} уже существует в вашем списке")
+        else:
+            user_list = UserList.objects.create(
+                user=request.user,
+                title=list_name,
+                description=list_description,
+                list_type=list_type,
+                is_private=True if list_is_private == "on" else False 
+            )   
 
     return redirect('profilePage') 
 
@@ -934,6 +948,7 @@ def add_item_to_list(request):
 
 
 def listPage(request, list_id):
+    errors = request.session.get("list_error_messages", [])
     user_list = UserList.objects.get(id=list_id)
     user = user_list.user
     user_is_author = user.username == request.user.username
@@ -946,7 +961,8 @@ def listPage(request, list_id):
         "user_is_author": user_is_author,
         "author": user,
         "items": items,
-        "items_count": len(items)
+        "items_count": len(items),
+        "errors": errors
     })
 
 def delete_item_from_list(request):
@@ -966,6 +982,8 @@ def delete_item_from_list(request):
     return redirect(request.META.get('HTTP_REFERER', 'home'))
 
 def edit_list(request):
+    request.session.modified = True
+    request.session['list_error_messages'] = []
     if request.POST:
         list_id = request.POST.get('list_id')
         list_name = request.POST.get('list_name')
@@ -973,10 +991,11 @@ def edit_list(request):
         list_type = request.POST.get('list_type')
         list_is_private = request.POST.get('list_is_private')
 
-        user_lists = UserList.objects.all()  
+        user = request.user
+        user_lists = user.user_lists.all()  
         user_list = user_lists.get(id=list_id)  
         if user_lists.filter(title=list_name):
-            error_messages = []
+            request.session["list_error_messages"].append(f"Лист с названием {list_name} уже существует в вашем списке")
         else:
             user_list.title = list_name
             
