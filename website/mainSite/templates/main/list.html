@@ -94,14 +94,29 @@
               <div class="meta-item">
                   <span class="meta-label">Автор списка</span>
                   <span class="meta-value">
-                      <div class="author-avatar">
-                        {% if author.avatar %}
-                        <img src="{{ author.avatar.url }}" alt="Аватар" class="user-avatar" id="userAvatar">
-                        {% else %}
-                        <div class="avatar" id="userAvatar">{{ author.username|first|upper }}</div>
-                        {% endif %}
-                      </div>
-                      {{author.username}}
+                    {% if user_is_author %}
+                      <a href="{% url "profilePage" %}" style="display: flex; align-items: baseline; gap: 6px;">
+                        <div class="author-avatar">
+                          {% if author.avatar %}
+                          <img src="{{ author.avatar.url }}" alt="Аватар" class="user-avatar" id="userAvatar">
+                          {% else %}
+                          <div class="avatar" id="userAvatar">{{ author.username|first|upper }}</div>
+                          {% endif %}
+                        </div>
+                        <span>{{author.username}}</span>
+                      </a>
+                    {% else %}
+                      <a href="{% url "userPage" user_id %}" style="display: flex; align-items: baseline; gap: 6px;">
+                        <div class="author-avatar">
+                          {% if author.avatar %}
+                          <img src="{{ author.avatar.url }}" alt="Аватар" class="user-avatar" id="userAvatar">
+                          {% else %}
+                          <div class="avatar" id="userAvatar">{{ author.username|first|upper }}</div>
+                          {% endif %}
+                        </div>
+                        <span>{{author.username}}</span>
+                      </a>
+                    {% endif %}
                   </span>
               </div>
               <div class="meta-item">

@@ -99,7 +99,7 @@
           <div class="user-lists-section">            
             <div class="lists-grid" id="listsGrid">
                 {% for user_list in user_lists %}
-                  <a href="{% url "listPage" user_list.id %}">
+                  <a href="{% url "userListPage" user_id user_list.id %}">
                     <div class="list-card">
                         <div class="list-header">
                             <div>

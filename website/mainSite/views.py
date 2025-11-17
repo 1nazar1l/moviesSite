@@ -861,9 +861,8 @@ def userPage(request, user_id):
 
     user_lists = list(user.user_lists.filter(is_private=False))
 
-    if not user.avatar:
-        avatar_url = ""
-    else:
+    avatar_url = ""
+    if user.avatar:
         avatar_url = user.avatar.url
 
     return render(request, 'main/user.html', context={
@@ -880,7 +879,8 @@ def userPage(request, user_id):
         "favorites": favorites,
         "comments": comments,
         "user_lists": user_lists,
-        "user_lists_count": len(user_lists)
+        "user_lists_count": len(user_lists),
+        "user_id": user.id,
     })
 
 def add_list(request):
@@ -963,6 +963,23 @@ def listPage(request, list_id):
         "items": items,
         "items_count": len(items),
         "errors": errors
+    })
+
+def userListPage(request, user_id, list_id):
+    user_list = UserList.objects.get(id=list_id)
+    user = user_list.user
+    user_is_author = user.username == request.user.username
+    items = user_list.items.all()
+    for item in items:
+        item.media_type = item.content_type.model
+    return render(request, "main/list.html", context={
+        "username": user.username,
+        "user_list": user_list,
+        "user_is_author": user_is_author,
+        "author": user,
+        "items": items,
+        "items_count": len(items),
+        "user_id": user_id
     })
 
 def delete_item_from_list(request):

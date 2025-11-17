@@ -26,6 +26,7 @@ urlpatterns = [
     path('profile/delete_list', views.delete_list, name='delete_list'),
     path('profile/signOut', views.signOut, name='signOut'),
     path('users/<int:user_id>', views.userPage, name="userPage"),
+    path('users/<int:user_id>/listPage/<int:list_id>', views.userListPage, name="userListPage"),
     path('favorite/add/', views.add_to_favorite, name='add_to_favorite'),
     path('favorite/remove/', views.remove_from_favorite, name='remove_from_favorite'),
     path('adminPanel/films', films_admin_panel, name='adminPanel'),
