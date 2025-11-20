@@ -40,6 +40,7 @@ class Film(models.Model):
     rating = models.FloatField(null=True, blank=True)
     genres = models.ManyToManyField('Genre', blank=True, related_name='films')
     actors = models.ManyToManyField(Actor, blank=True)
+    trailer_url = models.URLField(max_length=500, blank=True, null=True, verbose_name="Ссылка на трейлер")
 
     class Meta:
         verbose_name = "Фильм"
@@ -63,6 +64,7 @@ class Serial(models.Model):
     rating = models.FloatField(null=True, blank=True)
     genres = models.ManyToManyField('Genre', blank=True, related_name='serials')
     actors = models.ManyToManyField(Actor, blank=True)
+    trailer_url = models.URLField(max_length=500, blank=True, null=True, verbose_name="Ссылка на трейлер")
 
     class Meta:
         verbose_name = "Сериал"

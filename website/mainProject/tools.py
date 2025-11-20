@@ -7,6 +7,8 @@ from .models import Film, Serial, Actor, Message, Genre
 
 from django.conf import settings
 
+from bs4 import BeautifulSoup  # Добавлен импорт BeautifulSoup
+
 env.read_env()
 api_key = env("API_KEY")
 BASE_URL = "https://api.themoviedb.org/3"
@@ -121,13 +123,120 @@ def delete_all_media_items(request, media_type):
         "Все объекты успешно удалены!"
     )
 
+def get_trailer_url(search_id, media_type, title=None, release_date=None):
+    """
+    Получение ссылки на трейлер фильма/сериала
+    Сначала пытается через API TMDB, затем через BeautifulSoup на YouTube
+    """
+    # Пытаемся получить трейлер через API TMDB
+    if media_type in ["films", "serials"]:
+        url_part = "movie" if media_type == "films" else "tv"
+        videos_url = f"{BASE_URL}/{url_part}/{search_id}/videos"
+        
+        params = {
+            "api_key": api_key,
+            "language": "ru",
+        }
+        
+        try:
+            response = requests.get(videos_url, params=params)
+            response.raise_for_status()
+            videos_data = response.json()
+            
+            # Ищем официальные трейлеры на YouTube
+            if videos_data and 'results' in videos_data:
+                trailers = [video for video in videos_data['results'] 
+                           if video['site'] == 'YouTube' and 
+                           video['type'] in ['Trailer', 'Teaser']]
+                
+                if trailers:
+                    # Сортируем по официальности и дате публикации
+                    trailers.sort(key=lambda x: (x.get('official', False), x.get('published_at', '')), reverse=True)
+                    trailer = trailers[0]
+                    return f"https://www.youtube.com/watch?v={trailer['key']}"
+        
+        except requests.exceptions.RequestException:
+            # Если API не сработало, продолжаем к BeautifulSoup
+            pass
+    
+    # Если через API не нашли, используем BeautifulSoup
+    if title:
+        return get_trailer_url_bs4(title, release_date)
+    
+    return None
+
+def get_trailer_url_bs4(title, release_date=None):
+    """
+    Получение ссылки на трейлер с помощью BeautifulSoup через YouTube
+    """
+    search_query = f"{title} {release_date[:4] if release_date else ''} официальный трейлер"
+    search_query = search_query.replace(" ", "+")
+    
+    # Поиск на YouTube
+    youtube_url = f"https://www.youtube.com/results?search_query={search_query}"
+    
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    }
+    
+    try:
+        response = requests.get(youtube_url, headers=headers, timeout=10)
+        response.raise_for_status()
+        
+        soup = BeautifulSoup(response.content, 'html.parser')
+        
+        # Поиск ссылок на видео в структуре YouTube
+        video_links = []
+        script_tags = soup.find_all('script')
+        
+        for script in script_tags:
+            script_text = script.string
+            if script_text and 'videoId' in script_text:
+                # Ищем videoId в JSON структуре
+                import re
+                video_ids = re.findall(r'"videoId":"([^"]+)"', script_text)
+                video_links.extend(video_ids)
+        
+        # Альтернативный метод поиска по ссылкам
+        if not video_links:
+            for link in soup.find_all('a', href=True):
+                href = link['href']
+                if '/watch?v=' in href and href not in video_links:
+                    video_links.append(href)
+        
+        # Обработка найденных ссылок
+        processed_links = []
+        for link in video_links:
+            if link.startswith('/watch?v='):
+                video_id = link.split('watch?v=')[1].split('&')[0]
+                processed_links.append(video_id)
+            elif len(link) == 11:  # Длина YouTube video ID
+                processed_links.append(link)
+        
+        if processed_links:
+            # Берем первую найденную ссылку
+            return f"https://www.youtube.com/watch?v={processed_links[0]}"
+        
+        return None
+        
+    except (requests.exceptions.RequestException, Exception) as e:
+        print(f"Ошибка при поиске трейлера через BeautifulSoup: {e}")
+        return None
+
 def download_media_item(media_type, img_index, media_item_data, model, img_url, cast = []):
+    # Получаем трейлер для фильмов и сериалов
+    trailer_url = None
+    if media_type in ["films", "serials"]:
+        title = media_item_data.get("title") if media_type == "films" else media_item_data.get("name")
+        release_date = media_item_data.get("release_date") if media_type == "films" else media_item_data.get("first_air_date")
+        trailer_url = get_trailer_url(media_item_data["id"], media_type, title, release_date)
+
     if media_item_data[img_index] is None:
         site_img_path = ""
         local_img_path = ""
     else:
         site_img_path = f"{img_url}/{media_item_data[img_index]}"
-        local_img_path = f"{media_type}/{media_item_data["id"]}.jpg"
+        local_img_path = f"{media_type}/{media_item_data['id']}.jpg"
 
 
     if media_type == "films":
@@ -149,6 +258,7 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url, 
             "runtime": media_item_data["runtime"],
             "status": media_item_data["status"],
             "rating": media_item_data["vote_average"],
+            "trailer_url": trailer_url,  # Добавлено поле для трейлера
         }
     elif media_type == "serials":
         defaults = {
@@ -163,6 +273,7 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url, 
             "local_img_path": local_img_path,
             "status": media_item_data["status"],
             "rating": media_item_data["vote_average"],
+            "trailer_url": trailer_url,  # Добавлено поле для трейлера
         }
     elif media_type == "actors":
         defaults = {
@@ -180,6 +291,11 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url, 
         search_id=media_item_data["id"],
         defaults=defaults
     )
+
+    # Если объект уже существовал, обновляем трейлер
+    if not created and media_type in ["films", "serials"] and trailer_url:
+        media_item_obj.trailer_url = trailer_url
+        media_item_obj.save()
 
     if media_type != "actors":
         for genre_item in media_item_data["genres"]:
@@ -354,7 +470,7 @@ def parsing_media_items(request, media_type):
                 if media_type == "actors" and media_item["known_for_department"] != "Acting":
                     continue
                 
-                data_url = f"{BASE_URL}/{url_part}/{media_item["id"]}"
+                data_url = f"{BASE_URL}/{url_part}/{media_item['id']}"
 
                 if media_type != "actors":
                     params = {
@@ -377,7 +493,7 @@ def parsing_media_items(request, media_type):
 
                 cast = []
 
-                data_url = f"{BASE_URL}/{url_part}/{media_item["id"]}/credits"
+                data_url = f"{BASE_URL}/{url_part}/{media_item['id']}/credits"
 
                 response = requests.get(data_url, params=params)
                 response.raise_for_status()
