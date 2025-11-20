@@ -292,6 +292,14 @@
               {% endfor %}
             </ul>
           </div>
+
+          {% if media_type != "actors" %}
+            <a href="{{item.trailer_url}}" target="_blank">
+              <div class="btn btn-primary watch-trailer">
+                Смотреть трейлер
+              </div>
+            </a>
+          {% endif %}
         </div>
 
       </div>
