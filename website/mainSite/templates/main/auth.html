@@ -64,26 +64,22 @@
               </div>
               
               <div class="remember-forgot">
-                  <label class="remember-me">
-                      <input type="checkbox" id="remember">
-                      Запомнить меня
-                  </label>
-                  <a href="#" class="forgot-password">Забыли пароль?</a>
+                <a href="#" class="forgot-password">Забыли пароль?</a>
               </div>
               
               <button type="submit" class="submit-btn">Войти</button>
           </form>
           
-          <div class="auth-divider">
+          {% comment %} <div class="auth-divider">
               <span>или войдите с помощью</span>
-          </div>
+          </div> {% endcomment %}
           
-          <div class="social-auth">
+          {% comment %} <div class="social-auth">
               <button class="social-btn google">
                   <i class="fab fa-google"></i>
                   Войти через Google
               </button>
-          </div>
+          </div> {% endcomment %}
           
           <div class="auth-footer">
               <p>Еще нет аккаунта? <a href="{% url "regPage" %}">Зарегистрироваться</a></p>

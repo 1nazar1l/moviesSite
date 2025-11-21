@@ -22,6 +22,8 @@ import requests
 
 from django.db.models import Exists, OuterRef
 
+from django.core.mail import send_mail
+
 def set_previous_page_values(request, **kwargs):
     request.session.modified = True
 
@@ -97,8 +99,6 @@ def authPage(request):
 
 def regPage(request):
     User = get_user_model()
-    emails = list(set(User.objects.values_list("email")))
-    emails = [email[0] for email in emails]
     message = ""
     message_text = ""
 
@@ -111,21 +111,42 @@ def regPage(request):
             if User.objects.filter(username=username).exists():
                 message_text = f"Пользователь с таким именем({username}) уже существует"
                 message = "exist"
+            elif User.objects.filter(email=email).exists():
+                message_text = f"Пользователь с такой почтой({email}) уже существует"
+                message = "exist"
             else:
-                if email in emails:
-                    message_text = f"Пользователь с такой почтой({email}) уже существует"
-                    message = "exist"
-                else:
+                try:
+                    # Создаем пользователя
                     user = User.objects.create_user(
                         username=username,
                         email=email,
                         password=password  
                     )
                     
+                    # Аутентифицируем и логиним пользователя
                     user = authenticate(request, username=username, password=password)
                     if user is not None:
                         login(request, user)
+                        
+                        subject = 'Добро пожаловать!'
+                        message_body = f'Здравствуйте, {username}! Вы успешно зарегистрировались.'
+                        from_email = settings.EMAIL_HOST_USER
+                        recipient_list = [email]
+                        
+                        # Отправляем email асинхронно или с таймаутом
+                        send_mail(
+                            subject, 
+                            message_body, 
+                            from_email, 
+                            recipient_list,
+                            fail_silently=True  # Не падать при ошибке отправки
+                        )
+                        
                         return redirect("mainPage")
+                        
+                except Exception as e:
+                    message_text = f"Ошибка при создании пользователя: {str(e)}"
+                    message = "error"
 
     return render(request, "main/reg.html", {
         "message": message,
