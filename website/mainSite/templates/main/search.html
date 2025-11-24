@@ -55,14 +55,14 @@
         </p>
       </div>
 
-      <div class="sort-options">
+      {% comment %} <div class="sort-options">
         <span class="sort-label">Сортировка:</span>
         <select class="sort-select" id="sortSelect">
           <option value="rating">По рейтингу</option>
           <option value="release_date">По дате выхода</option>
           <option value="title">По названию</option>
         </select>
-      </div>
+      </div> {% endcomment %}
     </div>
   </div>
   {% if results_count != 0 %}  
@@ -89,7 +89,7 @@
                   </span>
                 </div>
                 <div class="movie-genres">
-                  {% for genre in film.genres %}
+                  {% for genre in film.genres.all %}
                     <span class="genre-tag">{{genre.name}}</span>
                   {% endfor %}
                 </div>
@@ -121,7 +121,7 @@
                   </span>
                 </div>
                 <div class="movie-genres">
-                  {% for genre in serial.genres %}
+                  {% for genre in serial.genres.all %}
                     <span class="genre-tag">{{genre.name}}</span>
                   {% endfor %}
                 </div>

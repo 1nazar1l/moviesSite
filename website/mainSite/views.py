@@ -210,6 +210,8 @@ def filmsPage(request):
     
     for film in films:
         check_path(film)
+
+    films = set(list(films))
     
     genres = Genre.objects.all()
     media_type = "films"
@@ -295,6 +297,7 @@ def serialsPage(request):
     if selected_genres:
         serials = serials.filter(genres__search_id__in=selected_genres).distinct()
     
+    serials = set(list(serials))
     for serial in serials:
         check_path(serial)
     
@@ -395,6 +398,8 @@ def actorsPage(request):
     for actor in actors:
         check_path(actor)
     
+    actors = set(list(actors))
+    
     media_type = "actors"
     
     # Создаем контекст с сохранением значений фильтров
@@ -456,6 +461,10 @@ def searchPage(request):
         name__icontains=search.capitalize()
     )
     actors = actors_with_default_search.union(actors_with_capitalize_search, all=True)
+
+    films = set(list(films))
+    serials = set(list(serials))
+    actors = set(list(actors))
 
     for objects in [films, serials, actors]:
         for object in objects:
@@ -523,6 +532,7 @@ def signOut(request):
     return redirect("mainPage")
 
 def itemPage(request, media_type, search_id):
+    is_vpn = False
     request.session['profile_error_messages'] = []
 
     if media_type == "film" or media_type == "serial" or media_type == "actor":
@@ -610,6 +620,7 @@ def itemPage(request, media_type, search_id):
         "object_id": item.id,
         "is_favorite": is_favorite,
         'user_lists_with_status': user_lists_with_status,
+        "is_vpn": is_vpn,
         "types": {
             "film": "film",
             "serial": "serial",
