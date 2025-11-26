@@ -1,6 +1,6 @@
 <a href="{% url "profilePage" %}">
   <div class="profile-block">
-    <span>{{username}}</span>
+    <span>{{request.user.username}}</span>
     <div class="profile-icon">
       {% if request.user.avatar %}
       <img src="{{ request.user.avatar.url }}" alt="Аватар" class="user-avatar" id="userAvatar">

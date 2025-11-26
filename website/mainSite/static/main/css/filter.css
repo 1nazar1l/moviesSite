@@ -1,0 +1,238 @@
+/* Стили для фильтра */
+.filter-section {
+    margin-bottom: 1.5rem;
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    width: fit-content;
+}
+
+.filter-sidebar {
+    flex: 0 0 300px;
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    height: fit-content;
+    top: calc(var(--header-height) + 2rem);
+}
+
+.filter-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    display: inline-block;
+}
+
+.filter-title::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    width: 80%;
+    transform: translateX(-50%);
+    height: 3px;
+    background-color: var(--accent);
+}
+
+.filter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filter-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.filter-input {
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    background-color: var(--background);
+    color: var(--primary-text);
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.filter-input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.range-inputs {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.range-inputs .filter-input {
+    flex: 1;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.checkbox-group input {
+    accent-color: var(--accent);
+}
+
+.select-wrapper {
+    position: relative;
+}
+
+.filter-select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    background-color: var(--background);
+    color: var(--primary-text);
+    font-size: 1rem;
+    appearance: none;
+    cursor: pointer;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.submit-btn {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: opacity 0.3s;
+    margin-top: 0.5rem;
+}
+
+.submit-btn:hover {
+    opacity: 0.9;
+}
+
+.reset-btn {
+    background-color: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 0.75rem;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 0.5rem;
+}
+
+.reset-btn:hover {
+    background-color: var(--accent);
+    color: white;
+}
+
+/* Адаптивность */
+@media (max-width: 1024px) {
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    .catalog-page {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 768px) {
+    .catalog-page {
+        flex-direction: column;
+    }
+
+    .filter-sidebar {
+        position: static;
+        flex: none;
+    }
+
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    .movie-poster {
+        height: 200px;
+    }
+}
+
+@media (max-width: 576px) {
+    .catalog-page {
+        padding: 1rem;
+    }
+
+    nav ul {
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+
+    .range-inputs {
+        flex-direction: column;
+    }
+
+    .content-header {
+        flex-direction: column;
+        align-items: start;
+    }
+
+    .sort-label {
+        font-size: 1.2rem;
+    }
+
+    .sort-options {
+        gap: 1.5rem;
+    }
+
+    .sort-select {
+        flex: 1;
+        outline: 0;
+    }
+}
+
+@media (max-width: 425px) {
+    .sort-options {
+        justify-content: space-between;
+        width: 100%;
+    }
+}
+
+@media (max-width: 375px) {
+    .sort-options {
+        flex-direction: column;
+        align-items: start;
+        gap: 0;
+    }
+
+    .sort-select {
+        outline: 0;
+        width: 100%;
+    }
+
+    .sort-label {
+        display: none;
+        opacity: 0;
+        pointer-events: none;
+    }
+}

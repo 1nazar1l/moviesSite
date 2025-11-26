@@ -1,0 +1,490 @@
+.admin-page {
+    flex: 1;
+    padding: 2rem 5%;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.admin-section {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+}
+
+.section-title-block {
+    display: flex;
+    width: 100%; 
+    justify-content: space-between;
+}
+
+.section-title-block .action-btn {
+    height: fit-content;
+    font-size: 1rem;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    display: inline-block;
+}
+
+/* Стили для парсинга */
+.parsing-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.input-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-block label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.input-block input[type="text"] {
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    background-color: var(--background);
+    color: var(--primary-text);
+    font-size: 1rem;
+    transition: border-color 0.3s;
+    width: 100%;
+}
+
+.input-block input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.checkbox-type {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    justify-content: space-between;
+}
+
+.custom-checkbox {
+    position: relative;
+}
+
+.custom-checkbox input {
+    display: none;
+}
+
+.checkbox-visual {
+    width: 50px;
+    height: 26px;
+    background-color: var(--border);
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    padding: 0 3px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    position: relative;
+}
+
+.checkbox-visual::before {
+    content: '';
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s;
+}
+
+.custom-checkbox input:checked+.checkbox-visual {
+    background-color: var(--accent);
+}
+
+.custom-checkbox input:checked+.checkbox-visual::before {
+    transform: translateX(24px);
+}
+
+.checkbox-visual i {
+    position: absolute;
+    left: 5px;
+    font-size: 0.7rem;
+    color: var(--secondary);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.custom-button {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+    justify-content: center;
+    /* max-width: 200px; */
+}
+
+.custom-button:hover {
+    opacity: 0.9;
+}
+
+.delete-messages-button {
+    background-color: #EF4444;
+}
+
+.parse-section {
+    width: fit-content;
+    height: fit-content;
+}
+
+.actions-section {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+}
+
+.messages-section {
+    height: fit-content;
+}
+
+/* Стили для таблицы */
+.table-container {
+    overflow-x: auto;
+    margin-top: 1.5rem;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    background-color: var(--accent);
+    color: white;
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+}
+
+.data-table tr {
+    border-bottom: 1px solid var(--border);
+}
+
+.data-table td {
+    padding: 1rem;
+}
+
+.data-table tr:nth-child(even) {
+    background-color: var(--row-even);
+}
+
+.data-table tr:nth-child(odd) {
+    background-color: var(--row-odd);
+}
+
+.data-table tr:hover {
+    background-color: var(--border);
+}
+
+.table-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-btn {
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.edit-btn {
+    background-color: #10B981;
+    color: white;
+}
+
+.delete-btn {
+    background-color: #EF4444;
+    color: white;
+}
+
+.view-btn {
+    background-color: var(--accent);
+    color: white;
+}
+
+/* Стили для сообщений */
+.messages-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.title-block {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.messages-type {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 3%;
+}
+
+.message-type-block {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--background);
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    flex: 1;
+}
+
+.icon-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-info.success i {
+    color: #4CAF50;
+}
+
+.icon-info.error i {
+    color: #da2d29;
+}
+
+.icon-info.warning i {
+    color: #FFD43B;
+}
+
+.messages-block {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    background-color: var(--background);
+}
+
+.messages-content {
+    padding: 1rem;
+}
+
+.message-block {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: var(--card-bg);
+    border-radius: 5px;
+    border: 1px solid var(--border);
+}
+
+.message-block:last-child {
+    margin-bottom: 0;
+}
+
+.main-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.text-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.message-border {
+    height: 1px;
+    background-color: var(--border);
+    margin: 0.5rem 0;
+}
+
+.text {
+    margin: 0.5rem 0;
+    line-height: 1.4;
+}
+
+.other-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: var(--secondary);
+}
+
+@media (max-width: 1400px) {
+    .messages-type {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 1300px) {
+    .actions-section {
+        gap: 1rem;
+    }
+    .other-info {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }   
+    .admin-page {
+        padding: 2rem 2.5%;
+    }
+}
+
+@media (max-width: 992px) {
+    .actions-section {
+        flex-direction: row;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    .actions-section > .actions-section-item:nth-child(1) {
+        order: 2;
+        flex: 5;
+    }
+    .actions-section > .actions-section-item:nth-child(2) {
+        order: 1;
+        width: 100%;
+    }
+    .actions-section > .actions-section-item:nth-child(3) {
+        order: 3;
+        flex: 4;
+    }
+
+    .messages-type {
+        flex-direction: row;
+        justify-content: start;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .filter-form {
+        max-width: 100%;
+    }
+
+    .range-inputs {
+        flex-direction: column;
+    }
+
+    .messages-type {
+        flex-direction: column;
+    }
+
+    .other-info {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .table-container {
+        font-size: 0.9rem;
+    }
+
+    .action-btn {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.7rem;
+    }
+
+    .messages-section {
+        padding: 1rem;
+    }
+
+    .range-inputs .filter-input {
+        width: 100%;
+    }
+
+    .admin-section {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .admin-page {
+        padding: 1rem;
+    }
+
+    .data-table {
+        font-size: 0.8rem;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 0.5rem;
+    }
+
+    .messages-content {
+        padding: 0.5rem;
+    }
+
+    .messages-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .actions-section > .actions-section-item:nth-child(1) {
+        flex: inherit;
+        width: 100%;
+    }
+
+    .actions-section > .actions-section-item:nth-child(3) {
+        flex: inherit;
+        width: 100%;
+    }
+
+    .section-title-block {
+        flex-direction: column;
+    }
+    
+    .section-title-block .action-btn {
+        width: fit-content;
+    }
+
+    .section-title-block .section-title {
+        align-self: self-start;
+    }
+}
+
+@media (max-width: 425px) {
+    .section-title {
+        font-size: 1.4rem;
+        align-self: center;
+    }
+
+    .section-title-block .section-title {
+        align-self: center;
+        font-size: 1.2rem;
+    }
+    .section-title-block .action-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}

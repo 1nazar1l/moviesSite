@@ -7,6 +7,8 @@
     --secondary: #64748B;
     --border: #E2E8F0;
     --header-height: 80px;
+    --row-even: #F8FAFC;
+    --row-odd: #FFFFFF;
 }
 
 [data-theme="dark"] {
@@ -16,7 +18,10 @@
     --accent: #3B82F6;
     --secondary: #94A3B8;
     --border: #334155;
+    --row-even: #1E293B;
+    --row-odd: #0F172A;
 }
+
 
 /* Общие стили */
 * {
@@ -371,69 +376,6 @@ footer {
 
 .back-link:hover {
     opacity: 0.8;
-}
-
-.checkbox-block {
-    display: flex;
-    gap: 10px;
-}
-
-.checkbox-block input[type="checkbox"] {
-    -webkit-appearance: none;
-    appearance: none;
-    background-color: var(--background);
-    width: 20px;
-    height: 20px;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    position: relative;
-}
-
-.checkbox-block input[type="checkbox"]::before {
-    position: absolute;
-    content: "";
-    width: 6px;
-    border-radius: 2px;
-    height: 2px;
-    background-color: var(--primary-text);
-    transform: rotate(40deg);
-    bottom: 32%;
-    left: 20%;
-    opacity: 0;
-    transition: all 0.2s ease;
-}
-
-.checkbox-block input[type="checkbox"]::after {
-    position: absolute;
-    content: "";
-    width: 10px;
-    border-radius: 2px;
-    height: 2px;
-    background-color: var(--primary-text);
-    transform: rotate(-52deg);
-    bottom: 40%;
-    left: 32%;
-    opacity: 0;
-    transition: all 0.2s ease;
-}
-
-.checkbox-block input[type="checkbox"]:checked {
-    background-color: var(--accent);
-}
-.checkbox-block input[type="checkbox"]:disabled {
-    background-color: var(--background);
-}
-
-.checkbox-block input[type="checkbox"]:checked::before {
-    opacity: 1;
-}
-
-.checkbox-block input[type="checkbox"]:checked::after {
-    opacity: 1;
-}
-
-.checkbox-block label {
-    color: var(--primary-text);
 }
 
 

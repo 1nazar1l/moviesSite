@@ -1,145 +1,116 @@
 <!DOCTYPE html>
 {% load static %}
 
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="{% static "adminPanel/css/normalize.css" %}">
-  <link rel="stylesheet" href="{% static "adminPanel/css/style.css" %}">
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MovieMarks</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static "adminPanel/css/base.css" %}">
+    {% block css %}{% endblock css %}
+    <script>
+      const themeToggles = document.querySelectorAll('#themeToggle');
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      const bodyTeg = document.body;
+      
+      document.documentElement.setAttribute('data-theme', currentTheme);
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <title>{% block page_title %}{% endblock page_title %}</title>
-</head>
-<body>
-  <header class="header">
-    <a href="{% url "films" %}">Фильмы</a>
-    <a href="{% url "serials" %}">Сериалы</a>
-    <a href="{% url "actors" %}">Актеры</a>
-    <a href="{% url "genres" %}">Жанры</a>
-    <a href="{% url "mainPage" %}">Главная страница</a>
-  </header>
-  <main>
-    <div class="filter_block">
-      {% block filter_block %}{% endblock filter_block %}
-    </div>
-    <div class="main_block">
-      <div class="media_container">
-          <div class="title_block">
-            <p>{% block title %}{% endblock title %}</p>
-          </div>
-          <div class="buttons_block">
-            {% block delete_buttons_block %}{% endblock delete_buttons_block %}
-          </div>
-        <div class="media_items_block">
-          <div class="media_items_content">
-            {% block media_block %}{% endblock media_block %}
-          </div>
+      themeToggles.forEach(themeToggle => {  
+          themeToggle.addEventListener('click', () => {
+              const currentTheme = document.documentElement.getAttribute('data-theme');
+              const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+              
+              document.documentElement.setAttribute('data-theme', newTheme);
+              localStorage.setItem('theme', newTheme);
+          });   
+      });
+    </script>
+  </head>
+  <body>
+    <header id="header">
+      <div class="pc-content">
+        <a href="{% url "mainPage" %}" class="logo">MovieMarks</a>
+        {% block header_nav %}{% endblock header_nav %}
+        <div class="header-controls">
+          <div class="theme-toggle" id="themeToggle"></div>
+          {% if request.user.is_authenticated %}
+            {% block auth_header_profile_url%}{% endblock auth_header_profile_url %}
+          {% else %}
+            {% block not_auth_header_profile_url %}{% endblock not_auth_header_profile_url %}
+          {% endif %}
         </div>
       </div>
-      <div class="admin_container">
-        <div class="block">
-          <div class="parse_media_items_block">
-            {% block parse_media_block %}{% endblock parse_media_block %}
-          </div>
-        </div>
-        <div class="messages_container">
-          <div class="title_block">
-            Сообщения и ошибки
-          </div>
-          <form action="{% url "clear_messages" %}" method="post" id="clear_messages">
-            {% csrf_token %}
-            <button type="submit"  class="custom_button delete_messages_button" onclick="return confirm('Продолжить?')">
-              Очистить сообщения
-            </button>
-            {% block page %}{% endblock page %}
-          </form>
-          <div class="messages_type">
-            {% for type, num in messages_type.items %}
-            {% if type != "clear" %}
-              <div class="message_type_block">
-                {% if type == "success" %}
-                  <div class="icon_info success">
-                    <i class="fa-solid fa-circle-check"></i>
-                  </div>
-                  {% elif type == "error" %}
-                  <div class="icon_info error">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                  </div>
-                  {% elif type == "warning" %}
-                  <div class="icon_info warning">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                  </div>
-                {% endif %}
-                <b>{{type|upper}}</b>
-                {{num}}
-              </div>
+      <div class="phone-content">
+        <a href="{% url "mainPage" %}" class="logo">MovieMarks</a>
+        <div class="sidebar">
+          <div class="header-controls">
+            {% if request.user.is_authenticated %}
+              {% block auth_sidebar_profile_url %}{% endblock auth_sidebar_profile_url %}
+            {% else %}
+              {% block not_auth_sidebar_profile_url %}{% endblock not_auth_sidebar_profile_url %}
             {% endif %}
-            {% endfor %}
           </div>
-          <div class="messages_block">
-            <div class="messages_content">
-              {% for message in messages %}
-                  {% if message.message_type != "clear" %}
-                    <div class="message_block">
-                      <div class="main_info">
-                        <div class="text_info">
-                          <div>
-                            {% if message.from_page == "actors" %}
-                              <b>Откуда:</b> Актеры
-                            {% elif message.from_page == "serials" %}
-                              <b>Откуда:</b> Сериалы
-                            {% elif message.from_page == "films" %}
-                              <b>Откуда:</b> Фильмы
-                            {% endif %}
-                          </div>
-                          <div>
-                            <b>Админ:</b> {{message.admin.username}}
-                          </div>
-                        </div>
-                        {% if message.message_type == "success" %}
-                        <div class="icon_info success">
-                          <i class="fa-solid fa-circle-check"></i>
-                        </div>
-                        {% elif message.message_type == "error" %}
-                        <div class="icon_info error">
-                          <i class="fa-solid fa-triangle-exclamation"></i>
-                        </div>
-                        {% elif message.message_type == "warning" %}
-                        <div class="icon_info warning">
-                          <i class="fa-solid fa-exclamation"></i>
-                        </div>
-                        {% endif %}
-                      </div>
-                      <div class="message_border"></div>
-                      <div class="text">
-                        {{message.text}}
-                      </div>
-                      <div class="message_border"></div>
-                      <div class="other_info">
-                        <div>
-                          <b>Когда произошло: </b>
-                          {{message.date}}
-                        </div>
-                        <div>
-                          <b>Продолжительность:</b>
-                          {{message.time}} с.
-                        </div>
-                      </div>
-                    </div>
-                  {% else %}
-                    <div class="message_block">
-                      Сообщения очищены
-                    </div>
-                  {% endif %}
-              {% endfor %}
-            </div>
+          {% block sidebar_nav %}{% endblock sidebar_nav %}
+        </div>
+        <div class="main-buttons">
+          <div class="theme-toggle" id="themeToggle"></div>
+          <div class="burger-menu">
+            <span></span>
+            <span></span>
+            <span></span>
           </div>
         </div>
       </div>
-    </div>
-  </main>
+    </header>
 
-  <script src="{% static "adminPanel/js/script.js" %}"></script>
-</body>
+    <main>
+      {% block main_content %}{% endblock main_content %}
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <span class="footer-title">О нас</span>
+          <p>
+            MovieMarks - это ваш надежный гид в мире кино и сериалов. Мы
+            помогаем находить и сохранять лучший контент.
+          </p>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-vk"></i></a>
+            <a href="#"><i class="fab fa-telegram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h3>
+            <span class="footer-title">Навигация</span>
+          </h3>
+          <ul class="footer-links">
+            <li><a href="{% url "mainPage" %}">Главная</a></li>
+            <li><a href="{% url "filmsPage" %}">Фильмы</a></li>
+            <li><a href="{% url "serialsPage" %}">Сериалы</a></li>
+            <li><a href="{% url "actorsPage" %}">Актеры</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3><span class="footer-title">Помощь</span></h3>
+          <ul class="footer-links">
+            <li><a href="#">Обратная связь</a></li>
+            <li><a href="#">Политика конфиденциальности</a></li>
+            <li><a href="#">Условия использования</a></li>
+            <li><a href="#">FAQ</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="copyright">
+        <p>&copy; 2025 MovieMarks. Все права защищены.</p>
+      </div>
+    </footer>
+    {% block script %}{% endblock script %}
+  </body>
 </html>

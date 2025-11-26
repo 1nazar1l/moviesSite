@@ -1,0 +1,122 @@
+<div class="actions-section-item filter-section">
+    <h2 class="filter-title">Фильтр</h2>
+    <form class="filter-form" id="filterForm">
+        <div class="filter-group">
+            <input
+                type="text"
+                class="filter-input"
+                placeholder="Поиск по названию"
+                name="title_search"
+            />
+        </div>
+
+        <div class="filter-group">
+            <label class="filter-label">Бюджет</label>
+            <div class="range-inputs">
+                <input
+                    type="text"
+                    class="filter-input"
+                    placeholder="От"
+                    name="budget_min"
+                />
+                <input
+                    type="text"
+                    class="filter-input"
+                    placeholder="До"
+                    name="budget_max"
+                />
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <label class="filter-label">Выручка</label>
+            <div class="range-inputs">
+                <input
+                    type="text"
+                    class="filter-input"
+                    placeholder="От"
+                    name="revenue_min"
+                />
+                <input
+                    type="text"
+                    class="filter-input"
+                    placeholder="До"
+                    name="revenue_max"
+                />
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <label class="filter-label">Год выхода</label>
+            <div class="range-inputs">
+                <input
+                    type="date"
+                    class="filter-input"
+                    name="release_date_min"
+                />
+                <input
+                    type="date"
+                    class="filter-input"
+                    name="release_date_max"
+                />
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <label class="filter-label">Продолжительность (мин)</label>
+            <div class="range-inputs">
+                <input
+                    type="text"
+                    class="filter-input"
+                    placeholder="От"
+                    name="duration_min"
+                />
+                <input
+                    type="text"
+                    class="filter-input"
+                    placeholder="До"
+                    name="duration_max"
+                />
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <label class="filter-label">Рейтинг</label>
+            <div class="range-inputs">
+                <input
+                    type="text"
+                    class="filter-input"
+                    placeholder="От"
+                    name="rating_min"
+                />
+                <input
+                    type="text"
+                    class="filter-input"
+                    placeholder="До"
+                    name="rating_max"
+                />
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <label class="filter-label">Жанры</label>
+            <div class="select-wrapper">
+                <select class="filter-select" name="genres" multiple>
+                    <option value="1">Боевик</option>
+                    <option value="2">Комедия</option>
+                    <option value="3">Драма</option>
+                    <option value="4">Фэнтези</option>
+                    <option value="5">Ужасы</option>
+                    <option value="6">Мелодрама</option>
+                    <option value="7">Фантастика</option>
+                    <option value="8">Триллер</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="submit" class="submit-btn">Применить фильтры</button>
+        <button type="button" class="reset-btn" id="resetFilters">
+            Сбросить
+        </button>
+    </form>
+</div>
