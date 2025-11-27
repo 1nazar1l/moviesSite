@@ -329,8 +329,6 @@ def serialsPage(request):
     
     return render(request, "main/items.html", context=context)
 
-from django.db import models
-
 def actorsPage(request):
     request.session['profile_error_messages'] = []
     

@@ -1,91 +1,188 @@
-{% extends "adminPanel/base.html" %}
+{% extends "adminPanel/base.html"%}
 {% load static %}
+{% load class_name %}
 
-{% block page_title %}
-  Список сериалов
-{% endblock page_title %}
+{% block css %}
+<link rel="stylesheet"href="{% static "main/css/normalize.css"%}">
+<link rel="stylesheet"href="{% static "main/css/base.css"%}">
+<link rel="stylesheet"href="{% static "main/css/item.css"%}">
+<link rel="stylesheet"href="{% static "main/css/user-avatar.css"%}">
+<link rel="stylesheet"href="{% static "adminPanel/css/items.css"%}">
+<link rel="stylesheet"href="{% static "main/css/filter.css"%}">
+{% endblock css %}
 
-{% block title %}
-  Список сериалов
-{% endblock title %}
+{% block script %}
+<script src="{% static "main/js/base.js"%}"></script>
+<script src="{% static "adminPanel/js/script.js"%}"></script>
+<script src="{% static "adminPanel/js/items.js"%}"></script>
+{% endblock script %}
 
-{% block delete_buttons_block %}
-  <form action="{% url 'delete_serials' %}" method="post" id="delete-selected-form">
-    {% csrf_token %}
-    <button type="submit" class="custom_button delete_button" onclick="return confirm('Удалить выбранные сериалы?')">
-      Удалить выбранные
-    </button>
-  </form>
-  <form action="{% url 'delete_all_serials' %}" method="post">
-    {% csrf_token %}
-    <button type="submit" class="custom_button delete_button" onclick="return confirm('Удалить все сериалы?')">
-      Удалить все сериалы
-    </button>
-  </form>
-{% endblock delete_buttons_block %}
+{% block header_nav %}
+{% include "adminPanel/partials/header_nav.html"%}
+{% endblock header_nav %}
 
-{% block media_block %}
-  {% for serial in serials %} 
-    <div class="media_block">
-      <div class="media_info">
-        <span><strong>ID:</strong> {{ serial.search_id }}</span>
-        <span><strong>Название:</strong> {{ serial.title }}</span>
-        <span><strong>Дата выхода:</strong> {{ serial.first_air_date|date:"Y" }}</span>
-      </div>
-      <div class="media_actions">
-        <input type="checkbox" name="media_ids" value="{{ serial.id }}" form="delete-selected-form">
+{% block sidebar_nav %}
+{% include "adminPanel/partials/header_nav.html"%}
+{% endblock sidebar_nav %}
+
+{% block auth_header_profile_url %}
+{% include "main/partials/auth_profile_url_block.html"%}
+{% endblock auth_header_profile_url %}
+
+{% block not_auth_header_profile_url %}
+<a class="auth-btn"href="{% url "authPage"%}">Войти</a>
+{% endblock not_auth_header_profile_url %}
+
+{% block auth_sidebar_profile_url %}
+{% include "main/partials/auth_profile_url_block.html"%}
+{% endblock auth_sidebar_profile_url %}
+
+{% block not_auth_sidebar_profile_url %}
+<a class="auth-btn"href="{% url "authPage"%}">Войти</a>
+{% endblock not_auth_sidebar_profile_url %}
+
+{% block main_content %}
+<div class="admin-page">
+  <!-- Секция парсинга -->
+  <div class="actions-section">
+    <!-- Фильтр -->
+    {% include "adminPanel/partials/serials_filter.html" with genres=genres %}
+    <!-- Секция сообщений и логов -->
+    <div class="actions-section-item admin-section messages-section">
+      <h2 class="section-title">Сообщения и ошибки</h2>
+      <div class="messages-container">
+        <div class="messages-type">
+          <div class="message-type-block">
+            <div class="icon-info success">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <b>SUCCESS</b>
+            {{messages_type.success}}
+          </div>
+          <div class="message-type-block">
+            <div class="icon-info error">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <b>ERROR</b>
+            {{messages_type.error}}
+          </div>
+          <div class="message-type-block">
+            <div class="icon-info warning">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <b>WARNING</b>
+            {{messages_type.warning}}
+          </div>
+        </div>
+
+        <div class="messages-block">
+          <div class="messages-content">
+            {% for message in messages %}
+            <div class="message-block">
+              <div class="main-info">
+                <div class="text-info">
+                  <div><b>Откуда:</b> {{message.from_page}}</div>
+                  <div><b>Админ:</b> {{message.admin.username}}</div>
+                </div>
+                {% if message.message_type == "success"%}
+                <div class="icon-info success">
+                  <i class="fa-solid fa-circle-check"></i>
+                </div>
+                {% elif message.message_type == "warning"%}
+                <div class="icon-info warning">
+                  <i class="fa-solid fa-exclamation"></i>
+                </div>
+                {% elif message.message_type == "error"%}
+                <div class="icon-info error">
+                  <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                {% endif %}
+              </div>
+              <div class="message-border"></div>
+              <div class="text">{{message.text}}</div>
+              <div class="message-border"></div>
+              <div class="other-info">
+                <div><b>Когда произошло:</b> {{message.date}}</div>
+                <div><b>Продолжительность:</b> {{message.time}}c</div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
-  {% endfor %}
-{% endblock media_block %}
+    <div class="actions-section-item admin-section parse-section">
+      <h2 class="section-title">Парсинг данных</h2>
+      <form action="{% url "parse_serials"%}"method="post">
+        {% csrf_token %}
+        <div class="parsing-content">
+          <div class="input-block checkbox-type">
+            <label>VPN включен (нужен для парсинга)</label>
+            <div class="custom-checkbox">
+              <input type="checkbox"name="vpn_is_connected"id="vpn_connected">
+              <label for="vpn_connected"class="checkbox-visual">
+                <i class="fa-solid fa-check"></i>
+              </label>
+            </div>
+          </div>
+          <div class="input-block text-type">
+            <label>С какой страницы начать</label>
+            <input type="text"placeholder=""name="start_page"id="start_page"autocomplete="off"maxlength="3"
+              required>
+          </div>
+          <div class="input-block text-type">
+            <label>Какой страницей закончить</label>
+            <input type="text"placeholder=""name="end_page"id="end_page"autocomplete="off"maxlength="3"required>
+          </div>
+          <button type="submit"class="custom-button continue-button">Начать парсинг</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-{% block parse_media_block %}
-  <form action="{% url "parse_serials" %}" method="post">
-    {% csrf_token %}
-    {% include "adminPanel/parse_media_content_block.html" with title_text="Парсинг сериалов" media_type="serials"%}
-  </form>
-{% endblock parse_media_block %}
-
-{% block page %}
-  <div class="invisible_block">
-    <input type="hidden" name="next" value="{{ request.path }}" form="clear_messages">
-  </div>
-{% endblock page %}
-
-{% block filter_block %}
-<div class="filter_content">
-  <div>
-    <input type="text" placeholder="Поиск по id">
-  </div>
-  <div>
-    <input type="text" placeholder="Поиск по названию">
-  </div>
-  <div>
-    <span>Впервые в эфире</span>
-    <input type="range">
-  </div>
-  <div>
-    <span>Закончили свой сериал</span>
-    <input type="range">
-  </div>
-  <div>
-    <span>Колличество эпизодов</span>
-    <input type="range">
-  </div>
-  <div>
-    <span>Колличество сезонов</span>
-    <input type="range">
-  </div>
-  <div>
-    <span>Вышел ли сериал</span>
-    <input type="checkbox">
-  </div>
-  <div>
-    <span>Рейтинг</span>
-    <input type="range">
-  </div>
-  <div>
-    <span>Жанры(тут будет выпадающий список)</span>
+  <!-- Секция управления данными -->
+  <div class="admin-section">
+    <div class="section-title-block">
+      <h2 class="section-title">Управление данными({{serials|length}})</h2>
+      <form action="{% url 'delete_serials' %}" method="post" id="delete-selected-form">
+        {% csrf_token %}
+        <button class="action-btn delete-btn"><i class="fas fa-trash"></i> Удалить выбранные</button>
+      </form>
+    </div>
+    <!-- Таблица данных -->
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>ID для поиска</th>
+            <th>Название</th>
+            <th>Статус</th>
+            <th>Действия</th>
+            <th>Выбрать для удаления</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for serial in serials %}
+          <tr>
+            <td>{{serial.id}}</td>
+            <td>{{serial.search_id}}</td>
+            <td>{{serial.title}}</td>
+            <td>{{serial.is_parsed}}</td>
+            <td class="table-actions">
+              <button class="action-btn edit-btn"><i class="fas fa-edit"></i> Редактировать</button>
+              <button class="action-btn delete-btn"><i class="fas fa-trash"></i> Удалить</button>
+            </td>
+            <td>
+              <div class="checkbox-block">
+                <input type="checkbox" name="media_ids" value="{{ serial.id }}" form="delete-selected-form">
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
-{% endblock filter_block %}
+{% endblock main_content %}

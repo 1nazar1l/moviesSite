@@ -1,216 +1,189 @@
-{% extends "adminPanel/base.html" %}
+{% extends "adminPanel/base.html"%}
 {% load static %}
 {% load class_name %}
 
 {% block css %}
-  <link rel="stylesheet" href="{% static "main/css/normalize.css" %}">
-  <link rel="stylesheet" href="{% static "main/css/base.css" %}">
-  <link rel="stylesheet" href="{% static "main/css/item.css" %}">
-  <link rel="stylesheet" href="{% static "main/css/user-avatar.css" %}">
-  <link rel="stylesheet" href="{% static "adminPanel/css/items.css" %}">
-  <link rel="stylesheet" href="{% static "main/css/filter.css" %}">
+<link rel="stylesheet"href="{% static "main/css/normalize.css"%}">
+<link rel="stylesheet"href="{% static "main/css/base.css"%}">
+<link rel="stylesheet"href="{% static "main/css/item.css"%}">
+<link rel="stylesheet"href="{% static "main/css/user-avatar.css"%}">
+<link rel="stylesheet"href="{% static "adminPanel/css/items.css"%}">
+<link rel="stylesheet"href="{% static "main/css/filter.css"%}">
 {% endblock css %}
 
 {% block script %}
-  <script src="{% static "main/js/base.js" %}"></script>
-  <script src="{% static "adminPanel/js/script.js" %}"></script>
-  <script src="{% static "adminPanel/js/items.js" %}"></script>
+<script src="{% static "main/js/base.js"%}"></script>
+<script src="{% static "adminPanel/js/script.js"%}"></script>
+<script src="{% static "adminPanel/js/items.js"%}"></script>
 {% endblock script %}
 
 {% block header_nav %}
-  {% include "adminPanel/partials/header_nav.html" %}
+{% include "adminPanel/partials/header_nav.html"%}
 {% endblock header_nav %}
 
 {% block sidebar_nav %}
-  {% include "adminPanel/partials/header_nav.html" %}
+{% include "adminPanel/partials/header_nav.html"%}
 {% endblock sidebar_nav %}
 
 {% block auth_header_profile_url %}
-  {% include "main/partials/auth_profile_url_block.html" %} 
+{% include "main/partials/auth_profile_url_block.html"%}
 {% endblock auth_header_profile_url %}
 
 {% block not_auth_header_profile_url %}
-  <a class="auth-btn" href="{% url "authPage" %}">Войти</a>
+<a class="auth-btn"href="{% url "authPage"%}">Войти</a>
 {% endblock not_auth_header_profile_url %}
 
 {% block auth_sidebar_profile_url %}
-  {% include "main/partials/auth_profile_url_block.html" %} 
+{% include "main/partials/auth_profile_url_block.html"%}
 {% endblock auth_sidebar_profile_url %}
 
 {% block not_auth_sidebar_profile_url %}
-  <a class="auth-btn" href="{% url "authPage" %}">Войти</a>
+<a class="auth-btn"href="{% url "authPage"%}">Войти</a>
 {% endblock not_auth_sidebar_profile_url %}
 
 {% block main_content %}
 <div class="admin-page">
-    <!-- Секция парсинга -->
-    <div class="actions-section">
-        <!-- Фильтр -->
-        {% include "adminPanel/partials/films_filter.html" %}
-        <!-- Секция сообщений и логов -->
-        <div class="actions-section-item admin-section messages-section">
-            <h2 class="section-title">Сообщения и ошибки</h2>
-            <div class="messages-container">
-                <div class="messages-type">
-                    <div class="message-type-block">
-                        <div class="icon-info success">
-                            <i class="fa-solid fa-circle-check"></i>
-                        </div>
-                        <b>SUCCESS</b>
-                        12
-                    </div>
-                    <div class="message-type-block">
-                        <div class="icon-info error">
-                            <i class="fa-solid fa-triangle-exclamation"></i>
-                        </div>
-                        <b>ERROR</b>
-                        5
-                    </div>
-                    <div class="message-type-block">
-                        <div class="icon-info warning">
-                            <i class="fa-solid fa-triangle-exclamation"></i>
-                        </div>
-                        <b>WARNING</b>
-                        3
-                    </div>
-                </div>
-
-                <div class="messages-block">
-                    <div class="messages-content">
-                        <!-- Сообщение 1 -->
-                        <div class="message-block">
-                            <div class="main-info">
-                                <div class="text-info">
-                                    <div><b>Откуда:</b> Фильмы</div>
-                                    <div><b>Админ:</b> admin_user</div>
-                                </div>
-                                <div class="icon-info success">
-                                    <i class="fa-solid fa-circle-check"></i>
-                                </div>
-                            </div>
-                            <div class="message-border"></div>
-                            <div class="text">
-                                Успешно добавлен новый фильм "Интерстеллар" с ID 1001
-                            </div>
-                            <div class="message-border"></div>
-                            <div class="other-info">
-                                <div><b>Когда произошло:</b> 15.09.2023 14:30</div>
-                                <div><b>Продолжительность:</b> 2.5 с.</div>
-                            </div>
-                        </div>
-
-                        <!-- Сообщение 2 -->
-                        <div class="message-block">
-                            <div class="main-info">
-                                <div class="text-info">
-                                    <div><b>Откуда:</b> Сериалы</div>
-                                    <div><b>Админ:</b> admin_user</div>
-                                </div>
-                                <div class="icon-info warning">
-                                    <i class="fa-solid fa-exclamation"></i>
-                                </div>
-                            </div>
-                            <div class="message-border"></div>
-                            <div class="text">
-                                Предупреждение: не удалось загрузить постер для сериала "Черное зеркало"
-                            </div>
-                            <div class="message-border"></div>
-                            <div class="other-info">
-                                <div><b>Когда произошло:</b> 14.09.2023 16:45</div>
-                                <div><b>Продолжительность:</b> 1.8 с.</div>
-                            </div>
-                        </div>
-
-                        <!-- Сообщение 3 -->
-                        <div class="message-block">
-                            <div class="main-info">
-                                <div class="text-info">
-                                    <div><b>Откуда:</b> Актеры</div>
-                                    <div><b>Админ:</b> admin_user</div>
-                                </div>
-                                <div class="icon-info error">
-                                    <i class="fa-solid fa-triangle-exclamation"></i>
-                                </div>
-                            </div>
-                            <div class="message-border"></div>
-                            <div class="text">
-                                Ошибка: не удалось подключиться к базе данных при добавлении актера
-                            </div>
-                            <div class="message-border"></div>
-                            <div class="other-info">
-                                <div><b>Когда произошло:</b> 13.09.2023 09:15</div>
-                                <div><b>Продолжительность:</b> 5.2 с.</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  <!-- Секция парсинга -->
+  <div class="actions-section">
+    <!-- Фильтр -->
+    {% include "adminPanel/partials/films_filter.html" with genres=genres %}
+    <!-- Секция сообщений и логов -->
+    <div class="actions-section-item admin-section messages-section">
+      <h2 class="section-title">Сообщения и ошибки</h2>
+      <div class="messages-container">
+        {% comment %} <div class="btn delete_messages_button">Очистить</div> {% endcomment %}
+        <div class="messages-type">
+          <div class="message-type-block">
+            <div class="icon-info success">
+              <i class="fa-solid fa-circle-check"></i>
             </div>
-        </div>
-        <div class="actions-section-item admin-section parse-section">
-            <h2 class="section-title">Парсинг данных</h2>
-            <div class="parsing-content">
-                <div class="input-block checkbox-type">
-                    <label>VPN включен (нужен для парсинга)</label>
-                    <div class="custom-checkbox">
-                        <input type="checkbox" name="vpn_is_connected" id="vpn_connected">
-                        <label for="vpn_connected" class="checkbox-visual">
-                            <i class="fa-solid fa-check"></i>
-                        </label>
-                    </div>
-                </div>
-                <div class="input-block text-type">
-                    <label>С какой страницы начать</label>
-                    <input type="text" placeholder="" name="start_page" id="start_page" autocomplete="off"
-                        maxlength="3">
-                </div>
-                <div class="input-block text-type">
-                    <label>Какой страницей закончить</label>
-                    <input type="text" placeholder="" name="end_page" id="end_page" autocomplete="off"
-                        maxlength="3">
-                </div>
-                <button type="submit" class="custom-button continue-button">Начать парсинг</button>
+            <b>SUCCESS</b>
+            {{messages_type.success}}
+          </div>
+          <div class="message-type-block">
+            <div class="icon-info error">
+              <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
+            <b>ERROR</b>
+            {{messages_type.error}}
+          </div>
+          <div class="message-type-block">
+            <div class="icon-info warning">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <b>WARNING</b>
+            {{messages_type.warning}}
+          </div>
         </div>
-    </div>
 
-    <!-- Секция управления данными -->
-    <div class="admin-section">
-        <div class="section-title-block">
-            <h2 class="section-title">Управление данными</h2>
-            <button class="action-btn delete-btn"><i class="fas fa-trash"></i> Удалить выбранные</button>
+        <div class="messages-block">
+          <div class="messages-content">
+            {% for message in messages %}
+            <div class="message-block">
+              <div class="main-info">
+                <div class="text-info">
+                  <div><b>Откуда:</b> {{message.from_page}}</div>
+                  <div><b>Админ:</b> {{message.admin.username}}</div>
+                </div>
+                {% if message.message_type == "success"%}
+                <div class="icon-info success">
+                  <i class="fa-solid fa-circle-check"></i>
+                </div>
+                {% elif message.message_type == "warning"%}
+                <div class="icon-info warning">
+                  <i class="fa-solid fa-exclamation"></i>
+                </div>
+                {% elif message.message_type == "error"%}
+                <div class="icon-info error">
+                  <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                {% endif %}
+              </div>
+              <div class="message-border"></div>
+              <div class="text">{{message.text}}</div>
+              <div class="message-border"></div>
+              <div class="other-info">
+                <div><b>Когда произошло:</b> {{message.date}}</div>
+                <div><b>Продолжительность:</b> {{message.time}}c</div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
         </div>
-        <!-- Таблица данных -->
-        <div class="table-container">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>ID для поиска</th>
-                        <th>Название</th>
-                        <th>Статус</th>
-                        <th>Действия</th>
-                        <th>Выбрать для удаления</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>1001</td>
-                        <td>Интерстеллар</td>
-                        <td>15.09.2023</td>
-                        <td class="table-actions">
-                            <button class="action-btn edit-btn"><i class="fas fa-edit"></i> Редактировать</button>
-                            <button class="action-btn delete-btn"><i class="fas fa-trash"></i> Удалить</button>
-                        </td>
-                        <td>
-                            <div class="checkbox-block">
-                                <input type="checkbox">
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+      </div>
     </div>
+    <div class="actions-section-item admin-section parse-section">
+      <h2 class="section-title">Парсинг данных</h2>
+      <form action="{% url "parse_films"%}"method="post">
+        {% csrf_token %}
+        <div class="parsing-content">
+          <div class="input-block checkbox-type">
+            <label>VPN включен (нужен для парсинга)</label>
+            <div class="custom-checkbox">
+              <input type="checkbox"name="vpn_is_connected"id="vpn_connected">
+              <label for="vpn_connected"class="checkbox-visual">
+                <i class="fa-solid fa-check"></i>
+              </label>
+            </div>
+          </div>
+          <div class="input-block text-type">
+            <label>С какой страницы начать</label>
+            <input type="text"placeholder=""name="start_page"id="start_page"autocomplete="off"maxlength="3"
+              required>
+          </div>
+          <div class="input-block text-type">
+            <label>Какой страницей закончить</label>
+            <input type="text"placeholder=""name="end_page"id="end_page"autocomplete="off"maxlength="3"required>
+          </div>
+          <button type="submit"class="custom-button continue-button">Начать парсинг</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Секция управления данными -->
+  <div class="admin-section">
+    <div class="section-title-block">
+      <h2 class="section-title">Управление данными({{films|length}})</h2>
+      <form action="{% url 'delete_films' %}" method="post" id="delete-selected-form">
+        {% csrf_token %}
+        <button class="action-btn delete-btn"><i class="fas fa-trash"></i> Удалить выбранные</button>
+      </form>
+    </div>
+    <!-- Таблица данных -->
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>ID для поиска</th>
+            <th>Название</th>
+            <th>Статус</th>
+            <th>Действия</th>
+            <th>Выбрать для удаления</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for film in films %}
+          <tr>
+            <td>{{film.id}}</td>
+            <td>{{film.search_id}}</td>
+            <td>{{film.title}}</td>
+            <td>{{film.is_parsed}}</td>
+            <td class="table-actions">
+              <button class="action-btn edit-btn"><i class="fas fa-edit"></i> Редактировать</button>
+              <button class="action-btn delete-btn"><i class="fas fa-trash"></i> Удалить</button>
+            </td>
+            <td>
+              <div class="checkbox-block">
+                <input type="checkbox" name="media_ids" value="{{ film.id }}" form="delete-selected-form">
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 {% endblock main_content %}

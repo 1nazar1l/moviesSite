@@ -94,5 +94,14 @@ document.addEventListener('DOMContentLoaded', function() {
     return true;
   }
 
+  submitButton.addEventListener('click', function(e) {
+    if (!validatePageNumbers()) {
+      e.preventDefault();
+      return false;
+    }
+    
+    return confirm('Начать?');
+  });
+
   vpnCheckbox.addEventListener('change', toggleVpnDependentElements);
 });

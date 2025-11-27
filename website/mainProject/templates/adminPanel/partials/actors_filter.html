@@ -1,6 +1,6 @@
-<div class="filter-sidebar">
+<div class="actions-section-item filter-section">
   <h2 class="filter-title">Фильтр</h2>
-  <form class="filter-form" id="filterForm" action="{% url 'actorsPage' %}" method="get">
+  <form class="filter-form" id="filterForm" action="{% url 'actors' %}" method="get">
     <div class="filter-group">
       <input
         type="text"
@@ -67,6 +67,20 @@
         name="project_search"
         value="{{ filter_values.project_search }}"
       />
+    </div>
+    
+    <div class="filter-group" style="display: flex; flex-direction: row; align-items: center;">
+        <div class="checkbox-block">
+            <input type="checkbox" name="is_parsed" {% if filter_values.is_parsed %}checked{% endif %}>
+        </div>
+        <label class="filter-label" style="margin-bottom: 0;">Объект добавлен</label>
+    </div>
+
+    <div class="filter-group" style="display: flex; flex-direction: row; align-items: center;">
+        <div class="checkbox-block">
+            <input type="checkbox" name="is_not_parsed" {% if filter_values.is_not_parsed %}checked{% endif %}>
+        </div>
+        <label class="filter-label" style="margin-bottom: 0;">Объект не добавлен</label>
     </div>
 
     <button type="submit" class="submit-btn">Применить фильтры</button>
