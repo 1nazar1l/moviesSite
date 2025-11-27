@@ -5,6 +5,26 @@
       <input
         type="text"
         class="filter-input"
+        placeholder="Поиск по id"
+        name="id"
+        value="{{ filter_values.id }}"
+      />
+    </div>
+
+    <div class="filter-group">
+      <input
+        type="text"
+        class="filter-input"
+        placeholder="Поиск по search_id"
+        name="search_id"
+        value="{{ filter_values.search_id }}"
+      />
+    </div>
+
+    <div class="filter-group">
+      <input
+        type="text"
+        class="filter-input"
         placeholder="Поиск по названию"
         name="title_search"
         value="{{ filter_values.title_search }}"

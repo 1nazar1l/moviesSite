@@ -15,6 +15,7 @@
 <script src="{% static "main/js/base.js"%}"></script>
 <script src="{% static "adminPanel/js/script.js"%}"></script>
 <script src="{% static "adminPanel/js/items.js"%}"></script>
+<script src="{% static "main/js/items.js"%}"></script>
 {% endblock script %}
 
 {% block header_nav %}
@@ -172,7 +173,7 @@
             <td>{{film.is_parsed}}</td>
             <td class="table-actions">
               <button class="action-btn edit-btn"><i class="fas fa-edit"></i> Редактировать</button>
-              <button class="action-btn delete-btn"><i class="fas fa-trash"></i> Удалить</button>
+              {% comment %} <button class="action-btn delete-btn"><i class="fas fa-trash"></i> Удалить</button> {% endcomment %}
             </td>
             <td>
               <div class="checkbox-block">

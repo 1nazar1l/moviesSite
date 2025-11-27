@@ -15,6 +15,8 @@ from django.db.models import Exists, OuterRef
 
 
 def films_admin_panel(request):
+    id = request.GET.get('id', '').strip()
+    search_id = request.GET.get('search_id', '').strip()
     title_search = request.GET.get('title_search', '').strip()
     budget_min = request.GET.get('budget_min', '').strip()
     budget_max = request.GET.get('budget_max', '').strip()
@@ -74,6 +76,12 @@ def films_admin_panel(request):
     if is_not_parsed:
         films = films.filter(is_parsed=False)
 
+    if id and type(id) == type(int):
+        films = films.filter(id=id)
+    
+    if search_id and type(search_id) == type(int):
+        films = films.filter(search_id=search_id)
+
     films = set(list(films))
 
     messages = Message.objects.all().order_by('-id')
@@ -96,6 +104,8 @@ def films_admin_panel(request):
         "messages_type": messages_type,
         "genres": genres,
         "filter_values": {
+            "id": id,
+            "search_id": search_id,
             "title_search": title_search,
             "budget_min": budget_min,
             "budget_max": budget_max,
@@ -114,6 +124,8 @@ def films_admin_panel(request):
     })
 
 def serials_admin_panel(request):
+    id = request.GET.get('id', '').strip()
+    search_id = request.GET.get('search_id', '').strip()
     title_search = request.GET.get('title_search', '').strip()
     episodes_min = request.GET.get('episodes_min', '').strip()
     episodes_max = request.GET.get('episodes_max', '').strip()
@@ -131,6 +143,12 @@ def serials_admin_panel(request):
     is_not_parsed = request.GET.get('is_not_parsed', '').strip()
     
     serials = Serial.objects.all()
+
+    if id and type(id) == type(int):
+        serials = serials.filter(id=id)
+
+    if search_id and type(search_id) == type(int):
+        serials = serials.filter(search_id=search_id)
     
     if title_search:
         serials_with_default_search = serials.filter(
@@ -199,6 +217,8 @@ def serials_admin_panel(request):
         "messages_type": messages_type,
         "genres": genres,
         "filter_values": {
+            "id": id,
+            "search_id": search_id,
             "title_search": title_search,
             "episodes_min": episodes_min,
             "episodes_max": episodes_max,
@@ -218,6 +238,8 @@ def serials_admin_panel(request):
     })
 
 def actors_admin_panel(request):
+    id = request.GET.get('id', '').strip()
+    search_id = request.GET.get('search_id', '').strip()
     name_search = request.GET.get('name_search', '').strip()
     birthday_min = request.GET.get('birthday_min', '').strip()
     birthday_max = request.GET.get('birthday_max', '').strip()
@@ -229,6 +251,12 @@ def actors_admin_panel(request):
     is_not_parsed = request.GET.get('is_not_parsed', '').strip()
 
     actors = Actor.objects.all()
+
+    if id and type(id) == type(int):
+        actors = actors.filter(id=id)
+    
+    if search_id and type(search_id) == type(int):
+        actors = actors.filter(search_id=search_id)
     
     if name_search:
         actors_with_default_search = actors.filter(
@@ -279,7 +307,7 @@ def actors_admin_panel(request):
         actors = actors_in_film.union(actors_in_serial, all=True)
 
     actors = list(set(actors))
-    
+
     messages = Message.objects.all().order_by('-id')
 
     messages_type = {
@@ -297,6 +325,8 @@ def actors_admin_panel(request):
         "messages": messages,
         "messages_type": messages_type,
         "filter_values": {
+            "id": id,
+            "search_id": search_id,
             "name_search": name_search,
             "birthday_min": birthday_min,
             "birthday_max": birthday_max,
@@ -310,8 +340,28 @@ def actors_admin_panel(request):
     })
 
 def genres_admin_panel(request):
-    all_genres = Genre.objects.all()
-    genres = all_genres.order_by('-id')
+    id = request.GET.get('id', '').strip()
+    search_id = request.GET.get('search_id', '').strip()
+    name_search = request.GET.get('name_search', '').strip()
+
+    genres = Genre.objects.all()
+
+    if id and type(id) == type(int):
+        genres = genres.filter(id=id)
+
+    if search_id and type(search_id) == type(int):
+        genres = genres.filter(search_id=search_id)
+    
+    if name_search:
+        genres_with_default_search = genres.filter(
+            name__icontains=name_search
+        )
+        genres_with_capitalize_search = genres.filter(
+            name__icontains=name_search.capitalize()
+        )
+        genres = genres_with_default_search.union(genres_with_capitalize_search, all=True) 
+    
+    genres = list(set(genres))
 
     messages = Message.objects.all().order_by('-id')
 
@@ -325,19 +375,16 @@ def genres_admin_panel(request):
     for message in messages:
         messages_type[message.message_type] += 1
 
-    id_search = request.GET.get("id_search")
-
-    if id_search:
-        genres = genres.filter(
-            Q(search_id__icontains=id_search)
-        )
-
     return render(request, "adminPanel/genres.html", context={
         "genres": genres,
         "messages": messages,
-        "messages_type": messages_type      
+        "messages_type": messages_type,
+        "filter_values": {
+            "id": id,
+            "search_id": search_id,
+            "name_search": name_search,
+        }  
     })
-
 
 def delete_films(request):
     media_type = "films"

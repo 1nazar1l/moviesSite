@@ -5,6 +5,26 @@
       <input
         type="text"
         class="filter-input"
+        placeholder="Поиск по id"
+        name="id"
+        value="{{ filter_values.id }}"
+      />
+    </div>
+
+    <div class="filter-group">
+      <input
+        type="text"
+        class="filter-input"
+        placeholder="Поиск по search_id"
+        name="search_id"
+        value="{{ filter_values.search_id }}"
+      />
+    </div>
+
+    <div class="filter-group">
+      <input
+        type="text"
+        class="filter-input"
         placeholder="Поиск по имени"
         name="name_search"
         value="{{ filter_values.name_search }}"
@@ -68,7 +88,7 @@
         value="{{ filter_values.project_search }}"
       />
     </div>
-    
+
     <div class="filter-group" style="display: flex; flex-direction: row; align-items: center;">
         <div class="checkbox-block">
             <input type="checkbox" name="is_parsed" {% if filter_values.is_parsed %}checked{% endif %}>

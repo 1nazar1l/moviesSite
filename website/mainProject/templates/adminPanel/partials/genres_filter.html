@@ -1,0 +1,38 @@
+<div class="actions-section-item filter-section">
+  <h2 class="filter-title">Фильтр</h2>
+  <form class="filter-form" id="filterForm" action="{% url 'genres' %}" method="get">
+    <div class="filter-group">
+      <input
+        type="text"
+        class="filter-input"
+        placeholder="Поиск по id"
+        name="id"
+        value="{{ filter_values.id }}"
+      />
+    </div>
+
+    <div class="filter-group">
+      <input
+        type="text"
+        class="filter-input"
+        placeholder="Поиск по search_id"
+        name="search_id"
+        value="{{ filter_values.search_id }}"
+      />
+    </div>
+    <div class="filter-group">
+      <input
+        type="text"
+        class="filter-input"
+        placeholder="Поиск по названию"
+        name="name_search"
+        value="{{ filter_values.name_search }}"
+      />
+    </div>
+
+    <button type="submit" class="submit-btn">Применить фильтры</button>
+    <button type="button" class="reset-btn" id="resetFilters">
+      Сбросить
+    </button>
+  </form>
+</div>

@@ -1,95 +1,150 @@
-{% extends "adminPanel/base.html" %}
+{% extends "adminPanel/base.html"%}
 {% load static %}
+{% load class_name %}
 
-{% block page_title %}
-  Список жанров
-{% endblock page_title %}
+{% block css %}
+<link rel="stylesheet"href="{% static "main/css/normalize.css"%}">
+<link rel="stylesheet"href="{% static "main/css/base.css"%}">
+<link rel="stylesheet"href="{% static "main/css/item.css"%}">
+<link rel="stylesheet"href="{% static "main/css/user-avatar.css"%}">
+<link rel="stylesheet"href="{% static "adminPanel/css/items.css"%}">
+<link rel="stylesheet"href="{% static "main/css/filter.css"%}">
+{% endblock css %}
 
-{% block title %}
-  Список жанров
-{% endblock title %}
+{% block script %}
+<script src="{% static "main/js/base.js"%}"></script>
+<script src="{% static "adminPanel/js/script.js"%}"></script>
+<script src="{% static "adminPanel/js/items.js"%}"></script>
+<script src="{% static "main/js/items.js"%}"></script>
+{% endblock script %}
 
-{% block delete_buttons_block %}
-  <form action="{% url 'delete_films' %}" method="post" id="delete-selected-form">
-    {% csrf_token %}
-    <button type="submit" class="custom_button delete_button" onclick="return confirm('Удалить выбранные жанры?')">
-      Удалить выбранные
-    </button>
-  </form>
-  <form action="{% url 'delete_all_films' %}" method="post">
-    {% csrf_token %}
-    <button type="submit" class="custom_button delete_button" onclick="return confirm('Удалить все жанры?')">
-      Удалить все жанры
-    </button>
-  </form>
-{% endblock delete_buttons_block %}
+{% block header_nav %}
+{% include "adminPanel/partials/header_nav.html"%}
+{% endblock header_nav %}
 
-{% block media_block %}
-  {% for genre in genres %}
-    <div class="media_block">
-      <div class="media_info">
-        <span><strong>ID:</strong> {{ genre.search_id }}</span>
-        <span><strong>Название:</strong> {{ genre.name }}</span>
+{% block sidebar_nav %}
+{% include "adminPanel/partials/header_nav.html"%}
+{% endblock sidebar_nav %}
+
+{% block auth_header_profile_url %}
+{% include "main/partials/auth_profile_url_block.html"%}
+{% endblock auth_header_profile_url %}
+
+{% block not_auth_header_profile_url %}
+<a class="auth-btn"href="{% url "authPage"%}">Войти</a>
+{% endblock not_auth_header_profile_url %}
+
+{% block auth_sidebar_profile_url %}
+{% include "main/partials/auth_profile_url_block.html"%}
+{% endblock auth_sidebar_profile_url %}
+
+{% block not_auth_sidebar_profile_url %}
+<a class="auth-btn"href="{% url "authPage"%}">Войти</a>
+{% endblock not_auth_sidebar_profile_url %}
+
+{% block main_content %}
+<div class="admin-page">
+  <div class="actions-section">
+    {% include "adminPanel/partials/genres_filter.html" %}
+    <div class="actions-section-item admin-section messages-section">
+      <h2 class="section-title">Сообщения и ошибки</h2>
+      <div class="messages-container">
+        <div class="messages-type">
+          <div class="message-type-block">
+            <div class="icon-info success">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <b>SUCCESS</b>
+            {{messages_type.success}}
+          </div>
+          <div class="message-type-block">
+            <div class="icon-info error">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <b>ERROR</b>
+            {{messages_type.error}}
+          </div>
+          <div class="message-type-block">
+            <div class="icon-info warning">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <b>WARNING</b>
+            {{messages_type.warning}}
+          </div>
+        </div>
+
+        <div class="messages-block">
+          <div class="messages-content">
+            {% for message in messages %}
+            <div class="message-block">
+              <div class="main-info">
+                <div class="text-info">
+                  <div><b>Откуда:</b> {{message.from_page}}</div>
+                  <div><b>Админ:</b> {{message.admin.username}}</div>
+                </div>
+                {% if message.message_type == "success"%}
+                <div class="icon-info success">
+                  <i class="fa-solid fa-circle-check"></i>
+                </div>
+                {% elif message.message_type == "warning"%}
+                <div class="icon-info warning">
+                  <i class="fa-solid fa-exclamation"></i>
+                </div>
+                {% elif message.message_type == "error"%}
+                <div class="icon-info error">
+                  <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                {% endif %}
+              </div>
+              <div class="message-border"></div>
+              <div class="text">{{message.text}}</div>
+              <div class="message-border"></div>
+              <div class="other-info">
+                <div><b>Когда произошло:</b> {{message.date}}</div>
+                <div><b>Продолжительность:</b> {{message.time}}c</div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
       </div>
-      <div class="media_actions">
-        <input type="checkbox" name="media_ids" value="{{ genre.id }}" form="delete-selected-form">
-      </div>
     </div>
-  {% endfor %}
-{% endblock media_block %}
-
-{% block parse_media_block %}
-{% endblock parse_media_block %}
-
-{% block page %}
-  <div class="invisible_block">
-    <input type="hidden" name="next" value="{{ request.path }}" form="clear_messages">
-  </div>
-{% endblock page %}
-
-{% block filter_block %}
-<form action="{% url "films" %}">
-
-  <div class="filter_content">
-    <div>
-      <input type="text" placeholder="Поиск по id" name="id_search">
-    </div>
-    <div>
-      <input type="text" placeholder="Поиск по названию">
-    </div>
-    <div>
-      <span>Бюджет</span>
-      <input type="text" placeholder="От">
-      <input type="text" placeholder="До">
-    </div>
-    <div>
-      <span>Выручка</span>
-      <input type="text" placeholder="От">
-      <input type="text" placeholder="До">
-    </div>
-    <div>
-      <span>Год выхода</span>
-      <input type="date">
-      <input type="date">
-    </div>
-    <div>
-      <span>Продолжительность</span>
-      <input type="text" placeholder="От">
-      <input type="text" placeholder="До">
-    </div>
-    <div>
-      <span>Вышел ли фильм</span>
-      <input type="checkbox">
-    </div>
-    <div>
-      <span>Рейтинг</span>
-      <input type="text" placeholder="От">
-      <input type="text" placeholder="До">
-    </div>
-    <div>
-      <span>Жанры(тут будет выпадающий список)</span>
+    <div class="actions-section-item admin-section parse-section">
+      <h2 class="section-title">Парсинг данных</h2>
     </div>
   </div>
-  <button type="submit">Отправить</button>
-</form>
-{% endblock filter_block %}
+
+  <div class="admin-section">
+    <div class="section-title-block">
+      <h2 class="section-title">Управление данными({{genres|length}})</h2>
+    </div>
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>ID для поиска</th>
+            <th>Название</th>
+            <th>Статус</th>
+            <th>Действия</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for genre in genres %}
+          <tr>
+            <td>{{genre.id}}</td>
+            <td>{{genre.search_id}}</td>
+            <td>{{genre.name}}</td>
+            <td>Добавлен</td>
+            <td class="table-actions">
+              <button class="action-btn edit-btn"><i class="fas fa-edit"></i> Редактировать</button>
+              {% comment %} <button class="action-btn delete-btn"><i class="fas fa-trash"></i> Удалить</button> {% endcomment %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock main_content %}
