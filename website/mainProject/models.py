@@ -102,6 +102,8 @@ class Comment(models.Model):
         on_delete=models.CASCADE,
         related_name='comments'
     )
+
+    is_private = models.BooleanField(null=True, blank=True)
     
     text = models.TextField(verbose_name="Текст комментария")
     writing_date = models.DateTimeField(

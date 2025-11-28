@@ -566,7 +566,22 @@ def itemPage(request, media_type, search_id):
     comments = Comment.objects.filter(
         content_type=content_type,
         object_id=item.id
-    ).select_related('user')
+    ).select_related('user').order_by()
+
+    author_comments = Comment.objects.none()
+    if request.user.is_authenticated:
+        author_comments = comments.filter(user=request.user).order_by()
+        # author_comments = author_comments.order_by(is_private=True)
+    
+    public_comments = comments.filter(is_private=False).order_by()
+
+    if request.user.is_authenticated:
+        comments = author_comments | public_comments
+        comments = comments
+    else:
+        comments = public_comments
+
+    comments_count = comments.count()
 
     user_lists_with_status = []
 
@@ -580,26 +595,19 @@ def itemPage(request, media_type, search_id):
         ).exists()
 
         user_lists = user.user_lists.all()
-
+        
         user_lists_with_status = []
-        
-        item_exists_subquery = ListItem.objects.filter(
-            user_list=OuterRef('pk'),
-            content_type=content_type,
-            object_id=item.id
-        )
-        
-        user_lists = user.user_lists.annotate(
-            has_item=Exists(item_exists_subquery)
-        )
-        
-        user_lists_with_status = [
-            {
+        for user_list in user_lists:
+            has_item = ListItem.objects.filter(
+                user_list=user_list,
+                content_type=content_type,
+                object_id=item.id
+            ).exists()
+            
+            user_lists_with_status.append({
                 'list': user_list,
-                'has_item': user_list.has_item
-            }
-            for user_list in user_lists
-        ]
+                'has_item': has_item
+            })
     else:
         is_favorite = False
 
@@ -614,6 +622,7 @@ def itemPage(request, media_type, search_id):
         "actors_count": len(actors),
         "media_type": media_type,
         "comments": comments,
+        "comments_count": comments_count,
         "content_type_id": content_type.id,
         "object_id": item.id,
         "is_favorite": is_favorite,
@@ -682,6 +691,7 @@ def create_comment(request):
             object_id = request.POST.get('object_id')
             text = request.POST.get('text')
             rating = request.POST.get('rating')
+            comment_is_private = request.POST.get('comment_is_private')
             
             # Проверяем обязательные поля
             if not all([content_type_id, object_id, text]):
@@ -703,7 +713,8 @@ def create_comment(request):
                 content_type=content_type,
                 object_id=object_id,
                 text=text,
-                rating=rating if rating else None  # rating может быть пустым
+                rating=rating if rating else None,  # rating может быть пустым
+                is_private=True if comment_is_private == "on" else False 
             )
             comment.save()
             

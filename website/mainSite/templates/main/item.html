@@ -471,7 +471,12 @@
                             <option value="8">8 ★ - Очень хорошо</option>
                             <option value="9">9 ★ - Отлично</option>
                             <option value="10">10 ★ - Шедевр</option>
-                        </select>
+                          </select>
+    
+                        <div class="checkbox-block" style="margin-top: 10px;">
+                          <input type="checkbox" name="comment_is_private">
+                          <label for="list_is_private">Сделать комментарий приватным</label>
+                        </div>
                     </div>
                     
                     <!-- Скрытые поля для определения объекта -->
@@ -506,6 +511,11 @@
                         <option value="9">9 ★ - Отлично</option>
                         <option value="10">10 ★ - Шедевр</option>
                     </select>
+
+                    <div class="checkbox-block" style="margin-top: 10px;">
+                      <input type="checkbox" name="comment_is_private">
+                      <label for="list_is_private">Сделать комментарий приватным</label>
+                    </div>
                 </div>
                 
                 <a href="{% url "authPage" %}">
@@ -522,7 +532,7 @@
       <div class="comments-list" id="commentsList">
         {% for comment in comments %}
           <a href="{% if comment.user.username != request.user.username %}{% url "userPage" comment.user.id %}{% else %}{% url "profilePage" %}{% endif %}">
-            <div class="comment-card">
+            <div class="comment-card {% if comment.user.username == request.user.username %}my-comment{% endif %}">
               <div class="comment-header">
                 <div class="comment-user">
                   {% if comment.user.avatar %}
@@ -545,6 +555,11 @@
                       {% endwith %}
                     </div>
                   </div>
+                  {% if comment.is_private %}
+                  <div class="private_comment">
+                    <i class="fas fa-lock"></i>
+                  </div>
+                  {% endif %}
                 </div>
                 {% if comment.rating %}
                 <div class="comment-rating">
@@ -554,7 +569,7 @@
                 {% endif %}
               </div>
               <div class="comment-content">
-                {{ comment.text }}
+                {{ comment.text }}{{comment.is_private}}
               </div>
             </div>
           </a>

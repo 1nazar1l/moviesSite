@@ -334,6 +334,11 @@
                         {% endwith %}
                       </div>
                     </div>
+                    {% if comment.is_private %}
+                    <div class="private_comment">
+                      <i class="fas fa-lock"></i>
+                    </div>
+                    {% endif %}
                   </div>
                   {% if comment.rating %}
                   <div class="comment-rating">
