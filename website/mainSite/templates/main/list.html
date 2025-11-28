@@ -95,7 +95,7 @@
                   <span class="meta-label">Автор списка</span>
                   <span class="meta-value">
                     {% if user_is_author %}
-                      <a href="{% url "profilePage" %}" style="display: flex; align-items: baseline; gap: 6px;">
+                      <a href="{% url "profilePage" %}" style="display: flex; gap: 10px;">
                         <div class="author-avatar">
                           {% if author.avatar %}
                           <img src="{{ author.avatar.url }}" alt="Аватар" class="user-avatar" id="userAvatar">
@@ -106,7 +106,7 @@
                         <span>{{author.username}}</span>
                       </a>
                     {% else %}
-                      <a href="{% url "userPage" user_id %}" style="display: flex; align-items: baseline; gap: 6px;">
+                      <a href="{% url "userPage" user_id %}" style="display: flex; gap: 10px;">
                         <div class="author-avatar">
                           {% if author.avatar %}
                           <img src="{{ author.avatar.url }}" alt="Аватар" class="user-avatar" id="userAvatar">

@@ -198,59 +198,61 @@
 
         <div class="comments-list" id="commentsList">
           {% for comment in comments %}
-          <a href="{% url "itemPage" comment.content_type.model comment.content_object.search_id %}">
-            <div class="comment-card">
-              <div class="comment-header">
-                <div class="comment-user">
-                  {% if avatar_url %}
-                  <img src="{{ avatar_url }}" alt="Аватар" class="user-avatar" id="userAvatar">
-                  {% else %}
-                  <div class="user-avatar" id="userAvatar">{{ user.username|first|upper }}</div>
-                  {% endif %}
-                  <div class="user-info">
-                    <div class="user-name">
-                      {{ comment.user.username }}
-                        / 
-                      {% if comment.content_type.model == "actor" %}
-                        актер
-                      {% elif comment.content_type.model == "serial" %}
-                        сериал
-                      {% elif comment.content_type.model == "film" %}
-                        фильм
-                      {% endif %}
-                        
-                      {% if comment.content_type.model != "actor" %}
-                        {{comment.content_object.title}}
-                      {% else %}
-                        {{comment.content_object.name}}
-                      {% endif %}
-                    </div>
-                    <div class="comment-date">
-                      {% now "Y-m-d" as today %}
-                      {% with comment_date=comment.writing_date.date %}
-                      {% if comment_date == today %}
-                      Сегодня
-                      {% elif comment_date == today|date:"Y-m-d"|add:"-1 day" %}
-                      Вчера
-                      {% else %}
-                      {{ comment.writing_date|timesince }} назад
-                      {% endif %}
-                      {% endwith %}
+          {% if comment.is_private == False %}
+            <a href="{% url "itemPage" comment.content_type.model comment.content_object.search_id %}">
+              <div class="comment-card">
+                <div class="comment-header">
+                  <div class="comment-user">
+                    {% if avatar_url %}
+                    <img src="{{ avatar_url }}" alt="Аватар" class="user-avatar" id="userAvatar">
+                    {% else %}
+                    <div class="user-avatar" id="userAvatar">{{ user.username|first|upper }}</div>
+                    {% endif %}
+                    <div class="user-info">
+                      <div class="user-name">
+                        {{ comment.user.username }}
+                          / 
+                        {% if comment.content_type.model == "actor" %}
+                          актер
+                        {% elif comment.content_type.model == "serial" %}
+                          сериал
+                        {% elif comment.content_type.model == "film" %}
+                          фильм
+                        {% endif %}
+                          
+                        {% if comment.content_type.model != "actor" %}
+                          {{comment.content_object.title}}
+                        {% else %}
+                          {{comment.content_object.name}}
+                        {% endif %}
+                      </div>
+                      <div class="comment-date">
+                        {% now "Y-m-d" as today %}
+                        {% with comment_date=comment.writing_date.date %}
+                        {% if comment_date == today %}
+                        Сегодня
+                        {% elif comment_date == today|date:"Y-m-d"|add:"-1 day" %}
+                        Вчера
+                        {% else %}
+                        {{ comment.writing_date|timesince }} назад
+                        {% endif %}
+                        {% endwith %}
+                      </div>
                     </div>
                   </div>
+                  {% if comment.rating %}
+                  <div class="comment-rating">
+                    <i class="fas fa-star"></i>
+                    <span>{{ comment.rating }}</span>
+                  </div>
+                  {% endif %}
                 </div>
-                {% if comment.rating %}
-                <div class="comment-rating">
-                  <i class="fas fa-star"></i>
-                  <span>{{ comment.rating }}</span>
+                <div class="comment-content">
+                  {{ comment.text }}
                 </div>
-                {% endif %}
               </div>
-              <div class="comment-content">
-                {{ comment.text }}
-              </div>
-            </div>
-          </a>
+            </a>
+          {% endif %}
           {% endfor %}
         </div>
         {% endif %}
