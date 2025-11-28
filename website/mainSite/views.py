@@ -20,9 +20,9 @@ from mainProject.tools import parse_media_item
 
 import requests
 
-from django.db.models import Exists, OuterRef
-
 from django.core.mail import send_mail
+
+from badwords import ProfanityFilter
 
 def set_previous_page_values(request, **kwargs):
     request.session.modified = True
@@ -571,7 +571,6 @@ def itemPage(request, media_type, search_id):
     author_comments = Comment.objects.none()
     if request.user.is_authenticated:
         author_comments = comments.filter(user=request.user).order_by()
-        # author_comments = author_comments.order_by(is_private=True)
     
     public_comments = comments.filter(is_private=False).order_by()
 
@@ -684,30 +683,36 @@ def update_user_info(request):
 
 @login_required
 def create_comment(request):
+    _filter = ProfanityFilter()
+    _filter.init(["ru", "en"])
+
     if request.method == 'POST':
         try:
-            # Получаем данные из формы
             content_type_id = request.POST.get('content_type_id')
             object_id = request.POST.get('object_id')
             text = request.POST.get('text')
             rating = request.POST.get('rating')
             comment_is_private = request.POST.get('comment_is_private')
             
-            # Проверяем обязательные поля
             if not all([content_type_id, object_id, text]):
                 messages.error(request, 'Заполните все обязательные поля.')
                 return redirect(request.META.get('HTTP_REFERER', 'profilePage'))
-            
-            # Получаем ContentType
+        
+            words = text.split(" ")
+            text = ""
+            for word in words:
+                contains_profanity = _filter.filter_text(word, match_threshold=0.5)
+                if contains_profanity:
+                    word = "*"*len(word)
+                
+                text += f"{word} "
+
             content_type = get_object_or_404(ContentType, id=content_type_id)
             
-            # Получаем модель объекта
             model_class = content_type.model_class()
             
-            # Проверяем существование объекта
             content_object = get_object_or_404(model_class, id=object_id)
             
-            # Создаем комментарий
             comment = Comment(
                 user=request.user,
                 content_type=content_type,
@@ -925,6 +930,8 @@ def userPage(request, user_id):
     })
 
 def add_list(request):
+    _filter = ProfanityFilter()
+    _filter.init(["ru", "en"])
     request.session.modified = True
     request.session['list_error_messages'] = []
     if request.POST:
@@ -932,6 +939,16 @@ def add_list(request):
         list_description = request.POST.get('list_description')
         list_type = request.POST.get('list_type')
         list_is_private = request.POST.get('list_is_private')
+
+
+        words = list_name.split(" ")
+        list_name = ""
+        for word in words:
+            contains_profanity = _filter.filter_text(word, match_threshold=0.5)
+            if contains_profanity:
+                word = "*"*len(word)
+            
+            list_name += f"{word} "
 
         user = request.user
         user_lists = user.user_lists.all()
