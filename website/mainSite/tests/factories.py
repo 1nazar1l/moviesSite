@@ -15,4 +15,4 @@ class UserListFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory("users.tests.factories.UserFactory")
     title = factory.Sequence(lambda n: f"Список {n}")
     list_type = "custom"
-    is_private = False 
+    is_private = False
