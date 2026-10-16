@@ -71,8 +71,6 @@ WSGI_APPLICATION = 'website.wsgi.application'
 ASGI_APPLICATION = 'website.asgi.application'
 
 
-# === База данных =============================================================
-# По умолчанию — SQLite. На этапе 3 переключимся на Postgres через DB_ENGINE.
 if env.str('DB_ENGINE', default='') == 'django.db.backends.postgresql':
     DATABASES = {
         'default': {
@@ -113,11 +111,8 @@ USE_TZ = True
 
 
 # === Статика и медиа =========================================================
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-_static_dir = BASE_DIR / 'static'
-STATICFILES_DIRS = [_static_dir] if _static_dir.exists() else []
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
