@@ -15,8 +15,14 @@ class Actor(models.Model):
     gender = models.IntegerField(null=True, blank=True)
     site_img_path = models.URLField(null=True, blank=True)
     local_img_path = models.ImageField(upload_to='actors/', null=True, blank=True)
-    movies = models.ManyToManyField('Film', blank=True)
-    serials = models.ManyToManyField('Serial', blank=True)
+    movies = models.ManyToManyField(
+        'Film', blank=True, related_name='actors',
+        verbose_name='Фильмы',
+    )
+    serials = models.ManyToManyField(
+        'Serial', blank=True, related_name='actors',
+        verbose_name='Сериалы',
+    )
     
     class Meta:
         verbose_name = "Актер"
@@ -39,7 +45,6 @@ class Film(models.Model):
     status = models.CharField(max_length=20, null=True, blank=True)
     rating = models.FloatField(null=True, blank=True)
     genres = models.ManyToManyField('Genre', blank=True, related_name='films')
-    actors = models.ManyToManyField(Actor, blank=True)
     trailer_url = models.URLField(max_length=500, blank=True, null=True, verbose_name="Ссылка на трейлер")
 
     class Meta:
@@ -63,7 +68,6 @@ class Serial(models.Model):
     status = models.CharField(max_length=20, null=True, blank=True)
     rating = models.FloatField(null=True, blank=True)
     genres = models.ManyToManyField('Genre', blank=True, related_name='serials')
-    actors = models.ManyToManyField(Actor, blank=True)
     trailer_url = models.URLField(max_length=500, blank=True, null=True, verbose_name="Ссылка на трейлер")
 
     class Meta:

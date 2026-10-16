@@ -1,7 +1,7 @@
 import logging
 import os
 import re
-from datetime import datetime
+from django.utils import timezone
 
 import requests
 from bs4 import BeautifulSoup
@@ -19,7 +19,7 @@ def create_error_message(request, media_type, text):
         message_type="error",
         from_page=media_type,
         text=text,
-        date=datetime.now().replace(microsecond=0),
+        date=timezone.now().replace(microsecond=0),
         time=0.0,
         admin=request.user,
     )
@@ -29,7 +29,7 @@ def create_warning_message(request, media_type, text):
         message_type="warning",
         from_page=media_type,
         text=text,
-        date=datetime.now().replace(microsecond=0),
+        date=timezone.now().replace(microsecond=0),
         time=0.0,
         admin=request.user,
     )
@@ -64,7 +64,8 @@ def delete_selected_media_items(request, media_type):
             create_error_message(request, media_type, "Модель не найдена(delete_selected_media_items)")
             return
 
-        start_time = datetime.now()
+        start_time = timezone.now()
+
         media_items_to_delete = model.objects.filter(id__in=media_ids)
 
         if media_type != "actors":
@@ -74,7 +75,7 @@ def delete_selected_media_items(request, media_type):
 
         deleted_count = media_items_to_delete.delete()[0]
 
-        end = datetime.now()
+        end = timezone.now()
         lead_time = end - start_time
 
         create_success_message(
@@ -110,9 +111,9 @@ def delete_all_media_items(request, media_type):
         create_error_message(request, media_type, "Модель не найдена(delete_all_media_items)")
         return
     
-    start_time = datetime.now()
+    start_time = timezone.now()
     model.objects.all().delete()
-    end = datetime.now()
+    end = timezone.now()
     lead_time = end - start_time
 
     create_success_message(
@@ -366,7 +367,6 @@ def parse_media_item(films, serials, actors, selected_item, selected_item_media_
 
     if media_type == "actors":
         actor = actors.get(search_id=search_id)
-        selected_item.actors.add(actor)
         if selected_item_media_type == "film" or selected_item_media_type == "films":
             actor.movies.add(selected_item)
         elif selected_item_media_type == "serial" or selected_item_media_type == "serials":
@@ -387,7 +387,6 @@ def parse_media_item(films, serials, actors, selected_item, selected_item_media_
     elif media_type == "films":
         film = films.get(search_id=search_id)
         selected_item.movies.add(film)
-        film.actors.add(selected_item)
         for item in cast:
             defaults = {
                 "is_parsed": False,
@@ -397,13 +396,11 @@ def parse_media_item(films, serials, actors, selected_item, selected_item_media_
             if item["id"] != selected_item.search_id:
                 actor, created = actors.get_or_create(search_id=item["id"], defaults=defaults)
 
-                film.actors.add(actor)
                 actor.movies.add(film)
 
     elif media_type == "serials":
         serial = serials.get(search_id=search_id)
         selected_item.serials.add(serial)
-        serial.actors.add(selected_item)
         for item in cast:
             defaults = {
                 "is_parsed": False,
@@ -413,7 +410,6 @@ def parse_media_item(films, serials, actors, selected_item, selected_item_media_
             if item["id"] != selected_item.search_id:
                 actor, created = actors.get_or_create(search_id=item["id"], defaults=defaults)
 
-                serial.actors.add(actor)
                 actor.serials.add(serial)
 
 def parsing_media_items(request, media_type):
@@ -447,7 +443,7 @@ def parsing_media_items(request, media_type):
 
     try:
         for page_number in range(int(start_page), int(end_page) + 1):
-            start = datetime.now()
+            start = timezone.now()
 
             params = {
                 "api_key": settings.TMDB_API_KEY,
@@ -539,7 +535,6 @@ def parsing_media_items(request, media_type):
 
                         actor = actors.get(search_id=media_item["id"])
                         actor.movies.add(film)
-                        film.actors.add(actor)
                 elif media_type == "films":
                     for item in cast:
                         defaults = {
@@ -550,7 +545,6 @@ def parsing_media_items(request, media_type):
                         actor, created = Actor.objects.get_or_create(search_id=item["id"], defaults=defaults)
 
                         film = films.get(search_id=media_item["id"])
-                        film.actors.add(actor)
                         actor.movies.add(film)
                 elif media_type == "serials":
                     for item in cast:
@@ -562,10 +556,9 @@ def parsing_media_items(request, media_type):
                         actor, created = Actor.objects.get_or_create(search_id=item["id"], defaults=defaults)
 
                         serial = serials.get(search_id=media_item["id"])
-                        serial.actors.add(actor)
                         actor.serials.add(serial)
 
-            end = datetime.now()
+            end = timezone.now()
             lead_time = end - start
 
             create_success_message(

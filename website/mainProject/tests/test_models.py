@@ -56,10 +56,12 @@ class TestFilm:
         assert film in genre.films.all()
 
     def test_actors_m2m(self):
+        """actor.movies.add(film) → film.actors.all() работает через related_name."""
         film = FilmFactory()
         actor = ActorFactory()
-        film.actors.add(actor)
+        actor.movies.add(film)
         assert actor in film.actors.all()
+        assert film in actor.movies.all()
 
     def test_trailer_url_blank_by_default(self):
         film = Film.objects.create(search_id=1, title='X')
@@ -84,9 +86,10 @@ class TestSerial:
         genre = GenreFactory()
         actor = ActorFactory()
         serial.genres.add(genre)
-        serial.actors.add(actor)
+        actor.serials.add(serial)
         assert genre in serial.genres.all()
         assert actor in serial.actors.all()
+        assert serial in actor.serials.all()
 
     def test_seasons_episodes_nullable(self):
         serial = Serial.objects.create(search_id=1, title='X')
@@ -108,48 +111,18 @@ class TestActor:
         assert 'Брэд Питт' in s
 
     def test_movies_m2m(self):
-        """actor.movies.add(film) — фиксируем текущее поведение.
-
-        ⚠️ В модели две отдельные M2M-таблицы (Actor.movies и Film.actors),
-        они не синхронизируются автоматически. Регресс-тест на баг —
-        ниже. См. TODO.md, этап 4.
-        """
         actor = ActorFactory()
         film = FilmFactory()
         actor.movies.add(film)
         assert film in actor.movies.all()
-
-    def test_movies_and_actors_m2m_are_not_synced(self):
-        """⚠️ Известный баг: actor.movies и film.actors не синхронизируются.
-
-        Регресс-тест — если кто-то починит, тест упадёт и мы узнаем.
-        """
-        actor = ActorFactory()
-        film = FilmFactory()
-        actor.movies.add(film)
-        # film.actors.all() пуст, потому что это другая M2M-таблица
-        assert actor not in film.actors.all()
-
-    def test_actors_add_via_film(self):
-        """film.actors.add(actor) — обратная сторона того же бага."""
-        actor = ActorFactory()
-        film = FilmFactory()
-        film.actors.add(actor)
-        assert actor in film.actors.all()
-        # но в actor.movies его нет
-        assert film not in actor.movies.all()
+        assert actor in film.actors.all() 
 
     def test_serials_m2m(self):
         actor = ActorFactory()
         serial = SerialFactory()
         actor.serials.add(serial)
         assert serial in actor.serials.all()
-
-    def test_serials_and_actors_m2m_are_not_synced(self):
-        actor = ActorFactory()
-        serial = SerialFactory()
-        actor.serials.add(serial)
-        assert actor not in serial.actors.all()
+        assert actor in serial.actors.all()
 
     def test_birthday_optional(self):
         actor = Actor.objects.create(search_id=1, name='X')

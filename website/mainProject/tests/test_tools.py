@@ -54,8 +54,11 @@ class TestMessageHelpers:
         assert msg.message_type == 'warning'
 
     def test_create_success_message(self, user):
+        from django.utils import timezone
         req = self._fake_request(user)
-        create_success_message(req, 'films', '2026-01-01 12:00:00', '1.5', 'Успех')
+        create_success_message(
+            req, 'films', timezone.now().replace(microsecond=0), '1.5', 'Успех',
+        )
         msg = Message.objects.get()
         assert msg.message_type == 'success'
         assert msg.time == 1.5
