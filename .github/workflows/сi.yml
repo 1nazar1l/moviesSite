@@ -24,12 +24,15 @@ jobs:
           pip install ruff==0.8.4 black==24.10.0 isort==5.13.2
 
       - name: ruff
+        working-directory: website
         run: ruff check .
 
       - name: black
+        working-directory: website
         run: black --check .
 
       - name: isort
+        working-directory: website
         run: isort --check-only .
 
   test:
