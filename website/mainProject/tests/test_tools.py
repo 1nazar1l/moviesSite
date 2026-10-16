@@ -1,4 +1,8 @@
-"""Тесты mainProject/tools.py — парсинг TMDB с моком requests."""
+"""Тесты mainProject/tools.py — парсинг TMDB с моком requests.
+
+После разбиения tools.py на services/ патчим `requests.get` и
+`get_trailer_url` по их настоящему адресу — в services.*, а не в tools.
+"""
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -12,7 +16,6 @@ from mainProject.tools import (
     download_media_item,
     get_trailer_url,
 )
-from mainProject.tests.factories import GenreFactory
 
 
 def _mock_response(json_data, status_code=200):
@@ -71,7 +74,7 @@ class TestMessageHelpers:
 @pytest.mark.django_db
 class TestGetTrailerUrl:
 
-    @patch('mainProject.tools.requests.get')
+    @patch('mainProject.services.trailers.requests.get')
     def test_trailer_from_tmdb_api(self, mock_get):
         """TMDB API вернул официальный трейлер — берём его."""
         mock_get.return_value = _mock_response({
@@ -95,7 +98,7 @@ class TestGetTrailerUrl:
         url = get_trailer_url(search_id=550, media_type='films', title='Fight Club')
         assert url == 'https://www.youtube.com/watch?v=abc123'
 
-    @patch('mainProject.tools.requests.get')
+    @patch('mainProject.services.trailers.requests.get')
     def test_trailer_prefers_official(self, mock_get):
         """Если есть официальный — берём его, а не свежий неофициальный."""
         mock_get.return_value = _mock_response({
@@ -113,8 +116,8 @@ class TestGetTrailerUrl:
         url = get_trailer_url(search_id=550, media_type='films')
         assert url == 'https://www.youtube.com/watch?v=old_official'
 
-    @patch('mainProject.tools.get_trailer_url_bs4')
-    @patch('mainProject.tools.requests.get')
+    @patch('mainProject.services.trailers.get_trailer_url_bs4')
+    @patch('mainProject.services.trailers.requests.get')
     def test_trailer_fallback_to_bs4(self, mock_get, mock_bs4):
         """Если TMDB API не дал трейлера — падаем в BS4."""
         mock_get.return_value = _mock_response({'results': []})
@@ -127,8 +130,8 @@ class TestGetTrailerUrl:
         assert url == 'https://www.youtube.com/watch?v=frombs4'
         mock_bs4.assert_called_once()
 
-    @patch('mainProject.tools.get_trailer_url_bs4')
-    @patch('mainProject.tools.requests.get')
+    @patch('mainProject.services.trailers.get_trailer_url_bs4')
+    @patch('mainProject.services.trailers.requests.get')
     def test_trailer_api_exception_falls_back(self, mock_get, mock_bs4):
         """Если API упал с RequestException — идём в BS4."""
         mock_get.side_effect = requests.exceptions.ConnectionError('нет VPN')
@@ -140,14 +143,14 @@ class TestGetTrailerUrl:
         )
         assert url == 'https://www.youtube.com/watch?v=fallback'
 
-    @patch('mainProject.tools.requests.get')
+    @patch('mainProject.services.trailers.requests.get')
     def test_trailer_no_title_returns_none(self, mock_get):
         """Без title и без трейлера в API — None."""
         mock_get.return_value = _mock_response({'results': []})
         url = get_trailer_url(search_id=550, media_type='films')
         assert url is None
 
-    @patch('mainProject.tools.requests.get')
+    @patch('mainProject.services.trailers.requests.get')
     def test_trailer_ignores_non_youtube(self, mock_get):
         """Трейлеры не с YouTube игнорируются."""
         mock_get.return_value = _mock_response({
@@ -159,7 +162,7 @@ class TestGetTrailerUrl:
         url = get_trailer_url(search_id=550, media_type='films')
         assert url is None
 
-    @patch('mainProject.tools.requests.get')
+    @patch('mainProject.services.trailers.requests.get')
     def test_trailer_ignores_non_trailer_type(self, mock_get):
         """Только Trailer и Teaser, а не Clip/Featurette."""
         mock_get.return_value = _mock_response({
@@ -171,7 +174,7 @@ class TestGetTrailerUrl:
         url = get_trailer_url(search_id=550, media_type='films')
         assert url is None
 
-    @patch('mainProject.tools.requests.get')
+    @patch('mainProject.services.trailers.requests.get')
     def test_trailer_for_serial(self, mock_get):
         """Для сериалов url_part = 'tv'."""
         mock_get.return_value = _mock_response({
@@ -191,7 +194,7 @@ class TestGetTrailerUrl:
 @pytest.mark.django_db
 class TestDownloadMediaItem:
 
-    @patch('mainProject.tools.get_trailer_url', return_value=None)
+    @patch('mainProject.services.media_download.get_trailer_url', return_value=None)
     def test_download_film_creates_object(self, mock_trailer):
         """Создаётся Film с переданными полями."""
         data = {
@@ -216,7 +219,7 @@ class TestDownloadMediaItem:
         assert film.rating == 8.4
         assert film.is_parsed is True
 
-    @patch('mainProject.tools.get_trailer_url', return_value='https://yt/x')
+    @patch('mainProject.services.media_download.get_trailer_url', return_value='https://yt/x')
     def test_download_film_creates_genres(self, mock_trailer):
         """M2M genres создаются и связываются."""
         data = {
@@ -236,7 +239,7 @@ class TestDownloadMediaItem:
         assert Genre.objects.filter(search_id=28, name='Боевик').exists()
         assert film.trailer_url == 'https://yt/x'
 
-    @patch('mainProject.tools.get_trailer_url', return_value=None)
+    @patch('mainProject.services.media_download.get_trailer_url', return_value=None)
     def test_download_serial(self, mock_trailer):
         data = {
             'id': 1399,
@@ -257,7 +260,7 @@ class TestDownloadMediaItem:
         assert serial.seasons == 8
         assert serial.episodes == 73
 
-    @patch('mainProject.tools.get_trailer_url', return_value=None)
+    @patch('mainProject.services.media_download.get_trailer_url', return_value=None)
     def test_download_actor(self, mock_trailer):
         data = {
             'id': 287,
@@ -273,7 +276,7 @@ class TestDownloadMediaItem:
         assert actor.name == 'Брэд Питт'
         assert actor.is_parsed is True
 
-    @patch('mainProject.tools.get_trailer_url', return_value=None)
+    @patch('mainProject.services.media_download.get_trailer_url', return_value=None)
     def test_download_creates_only_once(self, mock_trailer):
         """Повторный вызов — get_or_create, объект не дублируется."""
         data = {
@@ -285,10 +288,9 @@ class TestDownloadMediaItem:
         download_media_item('films', 'poster_path', data, Film, 'https://img/')
         assert Film.objects.filter(search_id=552).count() == 1
 
-    @patch('mainProject.tools.get_trailer_url', return_value=None)
+    @patch('mainProject.services.media_download.get_trailer_url', return_value='https://yt/new')
     def test_existing_film_updates_trailer(self, mock_trailer):
         """Если фильм уже есть и получен трейлер — обновляем trailer_url."""
-        mock_trailer.return_value = 'https://yt/new'
         film = Film.objects.create(search_id=553, title='Old', is_parsed=True)
         data = {
             'id': 553, 'title': 'Old', 'budget': 0, 'revenue': 0, 'overview': '',
