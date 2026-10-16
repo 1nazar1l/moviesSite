@@ -286,7 +286,8 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url):
             "local_img_path": local_img_path,
         }
 
-    media_item_obj, created = model.get_or_create(
+    manager = model.objects if hasattr(model, 'objects') else model
+    media_item_obj, created = manager.get_or_create(
         search_id=media_item_data["id"],
         defaults=defaults
     )
