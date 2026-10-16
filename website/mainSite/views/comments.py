@@ -1,4 +1,5 @@
 """Создание комментариев с фильтрацией нецензурной лексики."""
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
@@ -13,17 +14,17 @@ def create_comment(request):
     _filter = ProfanityFilter()
     _filter.init(["ru", "en"])
 
-    if request.method == 'POST':
+    if request.method == "POST":
         try:
-            content_type_id = request.POST.get('content_type_id')
-            object_id = request.POST.get('object_id')
-            text = request.POST.get('text')
-            rating = request.POST.get('rating')
-            comment_is_private = request.POST.get('comment_is_private')
+            content_type_id = request.POST.get("content_type_id")
+            object_id = request.POST.get("object_id")
+            text = request.POST.get("text")
+            rating = request.POST.get("rating")
+            comment_is_private = request.POST.get("comment_is_private")
 
             if not all([content_type_id, object_id, text]):
-                messages.error(request, 'Заполните все обязательные поля.')
-                return redirect(request.META.get('HTTP_REFERER', 'profilePage'))
+                messages.error(request, "Заполните все обязательные поля.")
+                return redirect(request.META.get("HTTP_REFERER", "profilePage"))
 
             cleaned_words = []
             for word in text.split(" "):
@@ -45,17 +46,29 @@ def create_comment(request):
                 is_private=(comment_is_private == "on"),
             )
 
-            messages.success(request, 'Ваш комментарий успешно добавлен!')
+            messages.success(request, "Ваш комментарий успешно добавлен!")
 
-            if hasattr(content_object, 'search_id'):
+            if hasattr(content_object, "search_id"):
                 if model_class == Film:
-                    return redirect('itemPage', media_type='film', search_id=content_object.search_id)
+                    return redirect(
+                        "itemPage",
+                        media_type="film",
+                        search_id=content_object.search_id,
+                    )
                 if model_class == Serial:
-                    return redirect('itemPage', media_type='serial', search_id=content_object.search_id)
+                    return redirect(
+                        "itemPage",
+                        media_type="serial",
+                        search_id=content_object.search_id,
+                    )
                 if model_class == Actor:
-                    return redirect('itemPage', media_type='actor', search_id=content_object.search_id)
+                    return redirect(
+                        "itemPage",
+                        media_type="actor",
+                        search_id=content_object.search_id,
+                    )
 
         except Exception as e:
-            messages.error(request, f'Ошибка при добавлении комментария: {str(e)}')
+            messages.error(request, f"Ошибка при добавлении комментария: {str(e)}")
 
-    return redirect(request.META.get('HTTP_REFERER', 'profilePage'))
+    return redirect(request.META.get("HTTP_REFERER", "profilePage"))

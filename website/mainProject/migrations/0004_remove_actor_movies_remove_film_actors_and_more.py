@@ -6,35 +6,35 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mainProject', '0003_actor_is_parsed_film_is_parsed_serial_is_parsed'),
+        ("mainProject", "0003_actor_is_parsed_film_is_parsed_serial_is_parsed"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='actor',
-            name='movies',
+            model_name="actor",
+            name="movies",
         ),
         migrations.RemoveField(
-            model_name='film',
-            name='actors',
+            model_name="film",
+            name="actors",
         ),
         migrations.RemoveField(
-            model_name='serial',
-            name='actors',
+            model_name="serial",
+            name="actors",
         ),
         migrations.AddField(
-            model_name='actor',
-            name='movies',
-            field=models.ManyToManyField(blank=True, to='mainProject.film'),
+            model_name="actor",
+            name="movies",
+            field=models.ManyToManyField(blank=True, to="mainProject.film"),
         ),
         migrations.AddField(
-            model_name='film',
-            name='actors',
-            field=models.ManyToManyField(blank=True, to='mainProject.actor'),
+            model_name="film",
+            name="actors",
+            field=models.ManyToManyField(blank=True, to="mainProject.actor"),
         ),
         migrations.AddField(
-            model_name='serial',
-            name='actors',
-            field=models.ManyToManyField(blank=True, to='mainProject.actor'),
+            model_name="serial",
+            name="actors",
+            field=models.ManyToManyField(blank=True, to="mainProject.actor"),
         ),
     ]

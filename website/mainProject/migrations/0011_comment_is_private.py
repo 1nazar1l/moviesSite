@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mainProject', '0010_film_trailer_url_serial_trailer_url'),
+        ("mainProject", "0010_film_trailer_url_serial_trailer_url"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='comment',
-            name='is_private',
+            model_name="comment",
+            name="is_private",
             field=models.BooleanField(blank=True, null=True),
         ),
     ]

@@ -1,4 +1,5 @@
 """Профиль пользователя: свой и чужой, обновление, аватар."""
+
 import os
 from datetime import date
 from pathlib import Path
@@ -15,7 +16,7 @@ def profilePage(request):
         return redirect("errorPage", media_type="profilePage")
 
     create_list_errors = request.session.get("list_error_messages", [])
-    error_messages = request.session.get('profile_error_messages', [])
+    error_messages = request.session.get("profile_error_messages", [])
 
     today = date.today()
     User = get_user_model()
@@ -35,21 +36,25 @@ def profilePage(request):
 
     user_lists = user.user_lists.all()
 
-    return render(request, "main/profile.html", context={
-        "username": user.username,
-        "icon": str(user.username)[0].upper(),
-        "username_value": user.username,
-        "description_value": user.description,
-        "error_messages": error_messages,
-        "days": days_from_registration,
-        "comments_count": comments_count,
-        "ratings_count": ratings_count,
-        "favorites_count": favorites_count,
-        "favorites": favorites,
-        "comments": comments,
-        "user_lists": user_lists,
-        "create_list_errors": create_list_errors,
-    })
+    return render(
+        request,
+        "main/profile.html",
+        context={
+            "username": user.username,
+            "icon": str(user.username)[0].upper(),
+            "username_value": user.username,
+            "description_value": user.description,
+            "error_messages": error_messages,
+            "days": days_from_registration,
+            "comments_count": comments_count,
+            "ratings_count": ratings_count,
+            "favorites_count": favorites_count,
+            "favorites": favorites,
+            "comments": comments,
+            "user_lists": user_lists,
+            "create_list_errors": create_list_errors,
+        },
+    )
 
 
 def userPage(request, user_id):
@@ -74,28 +79,32 @@ def userPage(request, user_id):
 
     avatar_url = user.avatar.url if user.avatar else ""
 
-    return render(request, 'main/user.html', context={
-        "username": user.username,
-        "avatar_url": avatar_url,
-        "icon": str(user.username)[0].upper(),
-        "username_value": user.username,
-        "email_value": user.email,
-        "description_value": user.description,
-        "days": days_from_registration,
-        "comments_count": comments_count,
-        "ratings_count": ratings_count,
-        "favorites_count": favorites_count,
-        "favorites": favorites,
-        "comments": comments,
-        "user_lists": user_lists,
-        "user_lists_count": len(user_lists),
-        "user_id": user.id,
-    })
+    return render(
+        request,
+        "main/user.html",
+        context={
+            "username": user.username,
+            "avatar_url": avatar_url,
+            "icon": str(user.username)[0].upper(),
+            "username_value": user.username,
+            "email_value": user.email,
+            "description_value": user.description,
+            "days": days_from_registration,
+            "comments_count": comments_count,
+            "ratings_count": ratings_count,
+            "favorites_count": favorites_count,
+            "favorites": favorites,
+            "comments": comments,
+            "user_lists": user_lists,
+            "user_lists_count": len(user_lists),
+            "user_id": user.id,
+        },
+    )
 
 
 def update_user_info(request):
     request.session.modified = True
-    request.session['profile_error_messages'] = []
+    request.session["profile_error_messages"] = []
 
     if request.POST:
         username = request.POST.get("username")
@@ -107,7 +116,7 @@ def update_user_info(request):
         users = users.exclude(id=request.user.id)
 
         if users.filter(username=username).exists():
-            request.session['profile_error_messages'].append(
+            request.session["profile_error_messages"].append(
                 f"Пользователь с никнеймом {username} уже существует"
             )
         else:
@@ -118,9 +127,7 @@ def update_user_info(request):
                 try:
                     os.rename(old_avatar_path, new_avatar_path)
                 except Exception as e:
-                    request.session['profile_error_messages'].append(
-                        f"Ошибка при обновлении аватара: {e}"
-                    )
+                    request.session["profile_error_messages"].append(f"Ошибка при обновлении аватара: {e}")
 
             user.username = username
             user.avatar.name = f"avatars/{username}.jpg"
@@ -135,18 +142,18 @@ def update_user_info(request):
 
 @login_required
 def add_avatar(request):
-    if request.method == 'POST' and request.FILES.get('avatar'):
+    if request.method == "POST" and request.FILES.get("avatar"):
         try:
-            avatar_file = request.FILES['avatar']
+            avatar_file = request.FILES["avatar"]
 
             if avatar_file.size > 5 * 1024 * 1024:
-                messages.error(request, 'Размер файла не должен превышать 5MB')
-                return redirect('profilePage')
+                messages.error(request, "Размер файла не должен превышать 5MB")
+                return redirect("profilePage")
 
-            allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+            allowed_types = ["image/jpeg", "image/png", "image/gif", "image/webp"]
             if avatar_file.content_type not in allowed_types:
-                messages.error(request, 'Допустимые форматы: JPEG, PNG, GIF, WebP')
-                return redirect('profilePage')
+                messages.error(request, "Допустимые форматы: JPEG, PNG, GIF, WebP")
+                return redirect("profilePage")
 
             file_extension = Path(avatar_file.name).suffix.lower()
             new_filename = f"{request.user.username}{file_extension}"
@@ -167,9 +174,9 @@ def add_avatar(request):
             user.avatar.name = f"avatars/{new_filename}"
             user.save()
 
-            messages.success(request, 'Аватар успешно обновлен!')
+            messages.success(request, "Аватар успешно обновлен!")
 
         except Exception as e:
-            messages.error(request, f'Ошибка при загрузке аватара: {str(e)}')
+            messages.error(request, f"Ошибка при загрузке аватара: {str(e)}")
 
-    return redirect('profilePage')
+    return redirect("profilePage")

@@ -40,7 +40,7 @@ class ProfanityFilter:
             processing_normalize_text=processing_normalize_text,
             processing_aggressive_normalize=processing_aggressive_normalize,
             processing_transliterate=processing_transliterate,
-            processing_replace_homoglyphs=processing_replace_homoglyphs
+            processing_replace_homoglyphs=processing_replace_homoglyphs,
         )
 
         self.language_files = self.initialize_language_files()
@@ -63,26 +63,28 @@ class ProfanityFilter:
     def initialize_bad_words(self: Self) -> set[str]:
         """Initialize the set of bad words from language files."""
         bad_words: set[str] = set()
-        
+
         for lang in self.language_files:
             try:
                 # Sanitize the language code to prevent path traversal
                 lang = lang.lower().strip()
                 if not lang.isalpha():
                     continue
-                    
+
                 file_path = self.resource_dir / f"{lang}.bdw"
                 if not file_path.exists():
                     continue
-                    
+
                 with file_path.open(encoding="utf-8") as f:
                     words = f.read().splitlines()
-                    processed_words = [self.text_processor.process_text(word) for word in words]
+                    processed_words = [
+                        self.text_processor.process_text(word) for word in words
+                    ]
                     bad_words.update(processed_words)
             except Exception as e:
                 print(f"Error loading language file for {lang}: {e}")
                 continue
-                
+
         return bad_words
 
     def add_words(self: Self, words: list[str]) -> None:
@@ -103,10 +105,11 @@ class ProfanityFilter:
         return SequenceMatcher(None, a, b).ratio()
 
     def filter_text(
-            self: Self, text: str,
-            match_threshold: float | None = None,
-            replace_character: str | None = None,
-        ) -> bool | str:
+        self: Self,
+        text: str,
+        match_threshold: float | None = None,
+        replace_character: str | None = None,
+    ) -> bool | str:
         """Check if the given text contains profanity.
 
         :param text: Input text to check.

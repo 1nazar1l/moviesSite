@@ -1,6 +1,8 @@
 """Публичные страницы: главная, каталоги, поиск, карточка объекта, ошибка."""
+
 from datetime import date
 
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import redirect, render
 
@@ -9,57 +11,59 @@ from mainSite.models import ListItem
 
 from ._helpers import check_path
 
-from django.contrib.auth import get_user_model
-
-
 
 def mainPage(request):
-    request.session['profile_error_messages'] = []
+    request.session["profile_error_messages"] = []
 
     today = date.today()
     films = Film.objects.exclude(is_parsed=False)
     coming_soon_films = films.filter(release_date__year=today.year)[:10]
-    films = films.exclude(release_date__year=today.year).order_by('-rating')[:20]
+    films = films.exclude(release_date__year=today.year).order_by("-rating")[:20]
     serials = Serial.objects.exclude(is_parsed=False)
     coming_soon_serials = serials.filter(first_air_date__year=today.year)[:10]
-    serials = serials.exclude(first_air_date__year=today.year).order_by('-first_air_date')[:20]
+    serials = serials.exclude(first_air_date__year=today.year).order_by("-first_air_date")[:20]
 
     for items in [films, coming_soon_films, serials, coming_soon_serials]:
         for item in items:
             check_path(item)
             item.first_genre = item.genres.first()
 
-    return render(request, "main/index.html", context={
-        "username": request.user,
-        "films": films,
-        "serials": serials,
-        "coming_soon_films": coming_soon_films,
-        "coming_soon_serials": coming_soon_serials,
-        "types": {"film": "film", "serial": "serial", "actor": "actor"},
-    })
+    return render(
+        request,
+        "main/index.html",
+        context={
+            "username": request.user,
+            "films": films,
+            "serials": serials,
+            "coming_soon_films": coming_soon_films,
+            "coming_soon_serials": coming_soon_serials,
+            "types": {"film": "film", "serial": "serial", "actor": "actor"},
+        },
+    )
 
 
 def filmsPage(request):
-    request.session['profile_error_messages'] = []
+    request.session["profile_error_messages"] = []
 
-    title_search = request.GET.get('title_search', '').strip()
-    budget_min = request.GET.get('budget_min', '').strip()
-    budget_max = request.GET.get('budget_max', '').strip()
-    revenue_min = request.GET.get('revenue_min', '').strip()
-    revenue_max = request.GET.get('revenue_max', '').strip()
-    release_date_min = request.GET.get('release_date_min', '').strip()
-    release_date_max = request.GET.get('release_date_max', '').strip()
-    duration_min = request.GET.get('duration_min', '').strip()
-    duration_max = request.GET.get('duration_max', '').strip()
-    rating_min = request.GET.get('rating_min', '').strip()
-    rating_max = request.GET.get('rating_max', '').strip()
-    selected_genres = request.GET.getlist('genres')
+    title_search = request.GET.get("title_search", "").strip()
+    budget_min = request.GET.get("budget_min", "").strip()
+    budget_max = request.GET.get("budget_max", "").strip()
+    revenue_min = request.GET.get("revenue_min", "").strip()
+    revenue_max = request.GET.get("revenue_max", "").strip()
+    release_date_min = request.GET.get("release_date_min", "").strip()
+    release_date_max = request.GET.get("release_date_max", "").strip()
+    duration_min = request.GET.get("duration_min", "").strip()
+    duration_max = request.GET.get("duration_max", "").strip()
+    rating_min = request.GET.get("rating_min", "").strip()
+    rating_max = request.GET.get("rating_max", "").strip()
+    selected_genres = request.GET.getlist("genres")
 
     films = Film.objects.exclude(is_parsed=False)
 
     if title_search:
         films = films.filter(title__icontains=title_search).union(
-            films.filter(title__icontains=title_search.capitalize()), all=True,
+            films.filter(title__icontains=title_search.capitalize()),
+            all=True,
         )
     if budget_min:
         films = films.filter(budget__gte=budget_min)
@@ -87,7 +91,7 @@ def filmsPage(request):
     for film in films:
         check_path(film)
 
-    films = set(list(films))
+    films = set(films)
     genres = Genre.objects.all()
 
     context = {
@@ -114,27 +118,28 @@ def filmsPage(request):
 
 
 def serialsPage(request):
-    request.session['profile_error_messages'] = []
+    request.session["profile_error_messages"] = []
 
-    title_search = request.GET.get('title_search', '').strip()
-    episodes_min = request.GET.get('episodes_min', '').strip()
-    episodes_max = request.GET.get('episodes_max', '').strip()
-    seasons_min = request.GET.get('seasons_min', '').strip()
-    seasons_max = request.GET.get('seasons_max', '').strip()
-    first_air_date_min = request.GET.get('first_air_date_min', '').strip()
-    first_air_date_max = request.GET.get('first_air_date_max', '').strip()
-    last_air_date_min = request.GET.get('last_air_date_min', '').strip()
-    last_air_date_max = request.GET.get('last_air_date_max', '').strip()
-    rating_min = request.GET.get('rating_min', '').strip()
-    rating_max = request.GET.get('rating_max', '').strip()
-    status_filter = request.GET.get('status', '').strip()
-    selected_genres = request.GET.getlist('genres')
+    title_search = request.GET.get("title_search", "").strip()
+    episodes_min = request.GET.get("episodes_min", "").strip()
+    episodes_max = request.GET.get("episodes_max", "").strip()
+    seasons_min = request.GET.get("seasons_min", "").strip()
+    seasons_max = request.GET.get("seasons_max", "").strip()
+    first_air_date_min = request.GET.get("first_air_date_min", "").strip()
+    first_air_date_max = request.GET.get("first_air_date_max", "").strip()
+    last_air_date_min = request.GET.get("last_air_date_min", "").strip()
+    last_air_date_max = request.GET.get("last_air_date_max", "").strip()
+    rating_min = request.GET.get("rating_min", "").strip()
+    rating_max = request.GET.get("rating_max", "").strip()
+    status_filter = request.GET.get("status", "").strip()
+    selected_genres = request.GET.getlist("genres")
 
     serials = Serial.objects.exclude(is_parsed=False)
 
     if title_search:
         serials = serials.filter(title__icontains=title_search).union(
-            serials.filter(title__icontains=title_search.capitalize()), all=True,
+            serials.filter(title__icontains=title_search.capitalize()),
+            all=True,
         )
     if episodes_min:
         serials = serials.filter(episodes__gte=episodes_min)
@@ -161,7 +166,7 @@ def serialsPage(request):
     if selected_genres:
         serials = serials.filter(genres__search_id__in=selected_genres).distinct()
 
-    serials = set(list(serials))
+    serials = set(serials)
     for serial in serials:
         check_path(serial)
 
@@ -192,21 +197,22 @@ def serialsPage(request):
 
 
 def actorsPage(request):
-    request.session['profile_error_messages'] = []
+    request.session["profile_error_messages"] = []
 
-    name_search = request.GET.get('name_search', '').strip()
-    birthday_min = request.GET.get('birthday_min', '').strip()
-    birthday_max = request.GET.get('birthday_max', '').strip()
-    deathday_min = request.GET.get('deathday_min', '').strip()
-    deathday_max = request.GET.get('deathday_max', '').strip()
-    gender_filter = request.GET.get('gender', '').strip()
-    project_search = request.GET.get('project_search', '').strip()
+    name_search = request.GET.get("name_search", "").strip()
+    birthday_min = request.GET.get("birthday_min", "").strip()
+    birthday_max = request.GET.get("birthday_max", "").strip()
+    deathday_min = request.GET.get("deathday_min", "").strip()
+    deathday_max = request.GET.get("deathday_max", "").strip()
+    gender_filter = request.GET.get("gender", "").strip()
+    project_search = request.GET.get("project_search", "").strip()
 
     actors = Actor.objects.exclude(is_parsed=False)
 
     if name_search:
         actors = actors.filter(name__icontains=name_search).union(
-            actors.filter(name__icontains=name_search.capitalize()), all=True,
+            actors.filter(name__icontains=name_search.capitalize()),
+            all=True,
         )
     if birthday_min:
         actors = actors.filter(birthday__gte=birthday_min)
@@ -238,7 +244,7 @@ def actorsPage(request):
     for actor in actors:
         check_path(actor)
 
-    actors = set(list(actors))
+    actors = set(actors)
 
     context = {
         "username": request.user,
@@ -258,15 +264,17 @@ def actorsPage(request):
 
 
 def searchPage(request):
-    request.session['profile_error_messages'] = []
+    request.session["profile_error_messages"] = []
 
-    search = request.POST.get('search')
+    search = request.POST.get("search")
 
     if search:
         from ._helpers import set_previous_page_values
+
         set_previous_page_values(request, search_page_value=search)
     else:
         from ._helpers import get_previous_page_values
+
         for item in get_previous_page_values(request):
             for key, value in item.items():
                 if key == "search_page_value":
@@ -277,36 +285,43 @@ def searchPage(request):
     actors = Actor.objects.exclude(is_parsed=False)
 
     films = films.filter(title__icontains=search).union(
-        films.filter(title__icontains=search.capitalize()), all=True,
+        films.filter(title__icontains=search.capitalize()),
+        all=True,
     )
     serials = serials.filter(title__icontains=search).union(
-        serials.filter(title__icontains=search.capitalize()), all=True,
+        serials.filter(title__icontains=search.capitalize()),
+        all=True,
     )
     actors = actors.filter(name__icontains=search).union(
-        actors.filter(name__icontains=search.capitalize()), all=True,
+        actors.filter(name__icontains=search.capitalize()),
+        all=True,
     )
 
-    films = set(list(films))
-    serials = set(list(serials))
-    actors = set(list(actors))
+    films = set(films)
+    serials = set(serials)
+    actors = set(actors)
 
     for objects in [films, serials, actors]:
         for obj in objects:
             check_path(obj)
 
-    return render(request, "main/search.html", context={
-        "username": request.user,
-        "films": films,
-        "serials": serials,
-        "actors": actors,
-        "search_title": search,
-        "results_count": len(films) + len(serials) + len(actors),
-        "types": {"film": "film", "serial": "serial", "actor": "actor"},
-    })
+    return render(
+        request,
+        "main/search.html",
+        context={
+            "username": request.user,
+            "films": films,
+            "serials": serials,
+            "actors": actors,
+            "search_title": search,
+            "results_count": len(films) + len(serials) + len(actors),
+            "types": {"film": "film", "serial": "serial", "actor": "actor"},
+        },
+    )
 
 
 def itemPage(request, media_type, search_id):
-    request.session['profile_error_messages'] = []
+    request.session["profile_error_messages"] = []
 
     if media_type in ("film", "serial", "actor"):
         media_type = f"{media_type}s"
@@ -330,9 +345,14 @@ def itemPage(request, media_type, search_id):
 
     content_type = ContentType.objects.get_for_model(item)
 
-    comments = Comment.objects.filter(
-        content_type=content_type, object_id=item.id,
-    ).select_related('user').order_by()
+    comments = (
+        Comment.objects.filter(
+            content_type=content_type,
+            object_id=item.id,
+        )
+        .select_related("user")
+        .order_by()
+    )
 
     author_comments = Comment.objects.none()
     if request.user.is_authenticated:
@@ -355,7 +375,8 @@ def itemPage(request, media_type, search_id):
         user = User.objects.get(id=request.user.id)
 
         is_favorite = user.favorites.filter(
-            content_type=content_type, object_id=item.id,
+            content_type=content_type,
+            object_id=item.id,
         ).exists()
 
         for user_list in user.user_lists.all():
@@ -364,31 +385,39 @@ def itemPage(request, media_type, search_id):
                 content_type=content_type,
                 object_id=item.id,
             ).exists()
-            user_lists_with_status.append({'list': user_list, 'has_item': has_item})
+            user_lists_with_status.append({"list": user_list, "has_item": has_item})
 
-    return render(request, "main/item.html", context={
-        "username": request.user,
-        "item": item,
-        "films": films,
-        "films_count": len(films),
-        "serials": serials,
-        "serials_count": len(serials),
-        "actors": actors,
-        "actors_count": len(actors),
-        "media_type": media_type,
-        "comments": comments,
-        "comments_count": comments_count,
-        "content_type_id": content_type.id,
-        "object_id": item.id,
-        "is_favorite": is_favorite,
-        'user_lists_with_status': user_lists_with_status,
-        "is_vpn": False,
-        "types": {"film": "film", "serial": "serial", "actor": "actor"},
-    })
+    return render(
+        request,
+        "main/item.html",
+        context={
+            "username": request.user,
+            "item": item,
+            "films": films,
+            "films_count": len(films),
+            "serials": serials,
+            "serials_count": len(serials),
+            "actors": actors,
+            "actors_count": len(actors),
+            "media_type": media_type,
+            "comments": comments,
+            "comments_count": comments_count,
+            "content_type_id": content_type.id,
+            "object_id": item.id,
+            "is_favorite": is_favorite,
+            "user_lists_with_status": user_lists_with_status,
+            "is_vpn": False,
+            "types": {"film": "film", "serial": "serial", "actor": "actor"},
+        },
+    )
 
 
 def errorPage(request, media_type=""):
-    request.session['profile_error_messages'] = []
-    return render(request, "main/error.html", context={
-        "username": request.user,
-    })
+    request.session["profile_error_messages"] = []
+    return render(
+        request,
+        "main/error.html",
+        context={
+            "username": request.user,
+        },
+    )

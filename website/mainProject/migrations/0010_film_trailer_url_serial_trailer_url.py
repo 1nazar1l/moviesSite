@@ -6,18 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mainProject', '0009_alter_genre_options_remove_film_genres_and_more'),
+        ("mainProject", "0009_alter_genre_options_remove_film_genres_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='film',
-            name='trailer_url',
-            field=models.URLField(blank=True, max_length=500, null=True, verbose_name='Ссылка на трейлер'),
+            model_name="film",
+            name="trailer_url",
+            field=models.URLField(
+                blank=True, max_length=500, null=True, verbose_name="Ссылка на трейлер"
+            ),
         ),
         migrations.AddField(
-            model_name='serial',
-            name='trailer_url',
-            field=models.URLField(blank=True, max_length=500, null=True, verbose_name='Ссылка на трейлер'),
+            model_name="serial",
+            name="trailer_url",
+            field=models.URLField(
+                blank=True, max_length=500, null=True, verbose_name="Ссылка на трейлер"
+            ),
         ),
     ]

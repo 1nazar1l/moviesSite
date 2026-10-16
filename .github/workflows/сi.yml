@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: Lint (ruff, black, isort)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install lint tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff==0.8.4 black==24.10.0 isort==5.13.2
+
+      - name: ruff
+        run: ruff check .
+
+      - name: black
+        run: black --check .
+
+      - name: isort
+        run: isort --check-only .
+
+  test:
+    name: Tests (pytest + PostgreSQL)
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: movies
+          POSTGRES_USER: movies
+          POSTGRES_PASSWORD: movies_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U movies -d movies"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DJANGO_SETTINGS_MODULE: website.settings
+      SECRET_KEY: ci-test-secret-key-not-for-production
+      DEBUG: "True"
+      API_KEY: ci-fake-tmdb-key
+      EMAIL_HOST_USER: ci@example.com
+      EMAIL_HOST_PASSWORD: ci-fake-password
+      DB_ENGINE: django.db.backends.postgresql
+      DB_NAME: movies
+      DB_USER: movies
+      DB_PASSWORD: movies_test
+      DB_HOST: 127.0.0.1
+      DB_PORT: "5432"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements/dev.txt
+
+      - name: Django check
+        working-directory: website
+        run: python manage.py check
+
+      - name: Migrations (no pending)
+        working-directory: website
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: Run tests
+        working-directory: website
+        run: pytest -v

@@ -1,4 +1,5 @@
 """Поиск ссылки на трейлер: TMDB API → fallback на YouTube через BS4."""
+
 import logging
 import re
 
@@ -20,6 +21,7 @@ def get_trailer_url(search_id, media_type, title=None, release_date=None):
         videos_url = f"{BASE_URL}/{url_part}/{search_id}/videos"
 
         from django.conf import settings
+
         params = {
             "api_key": settings.TMDB_API_KEY,
             "language": "ru",
@@ -30,16 +32,19 @@ def get_trailer_url(search_id, media_type, title=None, release_date=None):
             response.raise_for_status()
             videos_data = response.json()
 
-            if videos_data and 'results' in videos_data:
+            if videos_data and "results" in videos_data:
                 trailers = [
-                    video for video in videos_data['results']
-                    if video['site'] == 'YouTube'
-                    and video['type'] in ['Trailer', 'Teaser']
+                    video
+                    for video in videos_data["results"]
+                    if video["site"] == "YouTube" and video["type"] in ["Trailer", "Teaser"]
                 ]
 
                 if trailers:
                     trailers.sort(
-                        key=lambda x: (x.get('official', False), x.get('published_at', '')),
+                        key=lambda x: (
+                            x.get("official", False),
+                            x.get("published_at", ""),
+                        ),
                         reverse=True,
                     )
                     trailer = trailers[0]
@@ -73,27 +78,27 @@ def get_trailer_url_bs4(title, release_date=None):
         response = requests.get(youtube_url, headers=headers, timeout=10)
         response.raise_for_status()
 
-        soup = BeautifulSoup(response.content, 'html.parser')
+        soup = BeautifulSoup(response.content, "html.parser")
 
         video_links = []
-        script_tags = soup.find_all('script')
+        script_tags = soup.find_all("script")
 
         for script in script_tags:
             script_text = script.string
-            if script_text and 'videoId' in script_text:
+            if script_text and "videoId" in script_text:
                 video_ids = re.findall(r'"videoId":"([^"]+)"', script_text)
                 video_links.extend(video_ids)
 
         if not video_links:
-            for link in soup.find_all('a', href=True):
-                href = link['href']
-                if '/watch?v=' in href and href not in video_links:
+            for link in soup.find_all("a", href=True):
+                href = link["href"]
+                if "/watch?v=" in href and href not in video_links:
                     video_links.append(href)
 
         processed_links = []
         for link in video_links:
-            if link.startswith('/watch?v='):
-                video_id = link.split('watch?v=')[1].split('&')[0]
+            if link.startswith("/watch?v="):
+                video_id = link.split("watch?v=")[1].split("&")[0]
                 processed_links.append(video_id)
             elif len(link) == 11:
                 processed_links.append(link)

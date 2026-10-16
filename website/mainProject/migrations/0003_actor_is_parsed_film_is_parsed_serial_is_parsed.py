@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mainProject', '0002_initial'),
+        ("mainProject", "0002_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='actor',
-            name='is_parsed',
+            model_name="actor",
+            name="is_parsed",
             field=models.BooleanField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='film',
-            name='is_parsed',
+            model_name="film",
+            name="is_parsed",
             field=models.BooleanField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='serial',
-            name='is_parsed',
+            model_name="serial",
+            name="is_parsed",
             field=models.BooleanField(blank=True, null=True),
         ),
     ]

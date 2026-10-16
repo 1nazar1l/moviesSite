@@ -1,4 +1,5 @@
 """Запись сообщений о парсинге в модель `Message`."""
+
 from django.utils import timezone
 
 from mainProject.models import Message

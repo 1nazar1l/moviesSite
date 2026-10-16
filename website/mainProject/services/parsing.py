@@ -1,4 +1,5 @@
 """Парсинг TMDB: выбранный объект и страницы popular."""
+
 import logging
 import os
 
@@ -24,7 +25,7 @@ MEDIA_MODELS = {
 
 
 def delete_selected_media_items(request, media_type):
-    media_ids = request.POST.getlist('media_ids')
+    media_ids = request.POST.getlist("media_ids")
     if not media_ids:
         create_error_message(request, media_type, "Не выбрано ни одного объекта для удаления")
         return
@@ -48,7 +49,8 @@ def delete_selected_media_items(request, media_type):
         lead_time = timezone.now() - start_time
 
         create_success_message(
-            request, media_type,
+            request,
+            media_type,
             str(start_time.replace(microsecond=0)),
             str(lead_time.total_seconds()),
             f"Успешно удалено {deleted_count} объектов!",
@@ -56,7 +58,8 @@ def delete_selected_media_items(request, media_type):
 
         for media_item in deleted_media_items:
             create_success_message(
-                request, media_type,
+                request,
+                media_type,
                 str(start_time.replace(microsecond=0)),
                 "0.000000",
                 f"Объект {media_item[0]}(id {media_item[1]}) успешно удалён!",
@@ -77,16 +80,24 @@ def delete_all_media_items(request, media_type):
     lead_time = timezone.now() - start_time
 
     create_success_message(
-        request, media_type,
+        request,
+        media_type,
         str(start_time.replace(microsecond=0)),
         str(lead_time.total_seconds()),
         "Все объекты успешно удалены!",
     )
 
 
-def parse_media_item(films, serials, actors, selected_item,
-                     selected_item_media_type, added_object_model,
-                     media_type, search_id):
+def parse_media_item(
+    films,
+    serials,
+    actors,
+    selected_item,
+    selected_item_media_type,
+    added_object_model,
+    media_type,
+    search_id,
+):
     url_part = URL_PARTS.get(media_type)
     img_url = POPULAR_IMG_URL
     data_url = f"{BASE_URL}/{url_part}/{search_id}"
@@ -151,8 +162,8 @@ def parse_media_item(films, serials, actors, selected_item,
 
 
 def parsing_media_items(request, media_type):
-    start_page = request.POST.get('start_page')
-    end_page = request.POST.get('end_page')
+    start_page = request.POST.get("start_page")
+    end_page = request.POST.get("end_page")
 
     films = Film.objects.all()
     serials = Serial.objects.all()
@@ -234,7 +245,8 @@ def parsing_media_items(request, media_type):
                     for item in cast:
                         defaults = {"is_parsed": False, "title": item["title"]}
                         film, created = Film.objects.get_or_create(
-                            search_id=item["id"], defaults=defaults,
+                            search_id=item["id"],
+                            defaults=defaults,
                         )
                         actor = actors.get(search_id=media_item["id"])
                         actor.movies.add(film)
@@ -243,7 +255,8 @@ def parsing_media_items(request, media_type):
                     for item in cast:
                         defaults = {"is_parsed": False, "name": item["name"]}
                         actor, created = Actor.objects.get_or_create(
-                            search_id=item["id"], defaults=defaults,
+                            search_id=item["id"],
+                            defaults=defaults,
                         )
                         film = films.get(search_id=media_item["id"])
                         actor.movies.add(film)
@@ -252,14 +265,16 @@ def parsing_media_items(request, media_type):
                     for item in cast:
                         defaults = {"is_parsed": False, "name": item["name"]}
                         actor, created = Actor.objects.get_or_create(
-                            search_id=item["id"], defaults=defaults,
+                            search_id=item["id"],
+                            defaults=defaults,
                         )
                         serial = serials.get(search_id=media_item["id"])
                         actor.serials.add(serial)
 
             lead_time = timezone.now() - start
             create_success_message(
-                request, media_type,
+                request,
+                media_type,
                 str(start.replace(microsecond=0)),
                 str(lead_time.total_seconds()),
                 f"Страница {page_number} успешно скачана!",

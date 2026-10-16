@@ -1,4 +1,5 @@
 """Клиент TMDB API — тонкая обёртка над requests."""
+
 import logging
 
 import requests

@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Film, Serial, Actor, Message, Comment, Favorite, Genre
+
+from .models import Actor, Comment, Favorite, Film, Genre, Message, Serial
 
 admin.site.register(Film)
 admin.site.register(Serial)

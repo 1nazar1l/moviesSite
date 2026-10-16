@@ -1,4 +1,5 @@
 """Аутентификация: логин, регистрация, выход."""
+
 from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.core.mail import send_mail
@@ -8,9 +9,9 @@ from django.shortcuts import redirect, render
 def authPage(request):
     error_message = ""
 
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
@@ -18,10 +19,14 @@ def authPage(request):
             return redirect("mainPage")
         error_message = "Неверное имя пользователя или пароль"
 
-    return render(request, "main/auth.html", {
-        "username": request.user,
-        "error_message": error_message,
-    })
+    return render(
+        request,
+        "main/auth.html",
+        {
+            "username": request.user,
+            "error_message": error_message,
+        },
+    )
 
 
 def regPage(request):
@@ -29,10 +34,10 @@ def regPage(request):
     message = ""
     message_text = ""
 
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        email = request.POST.get('email')
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        email = request.POST.get("email")
 
         if username:
             if User.objects.filter(username=username).exists():
@@ -49,8 +54,8 @@ def regPage(request):
                         login(request, user)
 
                         send_mail(
-                            'Добро пожаловать!',
-                            f'Здравствуйте, {username}! Вы успешно зарегистрировались.',
+                            "Добро пожаловать!",
+                            f"Здравствуйте, {username}! Вы успешно зарегистрировались.",
                             settings.EMAIL_HOST_USER,
                             [email],
                             fail_silently=True,
@@ -60,11 +65,15 @@ def regPage(request):
                     message_text = f"Ошибка при создании пользователя: {str(e)}"
                     message = "error"
 
-    return render(request, "main/reg.html", {
-        "message": message,
-        "username": request.user,
-        "message_text": message_text,
-    })
+    return render(
+        request,
+        "main/reg.html",
+        {
+            "message": message,
+            "username": request.user,
+            "message_text": message_text,
+        },
+    )
 
 
 def signOut(request):

@@ -1,4 +1,5 @@
 """Админ-панели: films, serials, actors, genres."""
+
 from django.shortcuts import render
 
 from mainProject.models import Actor, Film, Genre, Message, Serial
@@ -7,28 +8,29 @@ from ._helpers import count_messages_by_type
 
 
 def films_admin_panel(request):
-    id = request.GET.get('id', '').strip()
-    search_id = request.GET.get('search_id', '').strip()
-    title_search = request.GET.get('title_search', '').strip()
-    budget_min = request.GET.get('budget_min', '').strip()
-    budget_max = request.GET.get('budget_max', '').strip()
-    revenue_min = request.GET.get('revenue_min', '').strip()
-    revenue_max = request.GET.get('revenue_max', '').strip()
-    release_date_min = request.GET.get('release_date_min', '').strip()
-    release_date_max = request.GET.get('release_date_max', '').strip()
-    duration_min = request.GET.get('duration_min', '').strip()
-    duration_max = request.GET.get('duration_max', '').strip()
-    rating_min = request.GET.get('rating_min', '').strip()
-    rating_max = request.GET.get('rating_max', '').strip()
-    selected_genres = request.GET.getlist('genres')
-    is_parsed = request.GET.get('is_parsed', '').strip()
-    is_not_parsed = request.GET.get('is_not_parsed', '').strip()
+    id = request.GET.get("id", "").strip()
+    search_id = request.GET.get("search_id", "").strip()
+    title_search = request.GET.get("title_search", "").strip()
+    budget_min = request.GET.get("budget_min", "").strip()
+    budget_max = request.GET.get("budget_max", "").strip()
+    revenue_min = request.GET.get("revenue_min", "").strip()
+    revenue_max = request.GET.get("revenue_max", "").strip()
+    release_date_min = request.GET.get("release_date_min", "").strip()
+    release_date_max = request.GET.get("release_date_max", "").strip()
+    duration_min = request.GET.get("duration_min", "").strip()
+    duration_max = request.GET.get("duration_max", "").strip()
+    rating_min = request.GET.get("rating_min", "").strip()
+    rating_max = request.GET.get("rating_max", "").strip()
+    selected_genres = request.GET.getlist("genres")
+    is_parsed = request.GET.get("is_parsed", "").strip()
+    is_not_parsed = request.GET.get("is_not_parsed", "").strip()
 
     films = Film.objects.all()
 
     if title_search:
         films = films.filter(title__icontains=title_search).union(
-            films.filter(title__icontains=title_search.capitalize()), all=True,
+            films.filter(title__icontains=title_search.capitalize()),
+            all=True,
         )
     if budget_min:
         films = films.filter(budget__gte=budget_min)
@@ -57,59 +59,72 @@ def films_admin_panel(request):
     if is_not_parsed:
         films = films.filter(is_parsed=False)
 
-    if id and type(id) == type(int):
-        films = films.filter(id=id)
-    if search_id and type(search_id) == type(int):
-        films = films.filter(search_id=search_id)
+    if id and id.isdigit():
+        films = films.filter(id=int(id))
+    if search_id and search_id.isdigit():
+        films = films.filter(search_id=int(search_id))
 
-    films = set(list(films))
+    films = set(films)
 
-    return render(request, "adminPanel/films.html", context={
-        "films": films,
-        "messages": Message.objects.all().order_by('-id'),
-        "messages_type": count_messages_by_type(),
-        "genres": Genre.objects.all(),
-        "filter_values": {
-            "id": id, "search_id": search_id, "title_search": title_search,
-            "budget_min": budget_min, "budget_max": budget_max,
-            "revenue_min": revenue_min, "revenue_max": revenue_max,
-            "release_date_min": release_date_min, "release_date_max": release_date_max,
-            "duration_min": duration_min, "duration_max": duration_max,
-            "rating_min": rating_min, "rating_max": rating_max,
-            "selected_genres": selected_genres,
-            "is_parsed": is_parsed, "is_not_parsed": is_not_parsed,
+    return render(
+        request,
+        "adminPanel/films.html",
+        context={
+            "films": films,
+            "messages": Message.objects.all().order_by("-id"),
+            "messages_type": count_messages_by_type(),
+            "genres": Genre.objects.all(),
+            "filter_values": {
+                "id": id,
+                "search_id": search_id,
+                "title_search": title_search,
+                "budget_min": budget_min,
+                "budget_max": budget_max,
+                "revenue_min": revenue_min,
+                "revenue_max": revenue_max,
+                "release_date_min": release_date_min,
+                "release_date_max": release_date_max,
+                "duration_min": duration_min,
+                "duration_max": duration_max,
+                "rating_min": rating_min,
+                "rating_max": rating_max,
+                "selected_genres": selected_genres,
+                "is_parsed": is_parsed,
+                "is_not_parsed": is_not_parsed,
+            },
         },
-    })
+    )
 
 
 def serials_admin_panel(request):
-    id = request.GET.get('id', '').strip()
-    search_id = request.GET.get('search_id', '').strip()
-    title_search = request.GET.get('title_search', '').strip()
-    episodes_min = request.GET.get('episodes_min', '').strip()
-    episodes_max = request.GET.get('episodes_max', '').strip()
-    seasons_min = request.GET.get('seasons_min', '').strip()
-    seasons_max = request.GET.get('seasons_max', '').strip()
-    first_air_date_min = request.GET.get('first_air_date_min', '').strip()
-    first_air_date_max = request.GET.get('first_air_date_max', '').strip()
-    last_air_date_min = request.GET.get('last_air_date_min', '').strip()
-    last_air_date_max = request.GET.get('last_air_date_max', '').strip()
-    rating_min = request.GET.get('rating_min', '').strip()
-    rating_max = request.GET.get('rating_max', '').strip()
-    status_filter = request.GET.get('status', '').strip()
-    selected_genres = request.GET.getlist('genres')
-    is_parsed = request.GET.get('is_parsed', '').strip()
-    is_not_parsed = request.GET.get('is_not_parsed', '').strip()
+    id = request.GET.get("id", "").strip()
+    search_id = request.GET.get("search_id", "").strip()
+    title_search = request.GET.get("title_search", "").strip()
+    episodes_min = request.GET.get("episodes_min", "").strip()
+    episodes_max = request.GET.get("episodes_max", "").strip()
+    seasons_min = request.GET.get("seasons_min", "").strip()
+    seasons_max = request.GET.get("seasons_max", "").strip()
+    first_air_date_min = request.GET.get("first_air_date_min", "").strip()
+    first_air_date_max = request.GET.get("first_air_date_max", "").strip()
+    last_air_date_min = request.GET.get("last_air_date_min", "").strip()
+    last_air_date_max = request.GET.get("last_air_date_max", "").strip()
+    rating_min = request.GET.get("rating_min", "").strip()
+    rating_max = request.GET.get("rating_max", "").strip()
+    status_filter = request.GET.get("status", "").strip()
+    selected_genres = request.GET.getlist("genres")
+    is_parsed = request.GET.get("is_parsed", "").strip()
+    is_not_parsed = request.GET.get("is_not_parsed", "").strip()
 
     serials = Serial.objects.all()
 
-    if id and type(id) == type(int):
-        serials = serials.filter(id=id)
-    if search_id and type(search_id) == type(int):
-        serials = serials.filter(search_id=search_id)
+    if id and id.isdigit():
+        serials = serials.filter(id=int(id))
+    if search_id and search_id.isdigit():
+        serials = serials.filter(search_id=int(search_id))
     if title_search:
         serials = serials.filter(title__icontains=title_search).union(
-            serials.filter(title__icontains=title_search.capitalize()), all=True,
+            serials.filter(title__icontains=title_search.capitalize()),
+            all=True,
         )
     if episodes_min:
         serials = serials.filter(episodes__gte=episodes_min)
@@ -140,48 +155,62 @@ def serials_admin_panel(request):
     if is_not_parsed:
         serials = serials.filter(is_parsed=False)
 
-    serials = set(list(serials))
+    serials = set(serials)
 
-    return render(request, "adminPanel/serials.html", context={
-        "serials": serials,
-        "messages": Message.objects.all().order_by('-id'),
-        "messages_type": count_messages_by_type(),
-        "genres": Genre.objects.all(),
-        "filter_values": {
-            "id": id, "search_id": search_id, "title_search": title_search,
-            "episodes_min": episodes_min, "episodes_max": episodes_max,
-            "seasons_min": seasons_min, "seasons_max": seasons_max,
-            "first_air_date_min": first_air_date_min, "first_air_date_max": first_air_date_max,
-            "last_air_date_min": last_air_date_min, "last_air_date_max": last_air_date_max,
-            "rating_min": rating_min, "rating_max": rating_max,
-            "status": status_filter, "selected_genres": selected_genres,
-            "is_parsed": is_parsed, "is_not_parsed": is_not_parsed,
+    return render(
+        request,
+        "adminPanel/serials.html",
+        context={
+            "serials": serials,
+            "messages": Message.objects.all().order_by("-id"),
+            "messages_type": count_messages_by_type(),
+            "genres": Genre.objects.all(),
+            "filter_values": {
+                "id": id,
+                "search_id": search_id,
+                "title_search": title_search,
+                "episodes_min": episodes_min,
+                "episodes_max": episodes_max,
+                "seasons_min": seasons_min,
+                "seasons_max": seasons_max,
+                "first_air_date_min": first_air_date_min,
+                "first_air_date_max": first_air_date_max,
+                "last_air_date_min": last_air_date_min,
+                "last_air_date_max": last_air_date_max,
+                "rating_min": rating_min,
+                "rating_max": rating_max,
+                "status": status_filter,
+                "selected_genres": selected_genres,
+                "is_parsed": is_parsed,
+                "is_not_parsed": is_not_parsed,
+            },
         },
-    })
+    )
 
 
 def actors_admin_panel(request):
-    id = request.GET.get('id', '').strip()
-    search_id = request.GET.get('search_id', '').strip()
-    name_search = request.GET.get('name_search', '').strip()
-    birthday_min = request.GET.get('birthday_min', '').strip()
-    birthday_max = request.GET.get('birthday_max', '').strip()
-    deathday_min = request.GET.get('deathday_min', '').strip()
-    deathday_max = request.GET.get('deathday_max', '').strip()
-    gender_filter = request.GET.get('gender', '').strip()
-    project_search = request.GET.get('project_search', '').strip()
-    is_parsed = request.GET.get('is_parsed', '').strip()
-    is_not_parsed = request.GET.get('is_not_parsed', '').strip()
+    id = request.GET.get("id", "").strip()
+    search_id = request.GET.get("search_id", "").strip()
+    name_search = request.GET.get("name_search", "").strip()
+    birthday_min = request.GET.get("birthday_min", "").strip()
+    birthday_max = request.GET.get("birthday_max", "").strip()
+    deathday_min = request.GET.get("deathday_min", "").strip()
+    deathday_max = request.GET.get("deathday_max", "").strip()
+    gender_filter = request.GET.get("gender", "").strip()
+    project_search = request.GET.get("project_search", "").strip()
+    is_parsed = request.GET.get("is_parsed", "").strip()
+    is_not_parsed = request.GET.get("is_not_parsed", "").strip()
 
     actors = Actor.objects.all()
 
-    if id and type(id) == type(int):
-        actors = actors.filter(id=id)
-    if search_id and type(search_id) == type(int):
-        actors = actors.filter(search_id=search_id)
+    if id and id.isdigit():
+        actors = actors.filter(id=int(id))
+    if search_id and search_id.isdigit():
+        actors = actors.filter(search_id=int(search_id))
     if name_search:
         actors = actors.filter(name__icontains=name_search).union(
-            actors.filter(name__icontains=name_search.capitalize()), all=True,
+            actors.filter(name__icontains=name_search.capitalize()),
+            all=True,
         )
     if birthday_min:
         actors = actors.filter(birthday__gte=birthday_min)
@@ -215,43 +244,60 @@ def actors_admin_panel(request):
 
     actors = list(set(actors))
 
-    return render(request, "adminPanel/actors.html", context={
-        "actors": actors,
-        "messages": Message.objects.all().order_by('-id'),
-        "messages_type": count_messages_by_type(),
-        "filter_values": {
-            "id": id, "search_id": search_id, "name_search": name_search,
-            "birthday_min": birthday_min, "birthday_max": birthday_max,
-            "deathday_min": deathday_min, "deathday_max": deathday_max,
-            "gender": gender_filter, "project_search": project_search,
-            "is_parsed": is_parsed, "is_not_parsed": is_not_parsed,
+    return render(
+        request,
+        "adminPanel/actors.html",
+        context={
+            "actors": actors,
+            "messages": Message.objects.all().order_by("-id"),
+            "messages_type": count_messages_by_type(),
+            "filter_values": {
+                "id": id,
+                "search_id": search_id,
+                "name_search": name_search,
+                "birthday_min": birthday_min,
+                "birthday_max": birthday_max,
+                "deathday_min": deathday_min,
+                "deathday_max": deathday_max,
+                "gender": gender_filter,
+                "project_search": project_search,
+                "is_parsed": is_parsed,
+                "is_not_parsed": is_not_parsed,
+            },
         },
-    })
+    )
 
 
 def genres_admin_panel(request):
-    id = request.GET.get('id', '').strip()
-    search_id = request.GET.get('search_id', '').strip()
-    name_search = request.GET.get('name_search', '').strip()
+    id = request.GET.get("id", "").strip()
+    search_id = request.GET.get("search_id", "").strip()
+    name_search = request.GET.get("name_search", "").strip()
 
     genres = Genre.objects.all()
 
-    if id and type(id) == type(int):
-        genres = genres.filter(id=id)
-    if search_id and type(search_id) == type(int):
-        genres = genres.filter(search_id=search_id)
+    if id and id.isdigit():
+        genres = genres.filter(id=int(id))
+    if search_id and search_id.isdigit():
+        genres = genres.filter(search_id=int(search_id))
     if name_search:
         genres = genres.filter(name__icontains=name_search).union(
-            genres.filter(name__icontains=name_search.capitalize()), all=True,
+            genres.filter(name__icontains=name_search.capitalize()),
+            all=True,
         )
 
     genres = list(set(genres))
 
-    return render(request, "adminPanel/genres.html", context={
-        "genres": genres,
-        "messages": Message.objects.all().order_by('-id'),
-        "messages_type": count_messages_by_type(),
-        "filter_values": {
-            "id": id, "search_id": search_id, "name_search": name_search,
+    return render(
+        request,
+        "adminPanel/genres.html",
+        context={
+            "genres": genres,
+            "messages": Message.objects.all().order_by("-id"),
+            "messages_type": count_messages_by_type(),
+            "filter_values": {
+                "id": id,
+                "search_id": search_id,
+                "name_search": name_search,
+            },
         },
-    })
+    )

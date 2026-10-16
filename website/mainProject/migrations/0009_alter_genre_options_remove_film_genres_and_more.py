@@ -6,30 +6,34 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mainProject', '0008_genre'),
+        ("mainProject", "0008_genre"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='genre',
-            options={'verbose_name': 'Жанр', 'verbose_name_plural': 'Жанры'},
+            name="genre",
+            options={"verbose_name": "Жанр", "verbose_name_plural": "Жанры"},
         ),
         migrations.RemoveField(
-            model_name='film',
-            name='genres',
+            model_name="film",
+            name="genres",
         ),
         migrations.RemoveField(
-            model_name='serial',
-            name='genres',
+            model_name="serial",
+            name="genres",
         ),
         migrations.AddField(
-            model_name='film',
-            name='genres',
-            field=models.ManyToManyField(blank=True, related_name='films', to='mainProject.genre'),
+            model_name="film",
+            name="genres",
+            field=models.ManyToManyField(
+                blank=True, related_name="films", to="mainProject.genre"
+            ),
         ),
         migrations.AddField(
-            model_name='serial',
-            name='genres',
-            field=models.ManyToManyField(blank=True, related_name='serials', to='mainProject.genre'),
+            model_name="serial",
+            name="genres",
+            field=models.ManyToManyField(
+                blank=True, related_name="serials", to="mainProject.genre"
+            ),
         ),
     ]

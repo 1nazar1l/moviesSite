@@ -8,88 +8,143 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Actor',
+            name="Actor",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('search_id', models.IntegerField(blank=True, null=True)),
-                ('name', models.CharField(blank=True, max_length=50, null=True)),
-                ('biography', models.TextField(blank=True, null=True)),
-                ('birthday', models.DateField(blank=True, default=None, null=True)),
-                ('deathday', models.DateField(blank=True, default=None, null=True)),
-                ('gender', models.IntegerField(blank=True, null=True)),
-                ('site_img_path', models.URLField(blank=True, null=True)),
-                ('local_img_path', models.ImageField(blank=True, null=True, upload_to='actors/')),
-                ('movies', models.JSONField(blank=True, null=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("search_id", models.IntegerField(blank=True, null=True)),
+                ("name", models.CharField(blank=True, max_length=50, null=True)),
+                ("biography", models.TextField(blank=True, null=True)),
+                ("birthday", models.DateField(blank=True, default=None, null=True)),
+                ("deathday", models.DateField(blank=True, default=None, null=True)),
+                ("gender", models.IntegerField(blank=True, null=True)),
+                ("site_img_path", models.URLField(blank=True, null=True)),
+                (
+                    "local_img_path",
+                    models.ImageField(blank=True, null=True, upload_to="actors/"),
+                ),
+                ("movies", models.JSONField(blank=True, null=True)),
             ],
             options={
-                'verbose_name': 'Актер',
-                'verbose_name_plural': 'Актеры',
+                "verbose_name": "Актер",
+                "verbose_name_plural": "Актеры",
             },
         ),
         migrations.CreateModel(
-            name='Film',
+            name="Film",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('search_id', models.IntegerField(blank=True, null=True)),
-                ('title', models.CharField(blank=True, max_length=100, null=True)),
-                ('budget', models.IntegerField(blank=True, null=True)),
-                ('revenue', models.IntegerField(blank=True, null=True)),
-                ('overview', models.TextField(blank=True, null=True)),
-                ('site_img_path', models.URLField(blank=True, null=True)),
-                ('local_img_path', models.ImageField(blank=True, null=True, upload_to='films/')),
-                ('release_date', models.DateField(blank=True, default=django.utils.timezone.now, null=True)),
-                ('runtime', models.IntegerField(blank=True, null=True)),
-                ('status', models.CharField(blank=True, max_length=20, null=True)),
-                ('rating', models.FloatField(blank=True, null=True)),
-                ('genres', models.JSONField(blank=True, null=True)),
-                ('actors', models.JSONField(blank=True, null=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("search_id", models.IntegerField(blank=True, null=True)),
+                ("title", models.CharField(blank=True, max_length=100, null=True)),
+                ("budget", models.IntegerField(blank=True, null=True)),
+                ("revenue", models.IntegerField(blank=True, null=True)),
+                ("overview", models.TextField(blank=True, null=True)),
+                ("site_img_path", models.URLField(blank=True, null=True)),
+                (
+                    "local_img_path",
+                    models.ImageField(blank=True, null=True, upload_to="films/"),
+                ),
+                (
+                    "release_date",
+                    models.DateField(
+                        blank=True, default=django.utils.timezone.now, null=True
+                    ),
+                ),
+                ("runtime", models.IntegerField(blank=True, null=True)),
+                ("status", models.CharField(blank=True, max_length=20, null=True)),
+                ("rating", models.FloatField(blank=True, null=True)),
+                ("genres", models.JSONField(blank=True, null=True)),
+                ("actors", models.JSONField(blank=True, null=True)),
             ],
             options={
-                'verbose_name': 'Фильм',
-                'verbose_name_plural': 'Фильмы',
+                "verbose_name": "Фильм",
+                "verbose_name_plural": "Фильмы",
             },
         ),
         migrations.CreateModel(
-            name='Message',
+            name="Message",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('from_page', models.TextField()),
-                ('text', models.TextField()),
-                ('date', models.DateTimeField()),
-                ('time', models.FloatField()),
-                ('message_type', models.TextField(blank=True, null=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("from_page", models.TextField()),
+                ("text", models.TextField()),
+                ("date", models.DateTimeField()),
+                ("time", models.FloatField()),
+                ("message_type", models.TextField(blank=True, null=True)),
             ],
             options={
-                'verbose_name': 'Сообщение',
-                'verbose_name_plural': 'Сообщения',
+                "verbose_name": "Сообщение",
+                "verbose_name_plural": "Сообщения",
             },
         ),
         migrations.CreateModel(
-            name='Serial',
+            name="Serial",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('search_id', models.IntegerField(blank=True, null=True)),
-                ('first_air_date', models.DateField(blank=True, default=django.utils.timezone.now, null=True)),
-                ('last_air_date', models.DateField(blank=True, default=django.utils.timezone.now, null=True)),
-                ('title', models.CharField(blank=True, max_length=100, null=True)),
-                ('episodes', models.IntegerField(blank=True, null=True)),
-                ('seasons', models.IntegerField(blank=True, null=True)),
-                ('overview', models.TextField(blank=True, null=True)),
-                ('site_img_path', models.URLField(blank=True, null=True)),
-                ('local_img_path', models.ImageField(blank=True, null=True, upload_to='serials/')),
-                ('status', models.CharField(blank=True, max_length=20, null=True)),
-                ('rating', models.FloatField(blank=True, null=True)),
-                ('genres', models.JSONField(blank=True, null=True)),
-                ('actors', models.JSONField(blank=True, null=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("search_id", models.IntegerField(blank=True, null=True)),
+                (
+                    "first_air_date",
+                    models.DateField(
+                        blank=True, default=django.utils.timezone.now, null=True
+                    ),
+                ),
+                (
+                    "last_air_date",
+                    models.DateField(
+                        blank=True, default=django.utils.timezone.now, null=True
+                    ),
+                ),
+                ("title", models.CharField(blank=True, max_length=100, null=True)),
+                ("episodes", models.IntegerField(blank=True, null=True)),
+                ("seasons", models.IntegerField(blank=True, null=True)),
+                ("overview", models.TextField(blank=True, null=True)),
+                ("site_img_path", models.URLField(blank=True, null=True)),
+                (
+                    "local_img_path",
+                    models.ImageField(blank=True, null=True, upload_to="serials/"),
+                ),
+                ("status", models.CharField(blank=True, max_length=20, null=True)),
+                ("rating", models.FloatField(blank=True, null=True)),
+                ("genres", models.JSONField(blank=True, null=True)),
+                ("actors", models.JSONField(blank=True, null=True)),
             ],
             options={
-                'verbose_name': 'Сериал',
-                'verbose_name_plural': 'Сериалы',
+                "verbose_name": "Сериал",
+                "verbose_name_plural": "Сериалы",
             },
         ),
     ]

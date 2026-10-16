@@ -1,4 +1,5 @@
 """Создание/обновление объекта Film/Serial/Actor из данных TMDB и скачивание постера."""
+
 import logging
 import os
 
@@ -77,7 +78,7 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url):
             "local_img_path": local_img_path,
         }
 
-    manager = model.objects if hasattr(model, 'objects') else model
+    manager = model.objects if hasattr(model, "objects") else model
     media_item_obj, created = manager.get_or_create(
         search_id=media_item_data["id"],
         defaults=defaults,
