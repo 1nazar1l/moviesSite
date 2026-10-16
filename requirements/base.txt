@@ -1,0 +1,18 @@
+# === Core ===
+Django==5.2.6
+
+# === Parsing / external API ===
+requests==2.34.2
+beautifulsoup4==4.15.0
+Pillow==12.3.0
+
+# === Config / env ===
+environs==15.2.0
+python-dotenv==1.0.1
+
+# === Database (PostgreSQL) ===
+psycopg[binary]==3.2.3
+
+# === Production server ===
+gunicorn==23.0.0
+whitenoise==6.8.2

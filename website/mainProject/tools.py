@@ -1,16 +1,16 @@
-import requests
+import logging
 import os
-from environs import env
-from datetime import datetime, date
+import re
+from datetime import datetime
 
-from .models import Film, Serial, Actor, Message, Genre
-
+import requests
+from bs4 import BeautifulSoup
 from django.conf import settings
 
-from bs4 import BeautifulSoup  # Добавлен импорт BeautifulSoup
+from .models import Actor, Film, Genre, Message, Serial
 
-env.read_env()
-api_key = env("API_KEY")
+logger = logging.getLogger(__name__)
+
 BASE_URL = "https://api.themoviedb.org/3"
 
 
@@ -134,7 +134,7 @@ def get_trailer_url(search_id, media_type, title=None, release_date=None):
         videos_url = f"{BASE_URL}/{url_part}/{search_id}/videos"
         
         params = {
-            "api_key": api_key,
+            "api_key": settings.TMDB_API_KEY,
             "language": "ru",
         }
         
@@ -193,7 +193,6 @@ def get_trailer_url_bs4(title, release_date=None):
             script_text = script.string
             if script_text and 'videoId' in script_text:
                 # Ищем videoId в JSON структуре
-                import re
                 video_ids = re.findall(r'"videoId":"([^"]+)"', script_text)
                 video_links.extend(video_ids)
         
@@ -219,11 +218,11 @@ def get_trailer_url_bs4(title, release_date=None):
         
         return None
         
-    except (requests.exceptions.RequestException, Exception) as e:
-        print(f"Ошибка при поиске трейлера через BeautifulSoup: {e}")
+    except Exception:
+        logger.exception("Ошибка при поиске трейлера через BeautifulSoup: title=%r", title)
         return None
 
-def download_media_item(media_type, img_index, media_item_data, model, img_url, cast = []):
+def download_media_item(media_type, img_index, media_item_data, model, img_url):
     # Получаем трейлер для фильмов и сериалов
     trailer_url = None
     if media_type in ["films", "serials"]:
@@ -302,17 +301,19 @@ def download_media_item(media_type, img_index, media_item_data, model, img_url, 
             genre, created = Genre.objects.get_or_create(search_id=genre_item["id"], defaults={
                 "name": genre_item["name"]
             })
-            print(genre, created)
+            logger.debug("Жанр %s (created=%s) для объекта %s", genre, created, media_item_obj)
             media_item_obj.genres.add(genre)
 
     img_filepath = os.path.join(settings.MEDIA_ROOT, local_img_path)
 
-    if not os.path.exists(img_filepath):
-        if site_img_path != "":
-            p = requests.get(site_img_path)
-        
+    if not os.path.exists(img_filepath) and site_img_path:
+        try:
+            response = requests.get(site_img_path, timeout=10)
+            response.raise_for_status()
             with open(img_filepath, "wb") as out:
-                out.write(p.content)
+                out.write(response.content)
+        except requests.RequestException:
+            logger.warning("Не удалось скачать постер %s", site_img_path)
 
 def parse_media_item(films, serials, actors, selected_item, selected_item_media_type, added_object_model, media_type, search_id):   
     url_parts = {
@@ -328,12 +329,12 @@ def parse_media_item(films, serials, actors, selected_item, selected_item_media_
 
     if media_type != "actors":
         params = {
-            "api_key": api_key,
+            "api_key": settings.TMDB_API_KEY,
             "language": "ru",
         }
     else:
         params = {
-            "api_key": api_key,
+            "api_key": settings.TMDB_API_KEY,
             "language": "ru",
             "append_to_response": "movie_credits"
         }
@@ -360,7 +361,7 @@ def parse_media_item(films, serials, actors, selected_item, selected_item_media_
     delete_item = added_object_model.get(search_id=search_id)
     delete_item.delete()
 
-    download_media_item(media_type, img_index, media_item_data, added_object_model, img_url, cast)
+    download_media_item(media_type, img_index, media_item_data, added_object_model, img_url)
 
     if media_type == "actors":
         actor = actors.get(search_id=search_id)
@@ -448,7 +449,7 @@ def parsing_media_items(request, media_type):
             start = datetime.now()
 
             params = {
-                "api_key": api_key,
+                "api_key": settings.TMDB_API_KEY,
                 "language": "ru",
                 "page": page_number,         
             }
@@ -474,12 +475,12 @@ def parsing_media_items(request, media_type):
 
                 if media_type != "actors":
                     params = {
-                        "api_key": api_key,
+                        "api_key": settings.TMDB_API_KEY,
                         "language": "ru",
                     }
                 else:
                     params = {
-                        "api_key": api_key,
+                        "api_key": settings.TMDB_API_KEY,
                         "language": "ru",
                         "append_to_response": "movie_credits"
                     }
@@ -524,7 +525,7 @@ def parsing_media_items(request, media_type):
                     if average_rating < 5.2:
                         continue
 
-                download_media_item(media_type, img_index, media_item_data, model, img_url, cast)
+                download_media_item(media_type, img_index, media_item_data, model, img_url)
 
                 if media_type == "actors":
                     for item in cast:
